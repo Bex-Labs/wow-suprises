@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Wow Surprises</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/loginstyles.css">
+    <link rel="stylesheet" href="css/booking-history.css">
+    
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">LOGO</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="booking-history.html" class="active">My Bookings</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1>My Bookings</h1>
+                    <p class="subtitle">View and manage your surprise bookings</p>
+                </div>
+                <div class="header-actions">
+                    <button onclick="refreshBookings()" class="btn-secondary" id="refreshBtn">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                    <a href="booking.html" class="btn-primary" style="text-decoration: none;">
+                        <i class="bi bi-plus-circle"></i> New Booking
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterByStatus('all')" data-status="all">
+                    <i class="bi bi-grid"></i> All
+                </button>
+                <button class="filter-tab" onclick="filterByStatus('pending')" data-status="pending">
+                    <i class="bi bi-clock-history"></i> Pending
+                </button>
+                <button class="filter-tab" onclick="filterByStatus('confirmed')" data-status="confirmed">
+                    <i class="bi bi-check-circle"></i> Confirmed
+                </button>
+                <button class="filter-tab" onclick="filterByStatus('processing')" data-status="processing">
+                    <i class="bi bi-arrow-repeat"></i> Processing
+                </button>
+                <button class="filter-tab" onclick="filterByStatus('delivered')" data-status="delivered">
+                    <i class="bi bi-box-seam"></i> Delivered
+                </button>
+                <button class="filter-tab" onclick="filterByStatus('cancelled')" data-status="cancelled">
+                    <i class="bi bi-x-circle"></i> Cancelled
+                </button>
+            </div>
+
+            <!-- Search and Sort -->
+            <div class="search-sort-section">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by reference, recipient name..." oninput="searchBookings()">
+                </div>
+                <select id="sortOrder" onchange="sortBookings()" class="sort-select">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="delivery-date">Delivery Date</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="price-low">Price: Low to High</option>
+                </select>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section" id="statsSection" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-icon pending-bg">
+                        <i class="bi bi-clock-history pending-color"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon confirmed-bg">
+                        <i class="bi bi-check-circle confirmed-color"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="confirmedCount">0</div>
+                        <div class="stat-label">Confirmed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon delivered-bg">
+                        <i class="bi bi-box-seam delivered-color"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="deliveredCount">0</div>
+                        <div class="stat-label">Delivered</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total-bg">
+                        <i class="bi bi-cash-stack total-color"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalSpent">₦0</div>
+                        <div class="stat-label">Total Spent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading your bookings...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="bi bi-calendar-x"></i>
+                <h2>No bookings yet</h2>
+                <p>You haven't made any surprise bookings yet</p>
+                <a href="booking.html" class="btn-primary" style="text-decoration: none;">
+                    <i class="bi bi-plus-circle"></i> Create Your First Booking
+                </a>
+            </div>
+
+            <!-- No Results State -->
+            <div id="noResultsState" class="empty-state" style="display: none;">
+                <i class="bi bi-search"></i>
+                <h2>No bookings found</h2>
+                <p>Try adjusting your filters or search terms</p>
+                <button onclick="clearFilters()" class="btn-secondary">
+                    <i class="bi bi-x-circle"></i> Clear Filters
+                </button>
+            </div>
+
+            <!-- Not Logged In State -->
+            <div id="notLoggedInState" class="empty-state" style="display: none;">
+                <i class="bi bi-lock"></i>
+                <h2>Please Login</h2>
+                <p>You need to login to view your bookings</p>
+                <a href="login.html" class="btn-primary" style="text-decoration: none;">
+                    <i class="bi bi-box-arrow-in-right"></i> Login / Register
+                </a>
+            </div>
+
+            <!-- Bookings List -->
+            <div id="bookingsList" class="bookings-list" style="display: none;">
+                <!-- Bookings will be dynamically loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- View Booking Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeViewModal()">&times;</span>
+            <div id="bookingDetails">
+                <!-- Booking details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Booking Modal -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="close" onclick="closeCancelModal()">&times;</span>
+            <div class="modal-header">
+                <i class="bi bi-exclamation-triangle warning-icon"></i>
+                <h2>Cancel Booking</h2>
+            </div>
+            <p class="modal-text">Are you sure you want to cancel this booking?</p>
+            <div class="alert-warning">
+                <i class="bi bi-info-circle"></i>
+                <div>
+                    <strong>Cancellation Policy:</strong>
+                    <p>Cancellations made 48+ hours before delivery receive a full refund. Otherwise, a cancellation fee may apply.</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeCancelModal()">
+                    Keep Booking
+                </button>
+                <button type="button" class="btn-danger" onclick="confirmCancellation()">
+                    <i class="bi bi-x-circle"></i> Yes, Cancel Booking
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/supabaseApi.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/booking-history.js"></script>
+</body>
+</html>

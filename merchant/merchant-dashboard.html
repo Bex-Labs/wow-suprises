@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WOW Merchant</title>
+    
+    <!-- Auth Guard - Protects this page -->
+    <script src="js/merchant-auth-guard.js"></script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/merchant.css">
+</head>
+<body class="merchant-page" data-page="dashboard">
+    
+    <!-- Sidebar -->
+    <aside class="merchant-sidebar">
+        <div class="merchant-logo">
+            <i class="bi bi-shop"></i>
+            <span>WOW Merchant</span>
+        </div>
+        
+        <nav class="merchant-nav">
+            <a href="merchant-dashboard.html" class="nav-item active">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="merchant-orders.html" class="nav-item">
+                <i class="bi bi-box-seam"></i>
+                <span>Orders</span>
+                <span class="badge" id="pendingOrdersBadge">0</span>
+            </a>
+            
+            <a href="merchant-services.html" class="nav-item">
+                <i class="bi bi-gift"></i>
+                <span>My Services</span>
+            </a>
+            
+            <a href="merchant-earnings.html" class="nav-item">
+                <i class="bi bi-currency-exchange"></i>
+                <span>Earnings</span>
+            </a>
+             
+            <a href="merchant-reviews.html" class="nav-item">
+                <i class="bi bi-star"></i>
+                <span>Reviews</span>
+            </a>
+            
+            <a href="merchant-profile.html" class="nav-item">
+                <i class="bi bi-person"></i>
+                <span>Profile</span>
+            </a>
+            
+            <a href="merchant-settings.html" class="nav-item">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+            
+            <div class="nav-divider"></div>
+            
+            <a href="#" class="nav-item" onclick="merchantLogout(); return false;">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="merchant-content">
+        <!-- Header -->
+        <header class="merchant-header">
+            <div class="header-left">
+                <h1><i class="bi bi-grid"></i> Dashboard</h1>
+                <p>Welcome back, <strong id="merchantBusinessName">Merchant</strong></p>
+            </div>
+            
+            <div class="header-right">
+                <div class="merchant-user-info">
+                    <div class="user-avatar">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div>
+                        <div class="user-name" id="merchantDisplayName">Business Name</div>
+                        <div class="user-role">Merchant</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <main class="merchant-main">
+            
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <!-- Total Orders -->
+                <div class="stat-card">
+                    <div class="stat-card-icon primary">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="stat-card-value" id="totalOrders">0</div>
+                    <div class="stat-card-label">Total Orders</div>
+                    <div class="stat-card-trend up">
+                        <i class="bi bi-arrow-up"></i>
+                        <span id="ordersTrend">0%</span> from last month
+                    </div>
+                </div>
+                
+                <!-- Total Earnings -->
+                <div class="stat-card">
+                    <div class="stat-card-icon success">
+                        <i class="bi bi-currency-exchange"></i>
+                    </div>
+                    <div class="stat-card-value" id="totalEarnings">₦0</div>
+                    <div class="stat-card-label">Total Earnings</div>
+                    <div class="stat-card-trend up">
+                        <i class="bi bi-arrow-up"></i>
+                        <span id="earningsTrend">0%</span> from last month
+                    </div>
+                </div>
+                
+                <!-- Rating -->
+                <div class="stat-card">
+                    <div class="stat-card-icon warning">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div class="stat-card-value" id="merchantRating">0.0</div>
+                    <div class="stat-card-label">Average Rating</div>
+                    <div class="stat-card-trend">
+                        <i class="bi bi-star"></i>
+                        <span id="totalReviews">0 reviews</span>
+                    </div>
+                </div>
+                
+                <!-- Pending Orders -->
+                <div class="stat-card">
+                    <div class="stat-card-icon danger">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="stat-card-value" id="pendingOrders">0</div>
+                    <div class="stat-card-label">Pending Orders</div>
+                    <div class="stat-card-trend">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Requires action</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 24px;">
+                <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Quick Actions</h3>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="merchant-orders.html" style="padding: 12px 24px; background: #000; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-seam"></i> View Orders
+                    </a>
+                    <a href="merchant-services.html" style="padding: 12px 24px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-plus-circle"></i> Add Service
+                    </a>
+                    <a href="merchant-earnings.html" style="padding: 12px 24px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-wallet"></i> View Earnings
+                    </a>
+                    <a href="merchant-profile.html" style="padding: 12px 24px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-person"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Recent Orders -->
+            <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; margin-bottom: 24px;">
+                <div style="padding: 20px 24px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 600;">Recent Orders</h3>
+                    <a href="merchant-orders.html" style="padding: 8px 16px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px;">
+                        View All
+                    </a>
+                </div>
+                <div id="recentOrdersList" style="padding: 0;">
+                    <!-- Orders will be loaded here -->
+                    <div style="padding: 40px; text-align: center; color: #666;">
+                        <i class="bi bi-box-seam" style="font-size: 48px; color: #e0e0e0; margin-bottom: 16px; display: block;"></i>
+                        <p>No orders yet. Orders will appear here once customers book your services.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Overview -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+                
+                <!-- This Week -->
+                <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">This Week</h3>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+                            <span style="color: #666; font-size: 14px;">New Orders</span>
+                            <strong style="font-size: 20px;" id="weekOrders">0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+                            <span style="color: #666; font-size: 14px;">Completed</span>
+                            <strong style="font-size: 20px; color: #22c55e;" id="weekCompleted">0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+                            <span style="color: #666; font-size: 14px;">Earnings</span>
+                            <strong style="font-size: 20px; color: #22c55e;" id="weekEarnings">₦0</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Services -->
+                <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Top Services</h3>
+                    <div id="topServicesList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="padding: 40px 20px; text-align: center; color: #666;">
+                            <i class="bi bi-gift" style="font-size: 48px; color: #e0e0e0; margin-bottom: 16px; display: block;"></i>
+                            <p style="margin: 0; font-size: 14px;">Add services to see performance</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </main>
+    </div>
+    
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JavaScript Files -->
+    <script src="js/utils.js"></script>
+    <script src="js/merchant-config.js"></script>
+    <script src="js/merchant-auth.js"></script>
+    <script src="js/merchant-dashboard.js"></script>
+    
+</body>
+</html>

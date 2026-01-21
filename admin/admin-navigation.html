@@ -1,0 +1,117 @@
+<!-- Admin Navigation Component -->
+<!-- Include this in all admin pages -->
+
+<aside class="admin-sidebar">
+    <div class="admin-logo">
+        <i class="bi bi-shield-check"></i>
+        <span>WOW Admin</span>
+    </div>
+    
+    <nav class="admin-nav">
+        <a href="admin-dashboard-supabase.html" class="nav-item" data-page="dashboard">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+        </a>
+        
+        <a href="admin-bookings.html" class="nav-item" data-page="bookings">
+            <i class="bi bi-calendar-check"></i>
+            <span>Bookings</span>
+        </a>
+        
+        <a href="admin-users.html" class="nav-item" data-page="users">
+            <i class="bi bi-people"></i>
+            <span>Users</span>
+        </a>
+        
+        <a href="admin-packages.html" class="nav-item" data-page="packages">
+            <i class="bi bi-box-seam"></i>
+            <span>Packages</span>
+        </a>
+        
+        <a href="admin-analytics.html" class="nav-item" data-page="analytics">
+            <i class="bi bi-graph-up"></i>
+            <span>Analytics</span>
+        </a>
+        
+        <a href="admin-settings.html" class="nav-item" data-page="settings">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
+        </a>
+        
+        <div class="nav-divider"></div>
+        
+        <a href="../index.html" class="nav-item nav-client-view" target="_blank" title="View client interface in new tab">
+            <i class="bi bi-eye"></i>
+            <span>View as Client</span>
+            <i class="bi bi-box-arrow-up-right" style="margin-left: auto; font-size: 12px;"></i>
+        </a>
+        
+        <a href="#" class="nav-item" onclick="adminLogout(); return false;">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<script>
+// Set active nav item based on current page
+document.addEventListener('DOMContentLoaded', () => {
+    const currentPage = document.body.getAttribute('data-page');
+    if (currentPage) {
+        const navItem = document.querySelector(`.nav-item[data-page="${currentPage}"]`);
+        if (navItem) {
+            navItem.classList.add('active');
+        }
+    }
+});
+
+// Admin logout function
+async function adminLogout() {
+    if (!confirm('Are you sure you want to logout?')) return;
+    
+    try {
+        if (typeof API !== 'undefined' && API.auth) {
+            await API.auth.signOut();
+        }
+        
+        // Clear all storage
+        sessionStorage.clear();
+        localStorage.removeItem('currentUser');
+        
+        showToast('Logged out successfully', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'admin-login-supabase.html';
+        }, 1000);
+    } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = 'admin-login-supabase.html';
+    }
+}
+</script>
+
+<style>
+.nav-divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 16px 0;
+}
+
+.nav-client-view {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    margin: 8px 12px;
+    border-radius: 8px;
+}
+
+.nav-client-view:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.nav-item.active {
+    background: #f0f0f0;
+    color: #000;
+    border-left: 3px solid #000;
+}
+</style>

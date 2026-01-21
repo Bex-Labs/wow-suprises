@@ -1,0 +1,550 @@
+/**
+ * ANALYTICS PAGE - FULLY CONSISTENT CSS
+ * Matches Users, Packages, Bookings pages exactly
+ */
+
+/* ========================================
+   FORCE VERTICAL LAYOUT
+   ======================================== */
+
+.admin-main {
+    display: block !important;
+    padding: 30px 40px;
+}
+
+/* ========================================
+   STATS GRID - 4 CARDS IN A ROW (Same as other pages)
+   ======================================== */
+
+.key-metrics-grid,
+.stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 24px !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+}
+
+.metric-card,
+.stat-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.metric-card:hover,
+.stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.metric-icon,
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.metric-icon.revenue {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.metric-icon.bookings {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.metric-icon.average {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.metric-icon.clients {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+}
+
+.metric-details,
+.stat-details {
+    flex: 1;
+}
+
+.metric-value,
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+}
+
+.metric-label,
+.stat-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.metric-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.metric-change.positive {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.metric-change.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* ========================================
+   ADMIN CARD - CONSISTENT CONTAINER
+   ======================================== */
+
+.admin-card,
+.analytics-card,
+.chart-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.admin-card-header,
+.chart-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.admin-card-header h3,
+.chart-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-card-body,
+.chart-body {
+    padding: 24px;
+}
+
+/* ========================================
+   ANALYTICS CONTROLS - MATCHES FILTER BARS
+   ======================================== */
+
+.analytics-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.date-range-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.date-range-selector label {
+    font-weight: 600;
+    color: #000;
+    font-size: 14px;
+}
+
+.date-range-selector select,
+.analytics-controls select {
+    padding: 10px 36px 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+.date-range-selector select:focus,
+.analytics-controls select:focus {
+    outline: none;
+    border-color: #000;
+}
+
+#customDateInputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#customDateInputs input {
+    padding: 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#customDateInputs input:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.analytics-actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+
+/* ========================================
+   CHARTS GRID - TWO COLUMNS
+   ======================================== */
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    padding: 24px;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
+
+/* Small select inside chart header */
+.chart-header select {
+    padding: 6px 28px 6px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    font-size: 13px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+/* ========================================
+   TOP PERFORMERS - THREE COLUMNS
+   ======================================== */
+
+.top-performers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.top-performers-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.top-performers-card h3 {
+    margin: 0;
+    padding: 20px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-list {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+}
+
+.top-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.top-item:hover {
+    background: #f0f0f0;
+}
+
+.top-rank {
+    width: 32px;
+    height: 32px;
+    background: #e0e0e0;
+    color: #666;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.top-rank.gold {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.top-rank.silver {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.top-rank.bronze {
+    background: #fed7aa;
+    color: #ea580c;
+}
+
+.top-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.top-name {
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 2px;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-meta {
+    font-size: 12px;
+    color: #666;
+}
+
+.top-value {
+    font-weight: 700;
+    color: #000;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   CATEGORY REVENUE LIST
+   ======================================== */
+
+.category-revenue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+}
+
+.category-item {
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.category-name {
+    font-weight: 600;
+    color: #000;
+    font-size: 14px;
+}
+
+.category-amount {
+    font-weight: 700;
+    color: #000;
+    font-size: 14px;
+}
+
+.category-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.category-bar-fill {
+    height: 100%;
+    background: #000;
+    border-radius: 3px;
+}
+
+/* ========================================
+   SECTION TITLES
+   ======================================== */
+
+.analytics-section {
+    margin-bottom: 24px;
+}
+
+.analytics-section h2 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* ========================================
+   BUTTONS - CONSISTENT
+   ======================================== */
+
+.btn-primary {
+    padding: 10px 20px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: #333;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background: #f0f0f0;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+/* ========================================
+   NO DATA STATE
+   ======================================== */
+
+.no-data-message {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.no-data-message i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    color: #e0e0e0;
+    display: block;
+}
+
+.no-data-message p {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .key-metrics-grid,
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .top-performers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 20px;
+    }
+    
+    .key-metrics-grid,
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-performers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .analytics-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .date-range-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .analytics-actions {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .analytics-actions button {
+        flex: 1;
+    }
+}

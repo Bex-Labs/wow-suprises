@@ -1,0 +1,562 @@
+/**
+ * SETTINGS PAGE - COMPLETE FIXED CSS
+ * Consistent with Users, Packages, Bookings, and Analytics pages
+ */
+
+/* ========================================
+   FORCE VERTICAL LAYOUT
+   ======================================== */
+
+.admin-main {
+    display: block !important;
+    padding: 30px 40px;
+}
+
+/* ========================================
+   SETTINGS TABS
+   ======================================== */
+
+.settings-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    background: #f0f0f0;
+    color: #000;
+}
+
+.tab-btn.active {
+    background: #000;
+    color: white;
+}
+
+.settings-tab-content {
+    display: none;
+}
+
+.settings-tab-content.active {
+    display: block;
+}
+
+/* ========================================
+   SETTINGS SECTIONS
+   ======================================== */
+
+.settings-section {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    border: 1px solid #e0e0e0;
+}
+
+.settings-section .section-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.settings-section .section-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-section .section-header p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+/* ========================================
+   FORM STYLING
+   ======================================== */
+
+.settings-section .form-group {
+    margin-bottom: 20px;
+}
+
+.settings-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000;
+}
+
+.settings-section .form-control,
+.settings-section input[type="text"],
+.settings-section input[type="email"],
+.settings-section input[type="tel"],
+.settings-section input[type="password"],
+.settings-section textarea,
+.settings-section select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #ffffff;
+    color: #000;
+    box-sizing: border-box;
+}
+
+.settings-section .form-control:focus,
+.settings-section input:focus,
+.settings-section textarea:focus,
+.settings-section select:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.settings-section .form-control:disabled {
+    background: #f9f9f9;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.settings-section textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* ========================================
+   FORM GRID LAYOUT
+   ======================================== */
+
+.settings-section .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.settings-section .form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.settings-section .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.settings-section .btn-primary,
+.settings-section button[type="submit"],
+.btn-primary {
+    padding: 12px 24px;
+    background: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.settings-section .btn-primary:hover,
+.settings-section button[type="submit"]:hover,
+.btn-primary:hover {
+    background: #333;
+}
+
+.settings-section .btn-secondary,
+.btn-secondary {
+    padding: 12px 24px;
+    background: #f0f0f0;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.settings-section .btn-secondary:hover,
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.settings-section .btn-danger,
+.btn-danger {
+    padding: 12px 24px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.settings-section .btn-danger:hover,
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* ========================================
+   PROFILE PICTURE UPLOAD
+   ======================================== */
+
+.profile-picture-upload {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.current-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 3px solid #e0e0e0;
+}
+
+.current-picture i {
+    font-size: 60px;
+    color: #666;
+}
+
+.current-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ========================================
+   PASSWORD REQUIREMENTS
+   ======================================== */
+
+.password-requirements {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.password-requirements h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    padding: 6px 0;
+    color: #666;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.password-requirements li i {
+    font-size: 16px;
+}
+
+.password-requirements li.met {
+    color: #22c55e;
+}
+
+.password-requirements li.met i {
+    color: #22c55e;
+}
+
+/* ========================================
+   TOGGLE SWITCHES
+   ======================================== */
+
+.notification-settings,
+.system-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.notification-item,
+.system-setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.notification-info strong,
+.setting-info strong {
+    display: block;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.notification-info p,
+.setting-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e0e0e0;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .toggle-slider {
+    background-color: #22c55e;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* ========================================
+   DANGER ZONE
+   ======================================== */
+
+.danger-zone {
+    border: 2px solid #fecaca;
+    background: #fef2f2;
+}
+
+.danger-zone .section-header {
+    border-bottom-color: #fecaca;
+}
+
+.danger-zone .section-header h2 {
+    color: #ef4444;
+}
+
+.danger-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.danger-action-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+}
+
+/* ========================================
+   ACTIVITY LOG
+   ======================================== */
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.activity-meta {
+    font-size: 13px;
+    color: #666;
+}
+
+/* ========================================
+   NOTIFICATION GROUP
+   ======================================== */
+
+.notification-group {
+    margin-bottom: 32px;
+}
+
+.notification-group:last-child {
+    margin-bottom: 0;
+}
+
+.notification-group h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 20px;
+    }
+    
+    .settings-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .settings-section {
+        padding: 24px;
+    }
+    
+    .settings-section .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-picture-upload {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .settings-section .form-actions {
+        flex-direction: column;
+    }
+    
+    .settings-section .form-actions button {
+        width: 100%;
+    }
+    
+    .notification-item,
+    .system-setting-item,
+    .danger-action-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .toggle-switch {
+        align-self: flex-end;
+    }
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - WOW Merchant</title>
+    
+    <!-- Auth Guard -->
+    <script src="js/merchant-auth-guard.js"></script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/merchant.css">
+</head>
+<body class="merchant-page" data-page="order-details">
+    
+    <!-- Sidebar -->
+    <aside class="merchant-sidebar">
+        <div class="merchant-logo">
+            <i class="bi bi-shop"></i>
+            <span>WOW Merchant</span>
+        </div>
+        
+        <nav class="merchant-nav">
+            <a href="merchant-dashboard.html" class="nav-item">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="merchant-orders.html" class="nav-item active">
+                <i class="bi bi-box-seam"></i>
+                <span>Orders</span>
+            </a>
+            
+            <a href="merchant-services.html" class="nav-item">
+                <i class="bi bi-gift"></i>
+                <span>My Services</span>
+            </a>
+            
+            <a href="merchant-earnings.html" class="nav-item">
+                <i class="bi bi-currency-exchange"></i>
+                <span>Earnings</span>
+            </a>
+            
+            <a href="merchant-reviews.html" class="nav-item">
+                <i class="bi bi-star"></i>
+                <span>Reviews</span>
+            </a>
+            
+            <a href="merchant-profile.html" class="nav-item">
+                <i class="bi bi-person"></i>
+                <span>Profile</span>
+            </a>
+            
+            <a href="merchant-settings.html" class="nav-item">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+            
+            <div class="nav-divider"></div>
+            
+            <a href="#" class="nav-item" onclick="merchantLogout(); return false;">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="merchant-content">
+        <!-- Header -->
+        <header class="merchant-header">
+            <div class="header-left">
+                <a href="merchant-orders.html" style="text-decoration: none; color: #666; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">
+                    <i class="bi bi-arrow-left"></i> Back to Orders
+                </a>
+                <h1 style="margin: 0;"><i class="bi bi-box-seam"></i> Order Details</h1>
+                <p id="orderIdDisplay">Loading...</p>
+            </div>
+            
+            <div class="header-right">
+                <div class="merchant-user-info">
+                    <div class="user-avatar">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div>
+                        <div class="user-name" id="merchantDisplayName">Business Name</div>
+                        <div class="user-role">Merchant</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <main class="merchant-main">
+            
+            <!-- Loading State -->
+            <div id="orderLoading" style="text-align: center; padding: 80px 20px; display: none;">
+                <div style="width: 60px; height: 60px; border: 4px solid #f0f0f0; border-top-color: #000; border-radius: 50%; margin: 0 auto 24px; animation: spin 1s linear infinite;"></div>
+                <p style="color: #666; font-size: 16px;">Loading order details...</p>
+            </div>
+            
+            <!-- Order Content -->
+            <div id="orderContent" style="display: none;">
+                
+                <!-- Status Update Actions -->
+                <div id="statusActions" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Update Order Status</h3>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;" id="statusButtonsContainer">
+                        <!-- Status buttons will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <!-- Main Grid -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    
+                    <!-- Left Column -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        
+                        <!-- Order Information -->
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Order Information</h3>
+                            <div id="orderInfo" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                <!-- Order info will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Delivery Tracking -->
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Delivery Tracking</h3>
+                            <div id="deliveryTimeline">
+                                <!-- Timeline will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Special Instructions -->
+                        <div id="specialInstructionsCard" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; display: none;">
+                            <h3 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Special Instructions</h3>
+                            <p id="specialInstructions" style="margin: 0; color: #666; line-height: 1.6;"></p>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        
+                        <!-- Customer Details -->
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Customer Details</h3>
+                            <div id="customerInfo">
+                                <!-- Customer info will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Order Summary -->
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Order Summary</h3>
+                            <div id="orderSummary">
+                                <!-- Summary will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Upload Delivery Photo -->
+                        <div id="uploadPhotoCard" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; display: none;">
+                            <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Delivery Photo</h3>
+                            <div id="deliveryPhotoPreview" style="display: none; margin-bottom: 16px;">
+                                <img id="photoPreview" style="width: 100%; border-radius: 8px; margin-bottom: 12px;" />
+                                <p style="font-size: 12px; color: #666; text-align: center; margin: 0;">Delivery photo uploaded</p>
+                            </div>
+                            <input type="file" id="deliveryPhotoInput" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+                            <button onclick="document.getElementById('deliveryPhotoInput').click()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #000; border: 1px dashed #ccc; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <i class="bi bi-camera"></i> Upload Photo
+                            </button>
+                            <p style="font-size: 12px; color: #666; margin: 8px 0 0 0; text-align: center;">Recommended for completed deliveries</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+    
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JavaScript Files -->
+    <script src="js/utils.js"></script>
+    <script src="js/merchant-config.js"></script>
+    <script src="js/merchant-auth.js"></script>
+    <script src="js/merchant-order-details.js"></script>
+    
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 1024px) {
+            .merchant-main > div > div {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+    
+</body>
+</html>

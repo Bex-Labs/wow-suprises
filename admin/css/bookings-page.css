@@ -1,0 +1,792 @@
+/**
+ * BOOKINGS PAGE - CONSISTENT UI WITH USERS PAGE
+ * Matches users-page.css styling exactly
+ */
+
+/* ========================================
+   FORCE VERTICAL LAYOUT - EVERYTHING STACKS
+   ======================================== */
+
+.admin-main {
+    display: block !important;
+    padding: 30px 40px;
+}
+
+/* ========================================
+   STATS GRID - 4 CARDS IN A ROW, FULL WIDTH
+   ======================================== */
+
+.stats-grid,
+.stats-grid-4,
+.bookings-stats {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 24px !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+}
+
+.stat-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.stat-details {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* ========================================
+   CONTENT SECTION - FULL WIDTH, BELOW STATS
+   ======================================== */
+
+.content-section,
+.admin-card {
+    display: block !important;
+    width: 100% !important;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.section-header,
+.admin-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.section-title,
+.card-title-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title h2,
+.admin-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+}
+
+.section-title .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(102, 126, 234, 0.1);
+    color: #3730a3;
+}
+
+.section-actions,
+.card-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ========================================
+   FILTERS BAR - CONSISTENT WITH USERS PAGE
+   ======================================== */
+
+.filters-bar,
+.bookings-controls,
+.users-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+}
+
+.search-box,
+.admin-search {
+    flex: 0 0 200px;
+    width: 200px;
+    max-width: 200px;
+    position: relative;
+}
+
+.search-box input,
+.admin-search input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.search-box input:focus,
+.admin-search input:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.search-box i,
+.admin-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 16px;
+}
+
+.filters-bar select,
+.admin-filter-select,
+.filter-select {
+    padding: 10px 36px 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+.filters-bar select:focus,
+.admin-filter-select:focus,
+.filter-select:focus {
+    outline: none;
+    border-color: #000;
+}
+
+/* ========================================
+   TABLE CONTAINER - CONSISTENT WITH USERS
+   ======================================== */
+
+.table-container,
+.admin-table-container,
+.bookings-table-container {
+    overflow-x: auto;
+    padding: 0;
+}
+
+.data-table,
+.admin-table,
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead,
+.admin-table thead,
+.bookings-table thead {
+    background: #f9f9f9;
+}
+
+.data-table th,
+.admin-table th,
+.bookings-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.data-table td,
+.admin-table td,
+.bookings-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #000;
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover,
+.admin-table tbody tr:hover,
+.bookings-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+/* ========================================
+   CLIENT INFO STYLING (LIKE USER INFO)
+   ======================================== */
+
+.client-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.client-name {
+    font-weight: 600;
+    color: #000;
+}
+
+.client-email {
+    font-size: 12px;
+    color: #666;
+}
+
+.recipient-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.recipient-info small {
+    font-size: 12px;
+    color: #666;
+}
+
+/* ========================================
+   STATUS BADGES - CONSISTENT COLORS
+   ======================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-warning,
+.status-badge.status-pending,
+.payment-badge.payment-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.badge-info,
+.status-badge.status-confirmed {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.badge-success,
+.status-badge.status-delivered,
+.status-badge.status-completed,
+.payment-badge.payment-paid {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.badge-danger,
+.status-badge.status-cancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.badge-secondary,
+.status-badge.status-processing,
+.payment-badge.payment-refunded {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+}
+
+.badge-primary {
+    background: rgba(102, 126, 234, 0.1);
+    color: #3730a3;
+}
+
+/* ========================================
+   ACTION BUTTONS - CONSISTENT WITH USERS
+   ======================================== */
+
+.action-buttons,
+.table-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-icon,
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-icon,
+.action-btn-view {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.btn-icon:hover,
+.action-btn-view:hover {
+    opacity: 0.8;
+}
+
+.btn-icon.btn-warning,
+.action-btn-edit {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.btn-icon.btn-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.btn-icon.btn-danger,
+.action-btn-delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* ========================================
+   BUTTONS - CONSISTENT WITH USERS PAGE
+   ======================================== */
+
+.admin-btn,
+.btn-primary,
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.admin-btn-primary,
+.btn-primary {
+    background: #000;
+    color: #fff;
+}
+
+.admin-btn-primary:hover,
+.btn-primary:hover {
+    background: #333;
+}
+
+.admin-btn-secondary,
+.btn-secondary {
+    background: #f0f0f0;
+    color: #000;
+}
+
+.admin-btn-secondary:hover,
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+/* ========================================
+   MODAL - CONSISTENT WITH USERS PAGE
+   ======================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.active,
+.modal[style*="display: block"] {
+    display: flex !important;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content.modal-large {
+    max-width: 800px;
+}
+
+.modal-header {
+    padding: 24px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2,
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-header .close,
+.modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #666;
+    line-height: 1;
+}
+
+.modal-header .close:hover,
+.modal-close:hover {
+    background: #e0e0e0;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer,
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e0e0e0;
+    justify-content: flex-end;
+}
+
+/* ========================================
+   FORM STYLING - CONSISTENT WITH USERS
+   ======================================== */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-grid .full-width,
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000;
+}
+
+.form-control,
+.form-control-disabled,
+.form-input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.form-control:focus,
+.form-input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-control-disabled {
+    background: #f9f9f9;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* ========================================
+   BOOKING DETAILS VIEW - CONSISTENT GRID
+   ======================================== */
+
+.booking-details-view {
+    padding: 0;
+}
+
+.details-grid,
+.booking-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.detail-section,
+.detail-group {
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.detail-section.full-width,
+.detail-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-row .label,
+.detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.detail-row .value,
+.detail-value {
+    font-size: 14px;
+    color: #000;
+    font-weight: 500;
+    text-align: right;
+}
+
+.admin-notes-view {
+    white-space: pre-wrap;
+    font-size: 14px;
+    color: #000;
+    line-height: 1.6;
+}
+
+/* ========================================
+   EMPTY STATE - CONSISTENT WITH USERS
+   ======================================== */
+
+.empty-state,
+.admin-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state i,
+.admin-empty-icon {
+    font-size: 64px;
+    color: #e0e0e0;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.empty-state h3,
+.admin-empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 8px;
+}
+
+.empty-state p,
+.admin-empty-text {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+
+.loading-spinner,
+.admin-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px;
+    color: #666;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   TEXT CENTER UTILITY
+   ======================================== */
+
+.text-center {
+    text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE - CONSISTENT WITH USERS PAGE
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .stats-grid,
+    .stats-grid-4,
+    .bookings-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 20px;
+    }
+    
+    .stats-grid,
+    .stats-grid-4,
+    .bookings-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .section-header,
+    .admin-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .section-actions,
+    .card-actions {
+        width: 100%;
+    }
+    
+    .filters-bar,
+    .bookings-controls,
+    .users-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box,
+    .admin-search {
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .form-grid,
+    .details-grid,
+    .booking-detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-actions,
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-actions button,
+    .modal-footer button {
+        width: 100%;
+    }
+    
+    .table-container,
+    .admin-table-container,
+    .bookings-table-container {
+        overflow-x: auto;
+    }
+}

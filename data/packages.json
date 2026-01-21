@@ -1,0 +1,55 @@
+[
+    {
+        "id": "pkg001",
+        "title": "Romantic Dinner Surprise",
+        "description": "Elegant candlelit dinner with live music",
+        "fullDescription": "Create an unforgettable romantic evening with our elegant candlelit dinner package. Includes live music, premium wine selection, and personalized decorations.",
+        "category": "anniversary",
+        "price": 500,
+        "rating": 5,
+        "totalBookings": 245,
+        "image": "images/romantic-dinner.jpg",
+        "images": [
+            "images/romantic-dinner.jpg",
+            "images/table-setup.jpg",
+            "images/live-music.jpg"
+        ],
+        "includes": [
+            "3-course gourmet meal",
+            "Live acoustic music",
+            "Premium wine pairing",
+            "Rose bouquet",
+            "Personalized decorations",
+            "Professional photographer (1 hour)"
+        ],
+        "available": true,
+        "createdAt": "2025-01-15"
+    },
+    {
+        "id": "pkg002",
+        "title": "Birthday Bash Extravaganza",
+        "description": "Full party setup with entertainment and catering",
+        "fullDescription": "Make birthdays unforgettable with our complete party package including venue decoration, entertainment, catering, and more.",
+        "category": "birthday",
+        "price": 1200,
+        "rating": 4,
+        "totalBookings": 189,
+        "image": "images/birthday-party.jpg",
+        "images": [
+            "images/birthday-party.jpg",
+            "images/decorations.jpg",
+            "images/cake.jpg"
+        ],
+        "includes": [
+            "Venue decoration",
+            "DJ or live band",
+            "Catering for 50 guests",
+            "Custom birthday cake",
+            "Party favors",
+            "Photo booth with props",
+            "Event coordinator"
+        ],
+        "available": true,
+        "createdAt": "2025-02-10"
+    }
+]

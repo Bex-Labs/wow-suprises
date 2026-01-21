@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management - WOW Admin</title>
+
+    <script src="js/admin-auth-guard.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/admin-additional.css">
+    <link rel="stylesheet" href="css/users-page.css">
+    
+    <style>
+        html, body { overflow-x: hidden; max-width: 100%; }
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #333; margin-right: 15px; }
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
+            .admin-sidebar.active { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="admin-page" data-page="users">
+    
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-logo">
+            <i class="bi bi-shield-check"></i>
+            <span>WOW Admin</span>
+        </div>
+        
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html" class="nav-item">
+                <i class="bi bi-grid"></i> <span>Dashboard</span>
+            </a>
+            
+            <a href="admin-orders.html" class="nav-item">
+                <i class="bi bi-box-seam"></i> <span>Orders</span>
+            </a>
+
+            <a href="admin-merchants.html" class="nav-item">
+                <i class="bi bi-shop"></i> <span>Merchants</span>
+            </a>
+
+            <a href="admin-payouts.html" class="nav-item">
+                <i class="bi bi-wallet2"></i> <span>Payouts</span>
+            </a>
+            
+            <a href="admin-bookings.html" class="nav-item">
+                <i class="bi bi-calendar-check"></i> <span>Bookings</span>
+                <span class="badge" id="pendingBookingsBadge">0</span>
+            </a>
+            
+            <a href="admin-packages.html" class="nav-item">
+                <i class="bi bi-gift"></i> <span>Packages</span>
+            </a>
+            
+            <a href="admin-users.html" class="nav-item active">
+                <i class="bi bi-people"></i> <span>Users</span>
+            </a>
+            
+            <a href="admin-analytics.html" class="nav-item">
+                <i class="bi bi-graph-up"></i> <span>Analytics</span>
+            </a>
+            
+            <a href="admin-settings.html" class="nav-item">
+                <i class="bi bi-gear"></i> <span>Settings</span>
+            </a>
+            
+            <div class="nav-divider"></div>
+            
+            <a href="../index.html" class="nav-item nav-client-view" target="_blank">
+                <i class="bi bi-eye"></i> <span>View as Client</span>
+                <i class="bi bi-box-arrow-up-right" style="margin-left: auto; font-size: 12px;"></i>
+            </a>
+            
+            <a href="#" class="nav-item" onclick="adminLogout(); return false;">
+                <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <div class="admin-content">
+        <header class="admin-header">
+            <div class="header-left">
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1><i class="bi bi-people"></i> Users Management</h1>
+                        <p>Manage clients and administrators</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="admin-user-info">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="adminName">Admin</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="admin-main">
+            <div class="stats-grid stats-grid-4">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #dbeafe;">
+                        <i class="bi bi-people" style="color: #3b82f6;"></i>
+                    </div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="totalUsersCount">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #ddd6fe;">
+                        <i class="bi bi-person-check" style="color: #8b5cf6;"></i>
+                    </div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="clientsCount">0</div>
+                        <div class="stat-label">Clients</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #fce7f3;">
+                        <i class="bi bi-shield-check" style="color: #ec4899;"></i>
+                    </div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="adminsCount">0</div>
+                        <div class="stat-label">Administrators</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #dcfce7;">
+                        <i class="bi bi-person-plus" style="color: #22c55e;"></i>
+                    </div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="activeUsersCount">0</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="card-title-section">
+                        <h3 class="admin-card-title">All Users</h3>
+                        <span class="badge" id="totalCount">0 users</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="admin-btn admin-btn-secondary" onclick="exportUsers()">
+                            <i class="bi bi-download"></i> Export
+                        </button>
+                        <button class="admin-btn admin-btn-primary" onclick="openCreateUserModal()">
+                            <i class="bi bi-person-plus"></i> Add User
+                        </button>
+                        <button class="admin-btn admin-btn-secondary" onclick="refreshUsers()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="admin-card-body">
+                    <div class="users-controls">
+                        <div class="admin-search">
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search by name, email, phone..." onkeyup="searchUsers()">
+                        </div>
+                        
+                        <select class="admin-filter-select" id="roleFilter" onchange="filterUsers()">
+                            <option value="">All Roles</option>
+                            <option value="client">Clients</option>
+                            <option value="admin">Administrators</option>
+                        </select>
+                        
+                        <select class="admin-filter-select" id="statusFilter" onchange="filterUsers()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                        
+                        <select class="admin-filter-select" id="sortOrder" onchange="sortUsers()">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="name">Name A-Z</option>
+                            <option value="email">Email A-Z</option>
+                        </select>
+                        
+                        <button class="admin-btn admin-btn-secondary" onclick="clearFilters()">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div class="admin-table-container">
+                        <table class="admin-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Contact</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Bookings</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        <div class="admin-loading">
+                                            <i class="bi bi-arrow-repeat spin"></i> Loading users...
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="emptyState" style="display: none;">
+                        <div class="admin-empty-state">
+                            <i class="bi bi-people admin-empty-icon"></i>
+                            <h3 class="admin-empty-title">No users found</h3>
+                            <p class="admin-empty-text">No users match your current filters</p>
+                            <button class="admin-btn admin-btn-primary" onclick="clearFilters()">
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userModalTitle"><i class="bi bi-person-plus"></i> Add New User</h2>
+                <span class="close" onclick="closeUserModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="userForm" onsubmit="saveUser(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" name="full_name" required class="form-control" placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" name="email" required class="form-control" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="08012345678">
+                        </div>
+                        <div class="form-group">
+                            <label>Role *</label>
+                            <select name="role" required class="form-control">
+                                <option value="client">Client</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status *</label>
+                            <select name="status" required class="form-control">
+                                <option value="active">Active</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="passwordGroup">
+                            <label>Password *</label>
+                            <input type="password" name="password" class="form-control" placeholder="Min 6 characters">
+                            <small>Leave blank to keep existing password</small>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn-primary"><i class="bi bi-check-circle"></i> Save User</button>
+                        <button type="button" class="btn-secondary" onclick="closeUserModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="viewModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2><i class="bi bi-person"></i> User Details</h2>
+                <span class="close" onclick="closeViewModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="viewModalBody"></div>
+        </div>
+    </div>
+    
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <script src="js/utils.js"></script>
+    <script src="js/admin-config.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-users.js"></script>
+    
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('adminSidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

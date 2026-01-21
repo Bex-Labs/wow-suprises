@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Surprise - Wow Surprises</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/loginstyles.css">
+    <link rel="stylesheet" href="css/booking.css">
+    <link rel="stylesheet" href="css/booking-integration.css">
+    
+    <!-- Flutterwave Inline JS -->
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
+    
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">LOGO</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="booking-history.html">My Bookings</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container booking-container">
+        <div class="booking-header">
+            <h1>Book Your Surprise</h1>
+            <p>Fill in the details to create an unforgettable moment</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">Recipient</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">Date & Time</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-label">Personalize</div>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-number">4</div>
+                <div class="step-label">Payment</div>
+            </div>
+            <div class="step" data-step="5">
+                <div class="step-number">5</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+        </div>
+
+        <!-- Package Summary -->
+        <div id="packageSummary" class="package-summary">
+            <!-- Will be populated dynamically -->
+        </div>
+
+        <!-- Booking Form -->
+        <div id="bookingForm" class="booking-form">
+            <!-- Step 1: Recipient Details -->
+            <div class="form-step active" data-step="1">
+                <h2><i class="bi bi-person-circle"></i> Recipient Details</h2>
+                <div class="form-group">
+                    <label for="recipientName" class="required">Recipient Name</label>
+                    <input type="text" id="recipientName" placeholder="Enter recipient's full name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recipientEmail">Recipient Email (Optional)</label>
+                        <input type="email" id="recipientEmail" placeholder="recipient@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipientPhone" class="required">Recipient Phone</label>
+                        <input type="tel" id="recipientPhone" placeholder="08012345678" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="deliveryAddress" class="required">Delivery/Venue Address</label>
+                    <textarea id="deliveryAddress" rows="3" placeholder="Enter full delivery address" required></textarea>
+                </div>
+                <div class="form-navigation">
+                    <button type="button" class="btn-primary" onclick="nextStep()">
+                        Next <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Date & Time -->
+            <div class="form-step" data-step="2">
+                <h2><i class="bi bi-calendar-event"></i> Select Date & Time</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="surpriseDate" class="required">Surprise Date</label>
+                        <input type="date" id="surpriseDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surpriseTime" class="required">Surprise Time</label>
+                        <input type="time" id="surpriseTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="timezone" class="required">Timezone</label>
+                    <select id="timezone" required>
+                        <option value="">Select Timezone</option>
+                        <option value="WAT" selected>West Africa Time (WAT)</option>
+                        <option value="EST">Eastern Time (EST)</option>
+                        <option value="CST">Central Time (CST)</option>
+                        <option value="PST">Pacific Time (PST)</option>
+                        <option value="GMT">GMT</option>
+                    </select>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="flexibleTiming">
+                        <span>Allow flexible timing (±30 minutes)</span>
+                    </label>
+                </div>
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()">
+                        <i class="bi bi-arrow-left"></i> Previous
+                    </button>
+                    <button type="button" class="btn-primary" onclick="nextStep()">
+                        Next <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Personalization -->
+            <div class="form-step" data-step="3">
+                <h2><i class="bi bi-chat-heart"></i> Personalize Your Surprise</h2>
+                <div class="form-group">
+                    <label for="personalMessage">Personal Message</label>
+                    <textarea id="personalMessage" rows="4" placeholder="Add a heartfelt message for your loved one..."></textarea>
+                    <small>This message will be included in the surprise presentation</small>
+                </div>
+                <div class="form-group">
+                    <label for="specialRequests">Special Requests or Instructions</label>
+                    <textarea id="specialRequests" rows="3" placeholder="Any allergies, dietary restrictions, or special requests?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Add-ons (Optional)</label>
+                    <div class="addons-grid">
+                        <label class="addon-item">
+                            <input type="checkbox" name="addons" value="extraFlowers" data-price="7500">
+                            <span class="addon-content">
+                                <i class="bi bi-flower1"></i>
+                                <strong>Extra Bouquet of Flowers</strong>
+                                <small>+₦7,500</small>
+                            </span>
+                        </label>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addons" value="champagne" data-price="11250">
+                            <span class="addon-content">
+                                <i class="bi bi-cup-straw"></i>
+                                <strong>Premium Champagne</strong>
+                                <small>+₦11,250</small>
+                            </span>
+                        </label>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addons" value="photographer" data-price="30000">
+                            <span class="addon-content">
+                                <i class="bi bi-camera"></i>
+                                <strong>Professional Photographer</strong>
+                                <small>2 hours - +₦30,000</small>
+                            </span>
+                        </label>
+                        <label class="addon-item">
+                            <input type="checkbox" name="addons" value="videographer" data-price="45000">
+                            <span class="addon-content">
+                                <i class="bi bi-camera-video"></i>
+                                <strong>Videographer</strong>
+                                <small>+₦45,000</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()">
+                        <i class="bi bi-arrow-left"></i> Previous
+                    </button>
+                    <button type="button" class="btn-primary" onclick="nextStep()">
+                        Next <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Payment -->
+            <div class="form-step" data-step="4">
+                <h2><i class="bi bi-credit-card"></i> Choose Payment Method</h2>
+                <p class="payment-subtitle">Select your preferred payment method to complete your booking</p>
+                
+                <div class="payment-methods">
+                    <!-- Flutterwave Card Payment -->
+                    <div class="payment-method-card">
+                        <div class="payment-method-header">
+                            <div class="payment-icon flutterwave-color">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <div class="payment-method-info">
+                                <h3>Pay with Card</h3>
+                                <p>Debit/Credit Card via Flutterwave</p>
+                            </div>
+                        </div>
+                        <div class="payment-features">
+                            <span><i class="bi bi-check-circle-fill"></i> Secure Payment</span>
+                            <span><i class="bi bi-check-circle-fill"></i> Instant Confirmation</span>
+                            <span><i class="bi bi-check-circle-fill"></i> Nigerian & International Cards</span>
+                        </div>
+                        <button type="button" class="btn-payment btn-primary" onclick="initiateFlutterwavePayment('card')">
+                            <i class="bi bi-credit-card"></i> Pay ₦<span class="payment-amount">0</span> with Card
+                        </button>
+                    </div>
+
+                    <!-- Flutterwave Bank Transfer -->
+                    <div class="payment-method-card">
+                        <div class="payment-method-header">
+                            <div class="payment-icon bank-color">
+                                <i class="bi bi-bank"></i>
+                            </div>
+                            <div class="payment-method-info">
+                                <h3>Bank Transfer</h3>
+                                <p>Direct bank transfer via Flutterwave</p>
+                            </div>
+                        </div>
+                        <div class="payment-features">
+                            <span><i class="bi bi-check-circle-fill"></i> Secure Transfer</span>
+                            <span><i class="bi bi-check-circle-fill"></i> All Nigerian Banks</span>
+                            <span><i class="bi bi-check-circle-fill"></i> Instant Verification</span>
+                        </div>
+                        <button type="button" class="btn-payment btn-secondary" onclick="initiateFlutterwavePayment('banktransfer')">
+                            <i class="bi bi-bank"></i> Pay ₦<span class="payment-amount">0</span> via Transfer
+                        </button>
+                    </div>
+
+                    <!-- Flutterwave USSD -->
+                    <div class="payment-method-card">
+                        <div class="payment-method-header">
+                            <div class="payment-icon ussd-color">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <div class="payment-method-info">
+                                <h3>USSD Payment</h3>
+                                <p>Pay with your bank USSD code</p>
+                            </div>
+                        </div>
+                        <div class="payment-features">
+                            <span><i class="bi bi-check-circle-fill"></i> No Internet Required</span>
+                            <span><i class="bi bi-check-circle-fill"></i> Quick & Easy</span>
+                            <span><i class="bi bi-check-circle-fill"></i> All Nigerian Banks</span>
+                        </div>
+                        <button type="button" class="btn-payment btn-secondary" onclick="initiateFlutterwavePayment('ussd')">
+                            <i class="bi bi-phone"></i> Pay ₦<span class="payment-amount">0</span> with USSD
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-navigation" style="margin-top: 32px;">
+                    <button type="button" class="btn-secondary" onclick="prevStep()">
+                        <i class="bi bi-arrow-left"></i> Previous
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 5: Confirmation -->
+            <div class="form-step" data-step="5">
+                <div class="success-message">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h2>Booking Confirmed!</h2>
+                    <p>Your surprise booking has been successfully confirmed.</p>
+                    <div class="booking-reference">
+                        <strong>Booking Reference:</strong>
+                        <span id="confirmationReference">WOW-XXXXX</span>
+                    </div>
+                </div>
+                
+                <div id="bookingReview" class="booking-review">
+                    <!-- Will be populated dynamically -->
+                </div>
+
+                <div class="form-navigation confirmation-actions">
+                    <a href="booking-history.html" class="btn-primary">
+                        <i class="bi bi-list-check"></i> View My Bookings
+                    </a>
+                    <a href="index.html" class="btn-secondary">
+                        <i class="bi bi-house"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+   <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/supabaseApi.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>

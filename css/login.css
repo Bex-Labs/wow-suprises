@@ -1,0 +1,248 @@
+/* Login Page - Modern Clean Design */
+
+.login-container {
+    max-width: 480px;
+    margin: 80px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.login-header h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #3a3a3a;
+}
+
+.login-header p {
+    color: #666666;
+    font-size: 15px;
+}
+
+/* Form Tabs */
+.form-tabs {
+    display: flex;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #e0e0e0;
+    gap: 0;
+}
+
+.tab {
+    flex: 1;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 15px;
+    color: #666666;
+    margin-bottom: -2px;
+}
+
+.tab:hover {
+    color: #3a3a3a;
+    background: #f9f9f9;
+}
+
+.tab.active {
+    border-bottom-color: #000000;
+    color: #000000;
+}
+
+/* Forms */
+.login-form, 
+.register-form {
+    display: none;
+}
+
+.login-form.active, 
+.register-form.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #3a3a3a;
+}
+
+.form-group label i {
+    font-size: 16px;
+    color: #666666;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"],
+.form-group input[type="tel"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #000000;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+}
+
+/* Checkbox Group */
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #000000;
+    cursor: pointer;
+}
+
+.checkbox-group span {
+    font-size: 14px;
+    color: #666666;
+}
+
+/* Buttons */
+.btn-full {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.link {
+    color: #000000;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* Social Login */
+.social-login {
+    margin-top: 32px;
+}
+
+.divider {
+    text-align: center;
+    margin: 24px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.divider span {
+    background: #ffffff;
+    padding: 0 16px;
+    position: relative;
+    color: #666666;
+    font-size: 14px;
+}
+
+.social-btns {
+    display: flex;
+    gap: 12px;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #3a3a3a;
+    font-family: 'Inter', sans-serif;
+}
+
+.social-btn:hover {
+    background: #f9f9f9;
+    border-color: #000000;
+}
+
+.social-btn i {
+    font-size: 18px;
+}
+
+/* Utility */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-container {
+        margin: 40px auto;
+        padding: 30px 20px;
+    }
+    
+    .login-header h1 {
+        font-size: 28px;
+    }
+    
+    .social-btns {
+        flex-direction: column;
+    }
+}

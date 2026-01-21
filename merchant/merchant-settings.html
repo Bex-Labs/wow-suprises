@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - WOW Merchant</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <link rel="stylesheet" href="css/merchant.css">
+    
+    <style>
+        /* Mobile Sidebar Toggle styling */
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #333; margin-right: 15px; }
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .merchant-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
+            .merchant-sidebar.active { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="merchant-page" data-page="settings">
+    
+    <aside class="merchant-sidebar" id="merchantSidebar">
+        <div class="merchant-logo">
+            <i class="bi bi-shop"></i>
+            <span>WOW Merchant</span>
+        </div>
+        
+        <nav class="merchant-nav">
+            <a href="merchant-dashboard.html" class="nav-item">
+                <i class="bi bi-grid"></i> <span>Dashboard</span>
+            </a>
+            <a href="merchant-orders.html" class="nav-item">
+                <i class="bi bi-box-seam"></i> <span>Orders</span>
+                <span class="badge" id="pendingOrdersBadge" style="display:none">0</span>
+            </a>
+            <a href="merchant-services.html" class="nav-item">
+                <i class="bi bi-gift"></i> <span>My Services</span>
+            </a>
+            <a href="merchant-earnings.html" class="nav-item">
+                <i class="bi bi-currency-exchange"></i> <span>Earnings</span>
+            </a>
+            <a href="merchant-reviews.html" class="nav-item">
+                <i class="bi bi-star"></i>
+                <span>Reviews</span>
+            </a>
+            <a href="merchant-profile.html" class="nav-item">
+                <i class="bi bi-person"></i> <span>Profile</span>
+            </a>
+            <a href="merchant-settings.html" class="nav-item active">
+                <i class="bi bi-gear"></i> <span>Settings</span>
+            </a>
+            
+            <div class="nav-divider"></div>
+            
+            <a href="#" class="nav-item" onclick="merchantLogout(); return false;">
+                <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="merchant-content">
+        <header class="merchant-header">
+            <div class="header-left">
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1>Settings</h1>
+                        <p>Manage your account preferences and security</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="merchant-user-info">
+                    <div class="user-avatar" id="headerAvatar">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div>
+                        <div class="user-name" id="merchantName">Loading...</div>
+                        <div class="user-role">Merchant</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="merchant-main">
+            <div class="card" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 30px;">
+                <div class="card-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700;"><i class="bi bi-bell"></i> Notification Preferences</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                        Choose how you want to be notified about important events
+                    </p>
+
+                    <form id="notificationsForm">
+                        <div class="settings-section">
+                            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-box-seam"></i> Order Notifications</h4>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>New Order Alerts</strong>
+                                    <p>Receive notifications when you get a new order</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyNewOrder" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Order Reminders</strong>
+                                    <p>Get reminded 24 hours before delivery date</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyOrderReminder" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Customer Messages</strong>
+                                    <p>Notifications for new messages from customers</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyMessages" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-wallet2"></i> Financial Notifications</h4>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Payment Received</strong>
+                                    <p>Notify when earnings are added to your account</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyPayment" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Payout Updates</strong>
+                                    <p>Status updates on withdrawal requests</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyPayout" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Weekly Earnings Summary</strong>
+                                    <p>Receive weekly performance reports</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyWeeklySummary" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-star"></i> Reviews & Ratings</h4>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>New Reviews</strong>
+                                    <p>Notify when customers leave reviews</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="notifyReviews" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-envelope"></i> Email Preferences</h4>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Email Notifications</strong>
+                                    <p>Receive email notifications (in addition to in-app)</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <strong>Marketing Emails</strong>
+                                    <p>Receive tips, updates, and promotional content</p>
+                                </div>
+                                <div class="setting-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="marketingEmails">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-login" style="width: auto; margin-top: 20px;">
+                            <i class="bi bi-check-lg"></i> Save Notification Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 30px;">
+                <div class="card-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700;"><i class="bi bi-shield-lock"></i> Security</h3>
+                </div>
+                <div class="card-body">
+                    <form id="passwordForm">
+                        <div class="settings-section">
+                            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-key"></i> Change Password</h4>
+                            
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password *</label>
+                                <input type="password" id="currentPassword" required class="form-input" placeholder="Enter current password">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newPassword">New Password *</label>
+                                <input type="password" id="newPassword" required class="form-input" placeholder="Enter new password" minlength="8">
+                                <small style="color: #999;">Minimum 8 characters</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password *</label>
+                                <input type="password" id="confirmPassword" required class="form-input" placeholder="Confirm new password">
+                            </div>
+
+                            <button type="submit" class="btn-login" style="width: auto; margin-top: 20px;">
+                                <i class="bi bi-check-lg"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="settings-section" style="margin-top: 30px;">
+                        <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-clock-history"></i> Session Management</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Active Session</strong>
+                                <p>Last login: <span id="lastLogin">Loading...</span></p>
+                            </div>
+                            <div class="setting-controls">
+                                <button class="btn-login" onclick="logoutAllDevices()" style="width: auto; background: #fff; color: #000; border: 1px solid #ddd;">
+                                    <i class="bi bi-box-arrow-right"></i> Logout All Devices
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 30px;">
+                <div class="card-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700;"><i class="bi bi-person-gear"></i> Account Settings</h3>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section">
+                        <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-moon"></i> Appearance</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Dark Mode</strong>
+                                <p>Switch to dark theme (coming soon)</p>
+                            </div>
+                            <div class="setting-controls">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="darkMode" disabled>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600;"><i class="bi bi-clock"></i> Operating Hours</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Automatically Accept Orders</strong>
+                                <p>Auto-accept orders during operating hours</p>
+                            </div>
+                            <div class="setting-controls">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoAcceptOrders">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label for="openingTime">Opening Time</label>
+                                <input type="time" id="openingTime" class="form-input" value="08:00">
+                            </div>
+                            <div class="form-group">
+                                <label for="closingTime">Closing Time</label>
+                                <input type="time" id="closingTime" class="form-input" value="20:00">
+                            </div>
+                        </div>
+
+                        <button class="btn-login" onclick="saveOperatingHours()" style="width: auto; margin-top: 20px;">
+                            <i class="bi bi-check-lg"></i> Save Operating Hours
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px; border-left: 4px solid #f44336; background: #fff; padding: 24px; border-radius: 12px; border-top: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0;">
+                <div class="card-header" style="margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: #d32f2f;"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h3>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Deactivate Account</strong>
+                                <p>Temporarily disable your account. You can reactivate anytime.</p>
+                            </div>
+                            <div class="setting-controls">
+                                <button class="btn-login" onclick="deactivateAccount()" style="width: auto; background: #fef3c7; color: #92400e; border: 1px solid #fcd34d;">
+                                    <i class="bi bi-pause-circle"></i> Deactivate Account
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Delete Account</strong>
+                                <p>Permanently delete your account and all data. This cannot be undone.</p>
+                            </div>
+                            <div class="setting-controls">
+                                <button class="btn-login" onclick="deleteAccount()" style="width: auto; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">
+                                    <i class="bi bi-trash"></i> Delete Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/merchant-config.js"></script>
+    <script src="js/merchant-auth.js"></script>
+    <script src="js/merchant-settings.js"></script>
+</body>
+</html>

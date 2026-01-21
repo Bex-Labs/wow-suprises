@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your Custom Package - WOW Surprises</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom-package.css">
+    <link rel="stylesheet" href="css/booking-integration.css">
+    <link rel="stylesheet" href="css/footer.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
+                <img src="images/logo.png" alt="WOW Surprises Logo" 
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="custom-package.html" class="active">Custom Package</a></li>
+                <li><a href="booking-history.html">My Bookings</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="padding: 60px 0 40px;">
+        <div class="container" style="text-align: center;">
+            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">
+                <i class="bi bi-palette" style="margin-right: 12px;"></i>
+                Build Your Custom Package
+            </h1>
+            <p class="hero-subtitle" style="font-size: 18px; color: #666; max-width: 700px; margin: 0 auto;">
+                Create your perfect surprise by selecting exactly what you want. Mix and match from our curated collection of flowers, entertainment, decorations, and more!
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 40px 20px 80px;">
+        <div class="custom-package-builder">
+            
+            <!-- Category Filters -->
+            <div class="category-filters" style="margin-bottom: 40px; text-align: center;">
+                <button class="category-btn active" data-category="all">
+                    <i class="bi bi-grid-3x3-gap"></i> All Items
+                </button>
+                <button class="category-btn" data-category="flowers">
+                    <i class="bi bi-flower1"></i> Flowers
+                </button>
+                <button class="category-btn" data-category="food">
+                    <i class="bi bi-cup-straw"></i> Food & Drinks
+                </button>
+                <button class="category-btn" data-category="entertainment">
+                    <i class="bi bi-music-note-beamed"></i> Entertainment
+                </button>
+                <button class="category-btn" data-category="photography">
+                    <i class="bi bi-camera"></i> Photography
+                </button>
+                <button class="category-btn" data-category="decorations">
+                    <i class="bi bi-balloon"></i> Decorations
+                </button>
+                <button class="category-btn" data-category="extras">
+                    <i class="bi bi-gift"></i> Extras
+                </button>
+            </div>
+
+            <!-- Main Layout: Grid + Sidebar -->
+            <div class="builder-layout">
+                
+                <!-- Items Grid -->
+                <div class="items-section">
+                    <div class="section-header">
+                        <h2>Select Items for Your Package</h2>
+                        <p>Click on any item to add it to your custom package</p>
+                    </div>
+                    
+                    <div id="itemsGrid" class="items-grid">
+                        <!-- Items will be populated by JavaScript -->
+                        <div class="loading-state" style="text-align: center; padding: 60px 20px;">
+                            <i class="bi bi-hourglass-split spin" style="font-size: 48px; color: #ccc;"></i>
+                            <p style="margin-top: 16px; color: #666;">Loading items...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Sidebar (Sticky) -->
+                <aside class="summary-sidebar">
+                    <div class="sidebar-content">
+                        <div class="sidebar-header">
+                            <i class="bi bi-bag-check" style="font-size: 32px; color: #000;"></i>
+                            <h3>Your Package</h3>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="summary-stats">
+                            <div class="stat">
+                                <span class="stat-label">Items Selected</span>
+                                <span class="stat-value" id="itemCount">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Total Price</span>
+                                <span class="stat-value" id="totalPrice">₦0</span>
+                            </div>
+                        </div>
+
+                        <!-- Selected Items List -->
+                        <div class="selected-items-container">
+                            <h4>Selected Items</h4>
+                            <div id="selectedItemsList">
+                                <p class="no-items">No items selected yet</p>
+                            </div>
+                        </div>
+
+                        <!-- Proceed Button -->
+                        <button id="proceedToBooking" class="btn-primary btn-proceed">
+                            <i class="bi bi-arrow-right-circle"></i>
+                            Proceed to Booking
+                        </button>
+
+                        <!-- Back Link -->
+                        <a href="index.html" class="back-link">
+                            <i class="bi bi-arrow-left"></i> Back to Packages
+                        </a>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-about">
+                    <div class="footer-logo">
+                        <img src="images/logo-white.png" alt="WOW Surprises" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
+                             style="height: 40px; width: auto; margin-bottom: 16px;">
+                    </div>
+                    <p>Creating unforgettable moments and bringing joy to every celebration.</p>
+                    <div class="footer-social">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
+                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
+                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
+                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
+                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <div class="footer-links">
+                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
+                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
+                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
+                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <a href="tel:+2348012345678">+234 801 234 5678</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-of-service.html">Terms of Service</a>
+                    <a href="refund-policy.html">Refund Policy</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" title="Back to top" aria-label="Scroll to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <!-- At the END of <body>, BEFORE </body> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/supabaseApi.js"></script>
+<script src="js/custom-package.js"></script>
+    
+    <script>
+    // Back to top functionality
+    (function() {
+        const backToTopButton = document.getElementById('backToTop');
+        if (backToTopButton) {
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            });
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WOW Admin</title>
+    
+    <script src="js/admin-auth-guard.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/admin-additional.css">
+    
+    <style>
+        /* CRITICAL FIX: Prevent horizontal expansion */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+        
+        .admin-content {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+        
+        .admin-main {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+        
+        /* Dashboard Charts Grid - Responsive */
+        .dashboard-charts {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+        
+        /* Dashboard Recent Grid - Responsive */
+        .dashboard-recent {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+        
+        /* Responsive breakpoints */
+        @media (max-width: 1200px) {
+            .dashboard-charts {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-recent {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Ensure all cards stay within bounds */
+        .admin-card {
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .admin-card-body {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        
+        /* Fix canvas overflow */
+        canvas {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body class="admin-page" data-page="dashboard">
+    
+    <aside class="admin-sidebar">
+        <div class="admin-logo">
+            <i class="bi bi-shield-check"></i>
+            <span>WOW Admin</span>
+        </div>
+        
+        <nav class="admin-nav">
+            <a href="admin-dashboard.html" class="nav-item active">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="admin-orders.html" class="nav-item">
+                <i class="bi bi-box-seam"></i>
+                <span>Orders</span>
+            </a>
+
+            <a href="admin-merchants.html" class="nav-item">
+                <i class="bi bi-shop"></i>
+                <span>Merchants</span>
+            </a>
+
+            <a href="admin-payouts.html" class="nav-item">
+                <i class="bi bi-wallet2"></i>
+                <span>Payouts</span>
+            </a>
+            <a href="admin-bookings.html" class="nav-item">
+                <i class="bi bi-calendar-check"></i>
+                <span>Bookings</span>
+                <span class="badge" id="pendingBookingsBadge">0</span>
+            </a>
+            
+            <a href="admin-packages.html" class="nav-item">
+                <i class="bi bi-gift"></i>
+                <span>Packages</span>
+            </a>
+            
+            <a href="admin-users.html" class="nav-item">
+                <i class="bi bi-people"></i>
+                <span>Users</span>
+            </a>
+            
+            <a href="admin-analytics.html" class="nav-item">
+                <i class="bi bi-graph-up"></i>
+                <span>Analytics</span>
+            </a>
+            
+            <a href="admin-settings.html" class="nav-item">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+            
+            <div class="nav-divider"></div>
+            
+            <a href="../index.html" class="nav-item nav-client-view" target="_blank">
+                <i class="bi bi-eye"></i>
+                <span>View as Client</span>
+                <i class="bi bi-box-arrow-up-right" style="margin-left: auto; font-size: 12px;"></i>
+            </a>
+            
+            <a href="#" class="nav-item" onclick="adminLogout(); return false;">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <div class="admin-content">
+        <header class="admin-header">
+            <div class="header-left">
+                <h1><i class="bi bi-grid"></i> Dashboard</h1>
+                <p>Welcome back, <strong id="adminUserName">Admin</strong></p>
+            </div>
+            
+            <div class="header-right">
+                <div class="admin-user-info">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="adminDisplayName">Admin User</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="admin-main">
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon primary">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalBookings">0</div>
+                    <div class="stat-card-label">Total Bookings</div>
+                    <div class="stat-card-trend up">
+                        <i class="bi bi-arrow-up"></i>
+                        <span id="bookingsTrend">0%</span> from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon success">
+                            <i class="bi bi-currency-exchange"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalRevenue">₦0</div>
+                    <div class="stat-card-label">Total Revenue</div>
+                    <div class="stat-card-trend up">
+                        <i class="bi bi-arrow-up"></i>
+                        <span id="revenueTrend">0%</span> from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon warning">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="activeUsers">0</div>
+                    <div class="stat-card-label">Active Users</div>
+                    <div class="stat-card-trend up">
+                        <i class="bi bi-arrow-up"></i>
+                        <span id="usersTrend">0%</span> from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon danger">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="pendingBookings">0</div>
+                    <div class="stat-card-label">Pending Bookings</div>
+                    <div class="stat-card-trend">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Requires attention</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-charts">
+                
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Booking Trends</h3>
+                        <select id="trendPeriod" class="admin-filter-select" style="padding: 8px 12px; font-size: 12px;">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                        </select>
+                    </div>
+                    <div class="admin-card-body">
+                        <canvas id="bookingTrendsChart" height="100"></canvas>
+                    </div>
+                </div>
+                
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Revenue by Category</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <canvas id="revenueByCategory" height="200"></canvas>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="dashboard-recent">
+                
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Recent Bookings</h3>
+                        <a href="admin-bookings.html" class="admin-btn admin-btn-sm admin-btn-secondary">
+                            View All
+                        </a>
+                    </div>
+                    <div class="admin-card-body" style="padding: 0;">
+                        <div id="recentBookingsList"></div>
+                    </div>
+                </div>
+                
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Top Packages</h3>
+                        <a href="admin-packages.html" class="admin-btn admin-btn-sm admin-btn-secondary">
+                            View All
+                        </a>
+                    </div>
+                    <div class="admin-card-body" style="padding: 0;">
+                        <div id="topPackagesList"></div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">Quick Actions</h3>
+                </div>
+                <div class="admin-card-body">
+                    <div class="admin-btn-group">
+                        <a href="admin-packages.html" class="admin-btn admin-btn-primary">
+                            <i class="bi bi-plus-circle"></i>
+                            Create Package
+                        </a>
+                        <a href="admin-bookings.html" class="admin-btn admin-btn-secondary">
+                            <i class="bi bi-calendar-check"></i>
+                            View Bookings
+                        </a>
+                        <a href="admin-users.html" class="admin-btn admin-btn-secondary">
+                            <i class="bi bi-person-plus"></i>
+                            Add User
+                        </a>
+                        <a href="admin-analytics.html" class="admin-btn admin-btn-secondary">
+                            <i class="bi bi-file-earmark-text"></i>
+                            Generate Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+    
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <script src="js/utils.js"></script>
+    <script src="js/admin-config.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+    
+</body>
+</html>
