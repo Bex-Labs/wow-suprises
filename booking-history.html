@@ -4,28 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings - Wow Surprises</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/loginstyles.css">
     <link rel="stylesheet" href="css/booking-history.css">
+    <link rel="stylesheet" href="css/footer.css">
     
-    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <nav class="navbar">
         <div class="container">
-            <div class="logo">LOGO</div>
+            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
+                <img src="images/logo.png" alt="WOW Surprises Logo" 
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
+            </a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="custom-package.html">Custom Package</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
                 <li><a href="booking-history.html" class="active">My Bookings</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
         </div>
     </nav>
 
     <main class="container">
         <div class="page-content">
-            <!-- Page Header -->
             <div class="page-header">
                 <div>
                     <h1>My Bookings</h1>
@@ -35,13 +43,12 @@
                     <button onclick="refreshBookings()" class="btn-secondary" id="refreshBtn">
                         <i class="bi bi-arrow-clockwise"></i> Refresh
                     </button>
-                    <a href="booking.html" class="btn-primary" style="text-decoration: none;">
+                    <a href="custom-package.html" class="btn-primary" style="text-decoration: none;">
                         <i class="bi bi-plus-circle"></i> New Booking
                     </a>
                 </div>
             </div>
 
-            <!-- Filter Tabs -->
             <div class="filter-tabs">
                 <button class="filter-tab active" onclick="filterByStatus('all')" data-status="all">
                     <i class="bi bi-grid"></i> All
@@ -63,7 +70,6 @@
                 </button>
             </div>
 
-            <!-- Search and Sort -->
             <div class="search-sort-section">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -78,7 +84,6 @@
                 </select>
             </div>
 
-            <!-- Stats Section -->
             <div class="stats-section" id="statsSection" style="display: none;">
                 <div class="stat-card">
                     <div class="stat-icon pending-bg">
@@ -118,23 +123,20 @@
                 </div>
             </div>
 
-            <!-- Loading State -->
             <div id="loadingState" class="loading-state">
                 <div class="spinner"></div>
                 <p>Loading your bookings...</p>
             </div>
 
-            <!-- Empty State -->
             <div id="emptyState" class="empty-state" style="display: none;">
                 <i class="bi bi-calendar-x"></i>
                 <h2>No bookings yet</h2>
                 <p>You haven't made any surprise bookings yet</p>
-                <a href="booking.html" class="btn-primary" style="text-decoration: none;">
+                <a href="custom-package.html" class="btn-primary" style="text-decoration: none;">
                     <i class="bi bi-plus-circle"></i> Create Your First Booking
                 </a>
             </div>
 
-            <!-- No Results State -->
             <div id="noResultsState" class="empty-state" style="display: none;">
                 <i class="bi bi-search"></i>
                 <h2>No bookings found</h2>
@@ -144,7 +146,6 @@
                 </button>
             </div>
 
-            <!-- Not Logged In State -->
             <div id="notLoggedInState" class="empty-state" style="display: none;">
                 <i class="bi bi-lock"></i>
                 <h2>Please Login</h2>
@@ -154,24 +155,19 @@
                 </a>
             </div>
 
-            <!-- Bookings List -->
             <div id="bookingsList" class="bookings-list" style="display: none;">
-                <!-- Bookings will be dynamically loaded here -->
-            </div>
+                </div>
         </div>
     </main>
 
-    <!-- View Booking Modal -->
     <div id="viewModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeViewModal()">&times;</span>
             <div id="bookingDetails">
-                <!-- Booking details will be loaded here -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- Cancel Booking Modal -->
     <div id="cancelModal" class="modal">
         <div class="modal-content modal-small">
             <span class="close" onclick="closeCancelModal()">&times;</span>
@@ -198,8 +194,86 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-about">
+                    <div class="footer-logo">
+                        <img src="images/logo-white.png" alt="WOW Surprises" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
+                             style="height: 40px; width: auto; margin-bottom: 16px;">
+                    </div>
+                    <p>Creating unforgettable moments and bringing joy to every celebration.</p>
+                    <div class="footer-social">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
+                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
+                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
+                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
+                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
+                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <div class="footer-links">
+                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
+                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
+                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
+                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <a href="tel:+2348012345678">+234 801 234 5678</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-of-service.html">Terms of Service</a>
+                    <a href="refund-policy.html">Refund Policy</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/supabaseApi.js"></script>

@@ -6,17 +6,14 @@
     <title>Build Your Custom Package - WOW Surprises</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/custom-package.css">
     <link rel="stylesheet" href="css/booking-integration.css">
     <link rel="stylesheet" href="css/footer.css">
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo" aria-label="WOW Surprises Home">
@@ -26,13 +23,12 @@
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="custom-package.html" class="active">Custom Package</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="reviews.html">Reviews</a></li> <li><a href="booking-history.html">My Bookings</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero" style="padding: 60px 0 40px;">
         <div class="container" style="text-align: center;">
             <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">
@@ -45,11 +41,9 @@
         </div>
     </section>
 
-    <!-- Main Content -->
     <main class="container" style="padding: 40px 20px 80px;">
         <div class="custom-package-builder">
             
-            <!-- Category Filters -->
             <div class="category-filters" style="margin-bottom: 40px; text-align: center;">
                 <button class="category-btn active" data-category="all">
                     <i class="bi bi-grid-3x3-gap"></i> All Items
@@ -74,10 +68,8 @@
                 </button>
             </div>
 
-            <!-- Main Layout: Grid + Sidebar -->
             <div class="builder-layout">
                 
-                <!-- Items Grid -->
                 <div class="items-section">
                     <div class="section-header">
                         <h2>Select Items for Your Package</h2>
@@ -85,7 +77,6 @@
                     </div>
                     
                     <div id="itemsGrid" class="items-grid">
-                        <!-- Items will be populated by JavaScript -->
                         <div class="loading-state" style="text-align: center; padding: 60px 20px;">
                             <i class="bi bi-hourglass-split spin" style="font-size: 48px; color: #ccc;"></i>
                             <p style="margin-top: 16px; color: #666;">Loading items...</p>
@@ -93,7 +84,6 @@
                     </div>
                 </div>
 
-                <!-- Summary Sidebar (Sticky) -->
                 <aside class="summary-sidebar">
                     <div class="sidebar-content">
                         <div class="sidebar-header">
@@ -101,7 +91,6 @@
                             <h3>Your Package</h3>
                         </div>
 
-                        <!-- Stats -->
                         <div class="summary-stats">
                             <div class="stat">
                                 <span class="stat-label">Items Selected</span>
@@ -113,7 +102,6 @@
                             </div>
                         </div>
 
-                        <!-- Selected Items List -->
                         <div class="selected-items-container">
                             <h4>Selected Items</h4>
                             <div id="selectedItemsList">
@@ -121,13 +109,11 @@
                             </div>
                         </div>
 
-                        <!-- Proceed Button -->
                         <button id="proceedToBooking" class="btn-primary btn-proceed">
                             <i class="bi bi-arrow-right-circle"></i>
                             Proceed to Booking
                         </button>
 
-                        <!-- Back Link -->
                         <a href="index.html" class="back-link">
                             <i class="bi bi-arrow-left"></i> Back to Packages
                         </a>
@@ -138,7 +124,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
             <div class="footer-content">
@@ -171,6 +156,7 @@
                         <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
                         <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
                         <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
+                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
                         <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
                         <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
                     </div>
@@ -217,19 +203,15 @@
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
     <button id="backToTop" title="Back to top" aria-label="Scroll to top">
         <i class="bi bi-arrow-up"></i>
     </button>
 
-    <!-- JavaScript -->
-    <!-- At the END of <body>, BEFORE </body> -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/supabaseApi.js"></script>
-<script src="js/custom-package.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/supabaseApi.js"></script>
+    <script src="js/custom-package.js"></script>
     
     <script>
     // Back to top functionality

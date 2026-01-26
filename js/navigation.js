@@ -11,13 +11,21 @@ async function updateNavigation() {
     if (!navLinks) return;
 
     // Check both local storage and Supabase session
-    const localUser = getCurrentUser();
+    // Helper to safely get user from storage if Utils exists, otherwise direct
+    const localUser = (typeof Storage !== 'undefined' && typeof Storage.get === 'function') 
+        ? Storage.get('currentUser') 
+        : JSON.parse(localStorage.getItem('currentUser'));
+        
     let user = localUser;
     
     // Also check Supabase session if API is available
-    if (typeof API !== 'undefined' && API.auth) {
+    // (Using window.sbClient or window.supabase from config)
+    const client = window.sbClient || window.supabase;
+    
+    if (client && client.auth) {
         try {
-            const supabaseUser = await API.auth.getCurrentUser();
+            const { data: { user: supabaseUser } } = await client.auth.getUser();
+            
             if (supabaseUser && !localUser) {
                 // Sync local storage with Supabase
                 const userInfo = {
@@ -26,7 +34,12 @@ async function updateNavigation() {
                     name: supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0],
                     phone: supabaseUser.user_metadata?.phone || ''
                 };
-                Storage.set('currentUser', userInfo);
+                
+                if (typeof Storage !== 'undefined') {
+                    Storage.set('currentUser', userInfo);
+                } else {
+                    localStorage.setItem('currentUser', JSON.stringify(userInfo));
+                }
                 user = userInfo;
             }
         } catch (error) {
@@ -34,10 +47,17 @@ async function updateNavigation() {
         }
     }
     
+    // Define the Standard Links that ALWAYS appear
+    const commonLinks = `
+        <li><a href="index.html">Home</a></li>
+        <li><a href="custom-package.html">Custom Package</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+    `;
+
     if (user) {
         // User is logged in - show user menu with logout
         navLinks.innerHTML = `
-            <li><a href="index.html">Home</a></li>
+            ${commonLinks}
             <li><a href="booking-history.html">My Bookings</a></li>
             <li class="user-menu">
                 <span class="user-name">
@@ -51,9 +71,9 @@ async function updateNavigation() {
     } else {
         // User is not logged in - show login link
         navLinks.innerHTML = `
-            <li><a href="index.html">Home</a></li>
+            ${commonLinks}
             <li><a href="booking-history.html">My Bookings</a></li>
-            <li><a href="login.html">Login</a></li>
+            <li><a href="login.html" id="authLink">Login</a></li>
         `;
     }
     
@@ -61,6 +81,7 @@ async function updateNavigation() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const links = navLinks.querySelectorAll('a');
     links.forEach(link => {
+        // Simple check to match href
         if (link.getAttribute('href') === currentPage) {
             link.classList.add('active');
         }
@@ -78,38 +99,28 @@ async function handleLogout() {
         const logoutBtn = document.querySelector('.btn-logout');
         if (logoutBtn) {
             logoutBtn.disabled = true;
-            logoutBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Logging out...';
+            logoutBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Logging out...';
         }
         
         // Call Supabase logout if available
-        if (typeof API !== 'undefined' && API.auth && API.auth.signOut) {
-            await API.auth.signOut();
+        const client = window.sbClient || window.supabase;
+        if (client && client.auth) {
+            await client.auth.signOut();
         }
         
         // Clear local storage
-        Storage.remove('currentUser');
-        SessionStorage.remove('currentUser');
-        SessionStorage.remove('selectedPackageId');
-        
-        showToast('Logged out successfully', 'success');
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem('selectedPackageId');
         
         // Redirect to home page
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1000);
+        window.location.href = 'index.html';
         
     } catch (error) {
         console.error('Logout error:', error);
-        showToast('Error logging out. Please try again.', 'error');
-        
-        // Still try to clear local storage
-        Storage.remove('currentUser');
-        SessionStorage.remove('currentUser');
-        
-        // Redirect anyway
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
+        // Force logout anyway
+        localStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
     }
 }
 
@@ -120,23 +131,25 @@ navStyle.textContent = `
         display: flex;
         align-items: center;
         gap: 15px;
+        margin-left: 10px;
     }
     
     .user-name {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-weight: 500;
-        color: #000000;
+        font-weight: 600;
+        color: #333;
         font-size: 15px;
     }
     
     .user-name i {
         font-size: 20px;
+        color: #555;
     }
     
     .btn-logout {
-        background: #dc2626;
+        background: #dc3545;
         color: white;
         border: none;
         padding: 8px 16px;
@@ -145,25 +158,14 @@ navStyle.textContent = `
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s;
-        font-family: 'Inter', sans-serif;
         display: flex;
         align-items: center;
         gap: 6px;
     }
     
     .btn-logout:hover {
-        background: #b91c1c;
+        background: #c82333;
         transform: translateY(-1px);
-    }
-    
-    .btn-logout:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-    
-    .btn-logout i {
-        font-size: 16px;
     }
     
     @media (max-width: 768px) {
@@ -171,6 +173,8 @@ navStyle.textContent = `
             flex-direction: column;
             gap: 10px;
             align-items: flex-start;
+            margin-left: 0;
+            margin-top: 10px;
         }
         
         .btn-logout {

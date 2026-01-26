@@ -5,24 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WOW Surprises - Create Unforgettable Moments</title>
     
-    <!-- Favicons -->
     <link rel="icon" type="image/png" href="images/favicon.png">
     
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/footer.css">
     
-    <!-- Meta Tags -->
     <meta name="description" content="Create unforgettable surprise experiences for your loved ones. Browse our surprise packages for birthdays, proposals, anniversaries, and more.">
     <meta name="keywords" content="surprise packages, birthday surprises, proposals, anniversary, event planning, Nigeria">
     <meta name="author" content="WOW Surprises">
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo" aria-label="WOW Surprises Home">
@@ -33,15 +28,14 @@
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="custom-package.html">Custom Package</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
                 <li><a href="booking-history.html">My Bookings</a></li>
                 <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Carousel Section -->
     <section class="hero hero-carousel">
-        <!-- Carousel Slides -->
         <div class="hero-slide active" style="background-image: url('images/front-view-purple-little-presents.jpg');">
             <div class="hero-overlay"></div>
         </div>
@@ -55,7 +49,6 @@
             <div class="hero-overlay"></div>
         </div>
         
-        <!-- Hero Content (stays on top) -->
         <div class="hero-content">
             <div class="container">
                 <h1>Bring the Wow to Every Occasion!</h1>
@@ -71,7 +64,6 @@
             </div>
         </div>
         
-        <!-- Carousel Controls -->
         <button class="carousel-prev" aria-label="Previous slide">
             <i class="bi bi-chevron-left"></i>
         </button>
@@ -79,7 +71,6 @@
             <i class="bi bi-chevron-right"></i>
         </button>
         
-        <!-- Carousel Dots -->
         <div class="carousel-dots">
             <button class="carousel-dot active" aria-label="Go to slide 1"></button>
             <button class="carousel-dot" aria-label="Go to slide 2"></button>
@@ -88,7 +79,6 @@
         </div>
     </section>
 
-    <!-- Features Section -->
     <section class="features">
         <div class="container">
             <div class="features-grid">
@@ -116,9 +106,7 @@
         </div>
     </section>
 
-    <!-- Main Content -->
     <main class="container">
-        <!-- Search & Filter Section -->
         <section class="filter-section" id="packages">
             <div class="search-bar">
                 <i class="bi bi-search"></i>
@@ -166,12 +154,10 @@
             </div>
         </section>
 
-        <!-- Packages Grid -->
         <section class="packages-section" id="packagesSection">
             <h2>Featured Surprise Packages</h2>
             <div id="packagesGrid" class="packages-grid">
-                <!-- Package cards will be dynamically inserted here -->
-            </div>
+                </div>
             
             <div id="loadingSpinner" class="loading" style="display: none;">
                 <i class="bi bi-arrow-repeat spin"></i> Loading packages...
@@ -196,7 +182,6 @@
             </div>
         </section>
 
-        <!-- Call to Action Section -->
         <section class="cta-section" style="text-align: center; padding: 60px 0; background: #f9f9f9; border-radius: 16px; margin-top: 60px;">
             <h2 style="font-size: 36px; margin-bottom: 16px;">Can't Find What You're Looking For?</h2>
             <p style="font-size: 18px; color: #666; margin-bottom: 30px;">Build your own custom package with exactly what you want!</p>
@@ -206,7 +191,6 @@
         </section>
     </main>
 
-    <!-- Package Details Modal -->
     <div id="packageModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-content">
             <span class="close" onclick="closeModal()" aria-label="Close modal">&times;</span>
@@ -214,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Professional Footer -->
     <footer class="site-footer">
         <div class="container">
             <div class="footer-content">
@@ -247,6 +230,7 @@
                         <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
                         <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
                         <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
+                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
                         <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
                         <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
                     </div>
@@ -298,12 +282,10 @@
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
     <button id="backToTop" title="Back to top" aria-label="Scroll to top">
         <i class="bi bi-arrow-up"></i>
     </button>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
@@ -311,7 +293,6 @@
     <script src="js/packages.js"></script>
     <script src="js/hero-carousel.js"></script>
     
-    <!-- Enhanced Functionality Script -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 WOW Surprises - Enhanced Index Page Loaded');
