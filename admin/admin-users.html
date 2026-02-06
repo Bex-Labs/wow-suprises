@@ -20,6 +20,38 @@
     
     <style>
         html, body { overflow-x: hidden; max-width: 100%; }
+        
+        /* RESPONSIVE 5-CARD GRID LAYOUT */
+        .stats-grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 Cards Default */
+            gap: 24px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        /* Laptop/Small Desktop (e.g. 1300px) - 3 top, 2 bottom */
+        @media (max-width: 1400px) {
+            .stats-grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Tablet (e.g. 900px) - 2 columns */
+        @media (max-width: 900px) {
+            .stats-grid-5 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Mobile - 1 column */
+        @media (max-width: 500px) {
+            .stats-grid-5 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Toggle */
         #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #333; margin-right: 15px; }
         @media (max-width: 768px) {
             #sidebarToggle { display: block; }
@@ -40,47 +72,36 @@
             <a href="admin-dashboard.html" class="nav-item">
                 <i class="bi bi-grid"></i> <span>Dashboard</span>
             </a>
-            
             <a href="admin-orders.html" class="nav-item">
                 <i class="bi bi-box-seam"></i> <span>Orders</span>
             </a>
-
             <a href="admin-merchants.html" class="nav-item">
                 <i class="bi bi-shop"></i> <span>Merchants</span>
             </a>
-
             <a href="admin-payouts.html" class="nav-item">
                 <i class="bi bi-wallet2"></i> <span>Payouts</span>
             </a>
-            
             <a href="admin-bookings.html" class="nav-item">
                 <i class="bi bi-calendar-check"></i> <span>Bookings</span>
                 <span class="badge" id="pendingBookingsBadge">0</span>
             </a>
-            
             <a href="admin-packages.html" class="nav-item">
                 <i class="bi bi-gift"></i> <span>Packages</span>
             </a>
-            
             <a href="admin-users.html" class="nav-item active">
                 <i class="bi bi-people"></i> <span>Users</span>
             </a>
-            
             <a href="admin-analytics.html" class="nav-item">
                 <i class="bi bi-graph-up"></i> <span>Analytics</span>
             </a>
-            
             <a href="admin-settings.html" class="nav-item">
                 <i class="bi bi-gear"></i> <span>Settings</span>
             </a>
-            
             <div class="nav-divider"></div>
-            
             <a href="../index.html" class="nav-item nav-client-view" target="_blank">
                 <i class="bi bi-eye"></i> <span>View as Client</span>
                 <i class="bi bi-box-arrow-up-right" style="margin-left: auto; font-size: 12px;"></i>
             </a>
-            
             <a href="#" class="nav-item" onclick="adminLogout(); return false;">
                 <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
             </a>
@@ -94,7 +115,7 @@
                     <button id="sidebarToggle"><i class="bi bi-list"></i></button>
                     <div>
                         <h1><i class="bi bi-people"></i> Users Management</h1>
-                        <p>Manage clients and administrators</p>
+                        <p>Manage clients, merchants and administrators</p>
                     </div>
                 </div>
             </div>
@@ -112,7 +133,9 @@
         </header>
         
         <main class="admin-main">
-            <div class="stats-grid stats-grid-4">
+            
+            <div class="stats-grid stats-grid-5">
+                
                 <div class="stat-card">
                     <div class="stat-icon" style="background: #dbeafe;">
                         <i class="bi bi-people" style="color: #3b82f6;"></i>
@@ -125,11 +148,21 @@
                 
                 <div class="stat-card">
                     <div class="stat-icon" style="background: #ddd6fe;">
-                        <i class="bi bi-person-check" style="color: #8b5cf6;"></i>
+                        <i class="bi bi-person" style="color: #8b5cf6;"></i>
                     </div>
                     <div class="stat-details">
                         <div class="stat-value" id="clientsCount">0</div>
                         <div class="stat-label">Clients</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #ffedd5;">
+                        <i class="bi bi-shop" style="color: #ea580c;"></i>
+                    </div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="merchantsCount">0</div>
+                        <div class="stat-label">Merchants</div>
                     </div>
                 </div>
                 
@@ -139,13 +172,13 @@
                     </div>
                     <div class="stat-details">
                         <div class="stat-value" id="adminsCount">0</div>
-                        <div class="stat-label">Administrators</div>
+                        <div class="stat-label">Admins</div>
                     </div>
                 </div>
                 
                 <div class="stat-card">
                     <div class="stat-icon" style="background: #dcfce7;">
-                        <i class="bi bi-person-plus" style="color: #22c55e;"></i>
+                        <i class="bi bi-person-check" style="color: #22c55e;"></i>
                     </div>
                     <div class="stat-details">
                         <div class="stat-value" id="activeUsersCount">0</div>
@@ -183,7 +216,7 @@
                         <select class="admin-filter-select" id="roleFilter" onchange="filterUsers()">
                             <option value="">All Roles</option>
                             <option value="client">Clients</option>
-                            <option value="admin">Administrators</option>
+                            <option value="merchant">Merchants</option> <option value="admin">Administrators</option>
                         </select>
                         
                         <select class="admin-filter-select" id="statusFilter" onchange="filterUsers()">
@@ -269,6 +302,7 @@
                             <label>Role *</label>
                             <select name="role" required class="form-control">
                                 <option value="client">Client</option>
+                                <option value="merchant">Merchant</option>
                                 <option value="admin">Administrator</option>
                             </select>
                         </div>

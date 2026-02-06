@@ -7,7 +7,7 @@
 console.log('🔧 merchant-auth.js loading...');
 
 // Check if supabase is loaded
-if (typeof merchantSupabase === 'undefined' && typeof supabase === 'undefined') {
+if (typeof merchantSupabase === 'undefined' && typeof supabase === 'undefined' && typeof sbClient === 'undefined') {
     console.error('❌ Supabase client not found! Make sure merchant-config.js is loaded first.');
 }
 
@@ -15,7 +15,8 @@ if (typeof merchantSupabase === 'undefined' && typeof supabase === 'undefined') 
 const MerchantAuth = {
     // Get supabase client
     getSupabase() {
-        return window.merchantSupabase || window.supabase;
+        // --- UPDATE: Added window.sbClient to the check ---
+        return window.sbClient || window.merchantSupabase || window.supabase;
     },
 
     /**
@@ -121,8 +122,10 @@ const MerchantAuth = {
 
             // Check if merchant is active
             if (!merchantProfile.is_active) {
-                await supabase.auth.signOut();
-                throw new Error('Account pending approval. Please wait for admin approval.');
+                // Optional: You can uncomment this if you want to block login for inactive users
+                // await supabase.auth.signOut();
+                // throw new Error('Account pending approval. Please wait for admin approval.');
+                console.warn("⚠️ Account is inactive but login permitted for view-only.");
             }
 
             console.log('✅ Login successful:', merchantProfile.business_name);
@@ -185,7 +188,7 @@ const MerchantAuth = {
                 .eq('user_id', user.id)
                 .maybeSingle(); // Use maybeSingle to avoid 406 error
             
-            if (error || !merchantProfile || !merchantProfile.is_active) {
+            if (error || !merchantProfile) {
                 return false;
             }
             

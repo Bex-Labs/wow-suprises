@@ -304,6 +304,176 @@ h3 {
     color: #000000;
 }
 
+/* --- PACKAGES GRID SYSTEM --- */
+
+/* The Grid Container */
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+/* Individual Card */
+.package-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.package-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Section */
+.package-image {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    background-color: #f3f4f6;
+}
+
+.package-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.package-card:hover .package-image img {
+    transform: scale(1.05);
+}
+
+/* Category Badge (Top Right) */
+.category-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #111111; /* Primary Pink/Red */
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Content Area */
+.package-content {
+    padding: 24px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header (Title + Price) */
+.package-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.package-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.price-tag {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #111111;
+    white-space: nowrap;
+}
+
+/* Description */
+.package-desc {
+    font-size: 0.95rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limits to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Features (Icons) */
+.package-features {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 24px;
+    font-size: 0.85rem;
+    color: #4b5563;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 15px;
+}
+
+.package-features span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+/* Select Button */
+.btn-select {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background-color: #111111;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    margin-top: auto; /* Pushes button to bottom */
+}
+
+.btn-select:hover {
+    background-color: #111111;
+    color: white;
+}
+
+/* Loading & Empty States */
+.loading, .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+    font-size: 2rem;
+    color: #111111;
+    margin-bottom: 10px;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Mobile Response */
+@media (max-width: 600px) {
+    .packages-grid {
+        grid-template-columns: 1fr; /* Stack cards on mobile */
+        gap: 20px;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .container {
