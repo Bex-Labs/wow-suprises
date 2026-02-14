@@ -1,7 +1,7 @@
 /**
  * Merchant Authentication Functions
  * Handles all merchant authentication operations
- * FIXED VERSION - Removes .catch() chaining errors
+ * FIXED VERSION - Option 2: Trigger-based Registration
  */
 
 console.log('🔧 merchant-auth.js loading...');
@@ -15,12 +15,12 @@ if (typeof merchantSupabase === 'undefined' && typeof supabase === 'undefined' &
 const MerchantAuth = {
     // Get supabase client
     getSupabase() {
-        // --- UPDATE: Added window.sbClient to the check ---
         return window.sbClient || window.merchantSupabase || window.supabase;
     },
 
     /**
-     * Register a new merchant
+     * Register a new merchant (Trigger-based)
+     * We pass data to Auth Metadata, and the SQL Trigger creates the profile row.
      */
     register: async function(merchantData) {
         try {
@@ -29,58 +29,43 @@ const MerchantAuth = {
 
             console.log('🔄 Starting merchant registration...');
 
-            // Check if email already exists
-            const { data: existingMerchant } = await supabase
-                .from('merchants')
-                .select('email')
-                .eq('email', merchantData.email)
-                .maybeSingle(); // Changed from single() to maybeSingle()
-
-            if (existingMerchant) {
-                throw new Error('Email already registered. Please login instead.');
-            }
-
-            // Create auth user
+            // 1. Sign Up the User
+            // We pass business details in 'options.data' so the SQL Trigger can see them
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: merchantData.email,
                 password: merchantData.password,
                 options: {
                     data: {
                         user_type: 'merchant',
-                        full_name: merchantData.ownerName
+                        business_name: merchantData.businessName,
+                        owner_name: merchantData.ownerName,
+                        phone: merchantData.phone,
+                        address: merchantData.address,
+                        category: merchantData.category
                     },
                     // Ensure this URL is correct for your setup
-                    emailRedirectTo: `${window.location.origin}/merchant-login.html?type=signup`
+                    emailRedirectTo: `${window.location.origin}/merchant-login.html`
                 }
             });
 
             if (authError) throw authError;
 
-            // Create merchant profile
-            const { data: merchantProfile, error: profileError } = await supabase
-                .from('merchants')
-                .insert([{
-                    user_id: authData.user.id,
-                    business_name: merchantData.businessName,
-                    owner_name: merchantData.ownerName,
-                    email: merchantData.email,
-                    phone: merchantData.phone,
-                    address: merchantData.address,
-                    category: merchantData.category,
-                    is_active: false,
-                    is_verified: false,
-                    status: 'pending',
-                    created_at: new Date().toISOString()
-                }])
-                .select()
-                .single();
-
-            if (profileError) throw profileError;
+            // 2. Success! The SQL Trigger handled the database insert.
+            // We just return success to the UI.
+            
+            // Check if email confirmation is required (session will be null)
+            if (authData.user && !authData.session) {
+                return {
+                    success: true,
+                    message: 'Registration successful! Please check your email to verify your account.',
+                    data: authData.user
+                };
+            }
 
             return {
                 success: true,
-                message: 'Registration successful! Please check your email.',
-                data: merchantProfile
+                message: 'Registration successful!',
+                data: authData.user
             };
 
         } catch (error) {
@@ -122,9 +107,6 @@ const MerchantAuth = {
 
             // Check if merchant is active
             if (!merchantProfile.is_active) {
-                // Optional: You can uncomment this if you want to block login for inactive users
-                // await supabase.auth.signOut();
-                // throw new Error('Account pending approval. Please wait for admin approval.');
                 console.warn("⚠️ Account is inactive but login permitted for view-only.");
             }
 
