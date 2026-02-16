@@ -32,13 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup login form submission
     const loginForm = document.getElementById('adminLoginForm');
     if (loginForm) {
-        loginForm.addEventListener('submit', handleAdminLoginSubmit);
+        // Clone to remove any previous listeners that might cause double submits
+        const newLoginForm = loginForm.cloneNode(true);
+        loginForm.parentNode.replaceChild(newLoginForm, loginForm);
+        newLoginForm.addEventListener('submit', handleAdminLoginSubmit);
     }
     
     // Setup register form submission
     const registerForm = document.getElementById('adminRegisterForm');
     if (registerForm) {
-        registerForm.addEventListener('submit', handleAdminRegisterSubmit);
+        const newRegisterForm = registerForm.cloneNode(true);
+        registerForm.parentNode.replaceChild(newRegisterForm, registerForm);
+        newRegisterForm.addEventListener('submit', handleAdminRegisterSubmit);
     }
     
     // Auto-focus email field
@@ -53,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function checkExistingAdminSession() {
     try {
-        const admin = await getCurrentAdmin();
+        if (typeof AdminAuth === 'undefined') return;
+        
+        const admin = await AdminAuth.getCurrentAdmin();
         
         if (admin && admin.role === 'admin') {
             // Already logged in as admin, redirect to dashboard
@@ -72,11 +79,13 @@ async function checkExistingAdminSession() {
  * STRICT: ONLY accepts accounts with role='admin'
  */
 async function handleAdminLoginSubmit(e) {
+    // FIX: THIS IS CRITICAL - STOPS THE RELOAD
     e.preventDefault();
     
     const form = e.target;
     const loginBtn = document.getElementById('loginBtn');
     const loginText = document.getElementById('loginText');
+    const originalText = loginText ? loginText.textContent : 'Sign In';
     
     // Get form values
     const email = form.loginEmail.value.trim();
@@ -102,21 +111,15 @@ async function handleAdminLoginSubmit(e) {
         return;
     }
     
-    if (password.length < 6) {
-        showToast('Password must be at least 6 characters', 'error');
-        form.loginPassword.focus();
-        return;
-    }
-    
     // Show loading state
-    loginBtn.disabled = true;
-    loginText.textContent = 'Signing in...';
+    if(loginBtn) loginBtn.disabled = true;
+    if(loginText) loginText.textContent = 'Signing in...';
     
     try {
         console.log('🔐 ADMIN LOGIN: Attempting login for:', email);
         
-        // Attempt login using admin-auth.js function
-        const session = await adminLogin(email, password, rememberMe);
+        // Attempt login using admin-auth.js function via window.AdminAuth
+        const session = await AdminAuth.adminLogin(email, password, rememberMe);
         
         console.log('✅ ADMIN LOGIN: Login successful!');
         
@@ -148,8 +151,8 @@ async function handleAdminLoginSubmit(e) {
         showToast(errorMessage, 'error');
         
         // Reset button
-        loginBtn.disabled = false;
-        loginText.textContent = 'Sign In';
+        if(loginBtn) loginBtn.disabled = false;
+        if(loginText) loginText.textContent = originalText;
         
         // Clear password field
         form.loginPassword.value = '';
@@ -162,11 +165,13 @@ async function handleAdminLoginSubmit(e) {
  * Creates account with role='admin'
  */
 async function handleAdminRegisterSubmit(e) {
+    // FIX: THIS IS CRITICAL - STOPS THE RELOAD
     e.preventDefault();
     
     const form = e.target;
     const registerBtn = document.getElementById('registerBtn');
     const registerText = document.getElementById('registerText');
+    const originalText = registerText ? registerText.textContent : 'Create Account';
     
     // Get form values
     const name = form.registerName.value.trim();
@@ -225,14 +230,14 @@ async function handleAdminRegisterSubmit(e) {
     }
     
     // Show loading state
-    registerBtn.disabled = true;
-    registerText.textContent = 'Creating admin account...';
+    if(registerBtn) registerBtn.disabled = true;
+    if(registerText) registerText.textContent = 'Creating admin account...';
     
     try {
         console.log('📝 ADMIN REGISTER: Creating admin account for:', email);
         
         // Attempt registration using admin-auth.js function
-        await adminRegister({
+        await AdminAuth.adminRegister({
             name: name,
             email: email,
             phone: phone,
@@ -260,13 +265,15 @@ async function handleAdminRegisterSubmit(e) {
             errorMessage = 'An admin account with this email already exists';
         } else if (errorMessage.includes('weak password')) {
             errorMessage = 'Please use a stronger password';
+        } else if (errorMessage.includes('fetch')) {
+            errorMessage = 'Network Error: Please check your internet connection.';
         }
         
         showToast(errorMessage, 'error');
         
         // Reset button
-        registerBtn.disabled = false;
-        registerText.textContent = 'Create Admin Account';
+        if(registerBtn) registerBtn.disabled = false;
+        if(registerText) registerText.textContent = originalText;
     }
 }
 
@@ -284,4 +291,36 @@ function handleForgotPassword(e) {
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
+}
+
+// Simple Toast fallback if utils.js isn't loaded
+if (typeof showToast === 'undefined') {
+    window.showToast = function(message, type) {
+        const container = document.getElementById('toastContainer') || document.body;
+        
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: ${type === 'error' ? '#ef4444' : '#22c55e'};
+            color: white;
+            border-radius: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-family: system-ui, -apple-system, sans-serif;
+            animation: slideIn 0.3s ease-out;
+        `;
+        toast.textContent = message;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    };
 }

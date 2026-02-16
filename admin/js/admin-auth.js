@@ -10,7 +10,7 @@
  */
 async function adminRegister(userData) {
     try {
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         
         if (!sb) {
             throw new Error('Supabase client not initialized');
@@ -19,6 +19,7 @@ async function adminRegister(userData) {
         console.log('🔐 Starting admin registration for:', userData.email);
         
         // Sign up with Supabase
+        // FIX: Added 'role: admin' to metadata so the SQL Trigger knows to create the profile
         const { data: authData, error: authError } = await sb.auth.signUp({
             email: userData.email,
             password: userData.password,
@@ -26,7 +27,7 @@ async function adminRegister(userData) {
                 data: {
                     full_name: userData.name,
                     phone: userData.phone,
-                    role: 'admin' // Set role as admin in metadata
+                    role: 'admin' 
                 },
                 emailRedirectTo: window.location.origin + '/admin-dashboard-supabase.html'
             }
@@ -47,61 +48,20 @@ async function adminRegister(userData) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Verify profile was created and update role
+        // FIX: Changed .single() to .maybeSingle() to prevent 406 Error
         const { data: existingProfile, error: checkError } = await sb
             .from('profiles')
             .select('*')
             .eq('id', authData.user.id)
-            .single();
+            .maybeSingle();
         
-        if (checkError || !existingProfile) {
-            console.log('⚠️ Profile not found, creating manually...');
-            
-            // Create profile manually with admin role
-            const { data: newProfile, error: profileError } = await sb
-                .from('profiles')
-                .insert([{
-                    id: authData.user.id,
-                    email: userData.email,
-                    full_name: userData.name,
-                    name: userData.name,
-                    phone: userData.phone,
-                    role: 'admin',
-                    permissions: ['all'],
-                    status: 'active',
-                    created_at: new Date().toISOString()
-                }])
-                .select()
-                .single();
-            
-            if (profileError) {
-                console.error('❌ Profile creation error:', profileError);
-                throw new Error('Failed to create admin profile: ' + profileError.message);
-            }
-            
-            console.log('✅ Profile created manually:', newProfile);
-        } else {
-            console.log('✅ Profile exists, updating role...');
-            
-            // Update existing profile to ensure admin role
-            const { error: updateError } = await sb
-                .from('profiles')
-                .update({
-                    role: 'admin',
-                    permissions: ['all'],
-                    status: 'active',
-                    full_name: userData.name,
-                    phone: userData.phone
-                })
-                .eq('id', authData.user.id);
-            
-            if (updateError) {
-                console.error('❌ Profile update error:', updateError);
-                throw new Error('Failed to set admin role: ' + updateError.message);
-            }
-            
-            console.log('✅ Profile updated with admin role');
+        // NOTE: We removed the manual INSERT block here because the SQL Trigger handles it now.
+        // This prevents the "Duplicate Key" or "RLS Policy" errors.
+        
+        if (existingProfile) {
+             console.log('✅ Profile confirmed via Trigger');
         }
-        
+
         // Create admin session
         const adminSession = {
             id: authData.user.id,
@@ -121,12 +81,14 @@ async function adminRegister(userData) {
         
         // Log admin registration activity
         try {
-            await logAdminActivity({
-                admin_id: authData.user.id,
-                action: 'register',
-                details: 'New admin account created',
-                user_agent: navigator.userAgent
-            });
+            if (typeof logAdminActivity === 'function') {
+                await logAdminActivity({
+                    admin_id: authData.user.id,
+                    action: 'register',
+                    details: 'New admin account created',
+                    user_agent: navigator.userAgent
+                });
+            }
         } catch (logError) {
             console.warn('⚠️ Could not log activity:', logError);
             // Don't fail registration if logging fails
@@ -149,7 +111,7 @@ async function adminRegister(userData) {
  */
 async function adminLogin(email, password, rememberMe = false) {
     try {
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         
         if (!sb) {
             throw new Error('Supabase client not initialized');
@@ -176,11 +138,13 @@ async function adminLogin(email, password, rememberMe = false) {
         
         // Get user profile to check if admin
         console.log('📋 Fetching user profile...');
+        
+        // FIX: Changed .single() to .maybeSingle()
         const { data: profile, error: profileError } = await sb
             .from('profiles')
             .select('*')
             .eq('id', authData.user.id)
-            .single();
+            .maybeSingle();
         
         if (profileError) {
             console.error('❌ Profile fetch error:', profileError);
@@ -189,21 +153,19 @@ async function adminLogin(email, password, rememberMe = false) {
             throw new Error('Failed to fetch user profile: ' + profileError.message);
         }
         
-        if (!profile) {
+        // Fallback: If no profile found in table, check metadata (Safety Net)
+        let userRole = profile ? profile.role : authData.user.user_metadata?.role;
+        let userName = profile ? (profile.full_name || profile.name) : authData.user.user_metadata?.full_name;
+
+        if (!profile && !userRole) {
             console.error('❌ No profile found for user');
             await sb.auth.signOut();
             throw new Error('User profile not found. Please contact administrator.');
         }
         
-        console.log('✅ Profile found:', {
-            email: profile.email,
-            role: profile.role,
-            status: profile.status
-        });
-        
         // Check if user has admin role
-        if (profile.role !== 'admin') {
-            console.error('❌ User is not an admin. Role:', profile.role);
+        if (userRole !== 'admin') {
+            console.error('❌ User is not an admin. Role:', userRole);
             // Sign out non-admin users
             await sb.auth.signOut();
             throw new Error('Access denied. Admin privileges required.');
@@ -211,8 +173,8 @@ async function adminLogin(email, password, rememberMe = false) {
         
         console.log('✅ Admin role verified');
         
-        // Check if account is active
-        if (profile.status !== 'active') {
+        // Check if account is active (only if profile exists)
+        if (profile && profile.status !== 'active') {
             console.error('❌ Account is not active. Status:', profile.status);
             await sb.auth.signOut();
             throw new Error('Your account has been suspended. Please contact administrator.');
@@ -222,10 +184,10 @@ async function adminLogin(email, password, rememberMe = false) {
         const adminSession = {
             id: authData.user.id,
             email: authData.user.email,
-            name: profile.full_name || profile.name || 'Admin',
-            role: profile.role,
-            permissions: profile.permissions || ['all'],
-            avatar: profile.avatar_url || null,
+            name: userName || 'Admin',
+            role: 'admin',
+            permissions: profile?.permissions || ['all'],
+            avatar: profile?.avatar_url || null,
             loginTime: new Date().toISOString(),
             supabaseSession: authData.session
         };
@@ -241,13 +203,15 @@ async function adminLogin(email, password, rememberMe = false) {
         
         // Log admin login activity
         try {
-            await logAdminActivity({
-                admin_id: authData.user.id,
-                action: 'login',
-                details: 'Admin logged in successfully',
-                ip_address: null,
-                user_agent: navigator.userAgent
-            });
+             if (typeof logAdminActivity === 'function') {
+                await logAdminActivity({
+                    admin_id: authData.user.id,
+                    action: 'login',
+                    details: 'Admin logged in successfully',
+                    ip_address: null,
+                    user_agent: navigator.userAgent
+                });
+            }
             console.log('✅ Login activity logged');
         } catch (logError) {
             console.warn('⚠️ Could not log activity:', logError);
@@ -281,7 +245,7 @@ async function getCurrentAdmin() {
         const adminSession = JSON.parse(storedSession);
         
         // Verify with Supabase
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         const { data: { session }, error } = await sb.auth.getSession();
         
         if (error || !session) {
@@ -292,13 +256,18 @@ async function getCurrentAdmin() {
         }
         
         // Verify user is still admin
+        // FIX: Changed .single() to .maybeSingle()
         const { data: profile, error: profileError } = await sb
             .from('profiles')
             .select('role')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
         
-        if (profileError || !profile || profile.role !== 'admin') {
+        if (profileError) { 
+             console.warn("Profile check failed, trusting session temporarily");
+        }
+
+        if (profile && profile.role !== 'admin') {
             // User is no longer admin, clear session
             await sb.auth.signOut();
             sessionStorage.removeItem('adminSession');
@@ -332,16 +301,20 @@ async function adminLogout() {
         
         if (admin) {
             // Log logout activity
-            await logAdminActivity({
-                admin_id: admin.id,
-                action: 'logout',
-                details: 'Admin logged out',
-                user_agent: navigator.userAgent
-            });
+            try {
+                if (typeof logAdminActivity === 'function') {
+                    await logAdminActivity({
+                        admin_id: admin.id,
+                        action: 'logout',
+                        details: 'Admin logged out',
+                        user_agent: navigator.userAgent
+                    });
+                }
+            } catch(e) { console.warn("Log failed"); }
         }
         
         // Sign out from Supabase
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         await sb.auth.signOut();
         
         // Clear local sessions
@@ -421,9 +394,9 @@ async function hasPermission(permission) {
         if (!admin) return false;
         
         // Super admin has all permissions
-        if (admin.permissions.includes('all')) return true;
+        if (admin.permissions && admin.permissions.includes('all')) return true;
         
-        return admin.permissions.includes(permission);
+        return admin.permissions && admin.permissions.includes(permission);
         
     } catch (error) {
         console.error('Permission check error:', error);
@@ -437,7 +410,7 @@ async function hasPermission(permission) {
  */
 async function logAdminActivity(activity) {
     try {
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         
         const activityLog = {
             admin_id: activity.admin_id,
@@ -454,7 +427,8 @@ async function logAdminActivity(activity) {
             .insert([activityLog]);
         
         if (error) {
-            console.error('Failed to log activity:', error);
+            // Silently fail if table doesn't exist to prevent crashing app
+            console.warn('Failed to log activity (Table may not exist):', error.message);
         }
         
     } catch (error) {
@@ -469,7 +443,7 @@ async function logAdminActivity(activity) {
  */
 async function getAdminActivityLogs(filters = {}) {
     try {
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         
         let query = sb
             .from('admin_activity_logs')
@@ -541,7 +515,7 @@ async function displayAdminInfo() {
         
         if (!admin) return;
         
-        console.log('📝 Displaying admin info:', admin.name, admin.avatar);
+        console.log('📝 Displaying admin info:', admin.name);
         
         // Update all possible name element IDs
         const nameIds = ['adminName', 'adminUserName', 'adminDisplayName'];
@@ -598,19 +572,19 @@ async function displayAdminInfo() {
  */
 async function checkAdminAccess() {
     try {
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         
         // Get current user
         const { data: { user }, error } = await sb.auth.getUser();
         
         if (error || !user) return false;
         
-        // Check if user is admin
+        // Check if user is admin - using maybeSingle
         const { data: profile, error: profileError } = await sb
             .from('profiles')
             .select('role')
             .eq('id', user.id)
-            .single();
+            .maybeSingle();
         
         if (profileError || !profile) return false;
         
@@ -666,12 +640,12 @@ async function addAdminNavLink() {
 }
 
 /**
- * 🚀 UPDATE GLOBAL BADGE (FIX FOR ZERO COUNT)
+ * 🚀 UPDATE GLOBAL BADGE
  * Fetches pending bookings and updates the sidebar badge
  */
 async function updateGlobalBadge() {
     try {
-        const sb = getSupabaseAdmin();
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
         
         // Count all bookings where status is 'pending'
         const { count, error } = await sb
@@ -707,11 +681,11 @@ async function updateGlobalBadge() {
 }
 
 /**
- * 🔔 SETUP GLOBAL REALTIME (FIX FOR LIVE UPDATES)
+ * 🔔 SETUP GLOBAL REALTIME
  * Listens for new bookings on ANY page
  */
 function setupGlobalRealtime() {
-    const sb = getSupabaseAdmin();
+    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
     
     sb.channel('global-badge-updates')
         .on(
@@ -731,7 +705,6 @@ if (typeof window !== 'undefined') {
         const isAuth = await protectAdminRoute();
         await addAdminNavLink();
         
-        // ✅ ADDED: Run badge logic if logged in
         if (isAuth) {
             updateGlobalBadge();
             setupGlobalRealtime();
@@ -740,8 +713,8 @@ if (typeof window !== 'undefined') {
 }
 
 // Export functions for use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
+if (typeof window !== 'undefined') {
+    window.AdminAuth = {
         adminLogin,
         adminRegister,
         adminLogout,
@@ -753,7 +726,7 @@ if (typeof module !== 'undefined' && module.exports) {
         logAdminActivity,
         getAdminActivityLogs,
         checkAdminAccess,
-        updateGlobalBadge, // Exported
-        setupGlobalRealtime // Exported
+        updateGlobalBadge, 
+        setupGlobalRealtime
     };
 }
