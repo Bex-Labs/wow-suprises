@@ -5,6 +5,8 @@
 // FIXED: Flutterwave 'onclose' now correctly triggers the cancellation popup
 // FIXED: 409 Conflict prevented (Buttons lock on click, IDs randomized)
 // FIXED: Foreign Key Violation bypassed (package_id safely set to null)
+// FIXED: merchant_id now correctly saved to booking so merchant dashboard shows bookings
+// FIXED: merchant_id now saved to review so merchant reviews page shows client reviews
 
 let currentStep = 1;
 let selectedPackage = null;
@@ -157,7 +159,9 @@ async function loadSelectedPackage() {
                     title: data.service_name || data.name,
                     price: parseFloat(data.base_price || data.price || 0),
                     description: data.description || '',
-                    category: data.category
+                    category: data.category,
+                    // FIX: capture merchant_id from the service so it can be saved to the booking
+                    merchant_id: data.merchant_id || null
                 };
             }
         }
@@ -199,7 +203,8 @@ async function loadCustomPackage() {
         title: 'Custom Package',
         price: parseFloat(customData.price || 0),
         items: customData.items,
-        category: 'custom'
+        category: 'custom',
+        merchant_id: null
     };
     isCustomPackage = true;
     totalAmount = parseFloat(selectedPackage.price);
@@ -474,8 +479,9 @@ async function createPendingBooking() {
 
     const bookingPayload = {
         user_id: user.id,
-        // 💥 FIX: Bypassing the strict Foreign Key constraint entirely
         package_id: null, 
+        // FIX: Save merchant_id so the merchant dashboard can find this booking
+        merchant_id: selectedPackage.merchant_id || null,
         package_name: selectedPackage.name || selectedPackage.title,
         recipient_name: bookingData.recipientName,
         recipient_phone: bookingData.recipientPhone,
@@ -622,7 +628,9 @@ async function submitBookingReview() {
             user_id: user.id,
             rating: parseInt(rating),
             title: reviewBookingData.status === 'cancelled' ? 'Failed Checkout Experience' : 'Booking Experience',
-            comment: comment
+            comment: comment,
+            // FIX: Save merchant_id so the merchant reviews page can fetch this review
+            merchant_id: reviewBookingData.merchant_id || (selectedPackage ? selectedPackage.merchant_id : null) || null
         };
 
         const { error } = await window.sbClient

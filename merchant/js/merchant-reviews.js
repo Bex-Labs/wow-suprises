@@ -1,6 +1,8 @@
 /**
  * Merchant Reviews JavaScript
  * Features: List, Filter, Sort, Reply, Stats
+ * FIXED: Queries 'reviews' table (not 'merchant_reviews') and filters by merchant_id
+ * FIXED: Reads customer name from profiles join via user_id
  */
 
 let currentMerchant = null;
@@ -41,17 +43,27 @@ function updateHeader() {
 }
 
 // 1. Fetch Data
+// FIX: Query 'reviews' table (matches the actual schema) filtered by merchant_id.
+// Also join profiles so we can display the customer's name.
 async function loadReviews() {
     try {
         const { data, error } = await MerchantAuth.getSupabase()
-            .from('merchant_reviews')
-            .select('*')
+            .from('reviews')
+            .select(`
+                *,
+                profiles:user_id ( full_name )
+            `)
             .eq('merchant_id', currentMerchant.id)
             .order('created_at', { ascending: false });
 
         if (error) throw error;
 
-        allReviews = data || [];
+        // Attach customer_name from joined profile
+        allReviews = (data || []).map(r => ({
+            ...r,
+            customer_name: r.profiles?.full_name || r.customer_name || 'Anonymous'
+        }));
+
         updateStats();
         renderReviews(allReviews);
 
@@ -187,6 +199,7 @@ window.filterReviews = function() {
 }
 
 // 5. Reply Functions
+// FIX: Replies update the 'reviews' table (not 'merchant_reviews')
 window.toggleReplyForm = function(id) {
     const form = document.getElementById(`reply-form-${id}`);
     if (form) form.classList.toggle('active');
@@ -199,9 +212,9 @@ window.submitReply = async function(id) {
     if (!text) return alert('Please write a reply first.');
 
     try {
-        // Update DB
+        // FIX: Update 'reviews' table (matches actual schema)
         const { error } = await MerchantAuth.getSupabase()
-            .from('merchant_reviews')
+            .from('reviews')
             .update({ 
                 merchant_reply: text,
                 replied_at: new Date().toISOString()

@@ -13,23 +13,24 @@
 
     <style>
         /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; z-index: 1100; }
 
         @media (max-width: 768px) {
             #mobileMenuBtn { display: block; }
+            #mobileMenuBtn.hidden { display: none !important; }
 
             .nav-links {
                 display: none;
                 flex-direction: column;
                 position: absolute;
-                top: 70px;
+                top: 0;
                 left: 0;
                 width: 100%;
                 background: #fff;
-                padding: 20px 0;
+                padding: 40px 0 !important;
                 box-shadow: 0 10px 15px rgba(0,0,0,0.1);
                 z-index: 1000;
-                gap: 15px;
+                gap: 15px !important;
             }
 
             .nav-links.active { display: flex; }
@@ -41,12 +42,13 @@
                 justify-content: center;
             }
 
-            .nav-links li span {
-                font-weight: 700;
+            .nav-links li a {
+                font-weight: 500;
                 display: block;
                 padding: 10px 0;
                 width: 100%;
                 text-align: center;
+                color: #000;
             }
         }
 
@@ -89,8 +91,8 @@
             .progress-steps::before { top: 14px; }
         }
 
-        /* FIX: navigation.js injects a red logout button — suppress it, auth handled below */
-        #loginStatus { display: none !important; }
+        /* FORCE PLAIN TEXT LOGOUT */
+        #loginStatus, .user-profile-btn { display: none !important; }
     </style>
 
     <script src="https://checkout.flutterwave.com/v3.js"></script>
@@ -390,32 +392,6 @@
         </div>
     </main>
 
-    <style>
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 10000;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .review-modal-content {
-            background: white; padding: 40px 30px; border-radius: 16px;
-            width: 90%; max-width: 450px; position: relative; text-align: center;
-            transform: translateY(20px); transition: transform 0.3s ease;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .modal-overlay.show .review-modal-content { transform: translateY(0); }
-        .close-modal-btn {
-            position: absolute; top: 15px; right: 15px; background: #f5f5f5; 
-            border: none; border-radius: 50%; width: 30px; height: 30px;
-            font-size: 14px; cursor: pointer; color: #666;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .close-modal-btn:hover { background: #e0e0e0; }
-        .booking-stars i { font-size: 36px; color: #e4e5e9; cursor: pointer; transition: 0.2s; margin: 0 5px; }
-    </style>
-
     <div id="bookingReviewModal" class="modal-overlay">
         <div class="review-modal-content">
             <button class="close-modal-btn" onclick="closeReviewModal()">X</button>
@@ -442,59 +418,50 @@
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/supabaseApi.js"></script>
-    <script src="js/navigation.js"></script>
     <script src="js/booking.js"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', async function() {
         const toggleBtn = document.getElementById('mobileMenuBtn');
         const navLinks = document.getElementById('navLinks');
-        const icon = toggleBtn?.querySelector('i');
 
         if (toggleBtn) {
             toggleBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 navLinks.classList.toggle('active');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('bi-list', 'bi-x-lg');
-                } else {
-                    icon.classList.replace('bi-x-lg', 'bi-list');
-                }
+                toggleBtn.classList.toggle('hidden');
             });
         }
 
         document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target)) {
                 navLinks.classList.remove('active');
-                icon.classList.replace('bi-x-lg', 'bi-list');
+                toggleBtn.classList.remove('hidden');
             }
         });
 
-        // Auth: match index.html pattern exactly (no name display, no red button)
-        try {
+        // FORCE PLAIN TEXT LOGOUT
+        setInterval(async () => {
             const authLink = document.getElementById('authLink');
+            const badDiv = document.getElementById('loginStatus');
+            if (badDiv) badDiv.remove();
+            
             const client = window.sbClient || window.supabase;
             if (client) {
                 const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    // Hi, Name logic removed. Auth state update only.
+                if (data?.session?.user && authLink.textContent !== 'Logout') {
                     authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.style.display = '';
                     authLink.onclick = async (e) => {
                         e.preventDefault();
-                        if (confirm('Logout?')) {
+                        if(confirm('Logout?')) {
                             await client.auth.signOut();
                             localStorage.removeItem('currentUser');
                             window.location.reload();
                         }
                     };
-                } else {
-                    // Ensure login link is visible if navigation.js hid it
-                    authLink.style.display = '';
                 }
             }
-        } catch (error) { console.error('Auth error:', error); }
+        }, 500);
     });
     </script>
 </body>
