@@ -6,29 +6,71 @@
     <title>Booking Management - WOW Merchant</title>
     
     <script src="js/merchant-auth-guard.js"></script>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <link rel="stylesheet" href="css/merchant.css">
     
     <style>
-        /* Specific Styles for the Job Ticket (Not in general CSS) */
-        .ticket-modal { background: #fff; width: 95%; max-width: 700px; margin: 5% auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .ticket-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; }
+        /* ========================================
+           CRITICAL LAYOUT & OVERFLOW FIXES
+           ======================================== */
+        html, body { overflow-x: hidden; max-width: 100%; margin: 0; padding: 0; background: #f8fafc; }
+        .merchant-content, .merchant-main { min-width: 0 !important; width: 100%; box-sizing: border-box; }
+        
+        /* Filter Bar Styles */
+        .filters-bar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 24px; background: #fff; padding: 16px 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); flex-wrap: wrap; }
+        .admin-search { flex: 1 1 250px; position: relative; min-width: 0; max-width: 400px; }
+        .admin-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .admin-search input { width: 100%; padding: 10px 10px 10px 38px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc; box-sizing: border-box; transition: border-color 0.2s; }
+        .admin-search input:focus { border-color: #3b82f6; background: #fff; }
+        
+        .admin-filter-select { padding: 10px 32px 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: #f8fafc; color: #334155; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+        .admin-filter-select:focus { border-color: #3b82f6; }
+
+        /* Enterprise Table Physics */
+        .merchant-card { min-width: 0 !important; width: 100%; box-sizing: border-box; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 24px; }
+        .admin-table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; }
+        .admin-table { width: 100%; min-width: 950px; border-collapse: collapse; text-align: left; }
+        .admin-table thead { background: #f8fafc; }
+        .admin-table th { padding: 14px 20px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+        .admin-table td { padding: 16px 20px; font-size: 13px; color: #334155; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .admin-table tbody tr:hover { background: #f1f5f9; }
+
+        /* Specific Styles for the Job Ticket Modal */
+        .ticket-modal { background: #fff; width: 95%; max-width: 700px; margin: 5% auto; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .ticket-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
         .ticket-body { padding: 25px; max-height: 80vh; overflow-y: auto; }
         
         .progress-track { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
-        .progress-track::before { content: ''; position: absolute; top: 15px; left: 0; right: 0; height: 3px; background: #e5e7eb; z-index: 0; }
+        .progress-track::before { content: ''; position: absolute; top: 15px; left: 0; right: 0; height: 3px; background: #e2e8f0; z-index: 0; }
         .track-step { position: relative; z-index: 1; text-align: center; background: #fff; padding: 0 10px; }
-        .track-icon { width: 32px; height: 32px; border-radius: 50%; background: #f3f4f6; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-weight: bold; color: #9ca3af; }
-        .track-step.active .track-icon { background: #22c55e; color: #fff; }
-        .track-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; }
+        .track-icon { width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-weight: bold; color: #94a3b8; }
+        .track-step.active .track-icon { background: #22c55e; color: #fff; border-color: #22c55e; }
+        .track-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; }
         .track-step.active .track-label { color: #22c55e; }
 
-        /* Action Grid */
-        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+
+        /* Mobile Sidebar Toggle styling */
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #0f172a; margin-right: 15px; padding: 0; }
+        
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .merchant-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
+            .merchant-sidebar.active { transform: translateX(0); }
+            
+            .merchant-main { padding: 16px; }
+            
+            /* Responsive Filters Grid */
+            .filters-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; }
+            .admin-search { grid-column: 1 / -1; max-width: 100%; }
+            .admin-filter-select { grid-column: 1 / 2; width: 100%; min-width: 0; }
+            .filters-bar button { grid-column: 2 / 3; width: 100%; justify-content: center; }
+            
+            .ticket-modal { width: 100%; margin: 0; border-radius: 0; min-height: 100vh; }
+            .action-buttons { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body class="merchant-page" data-page="bookings">
@@ -40,50 +82,37 @@
         </div>
         
         <nav class="merchant-nav">
-            <a href="merchant-dashboard.html" class="nav-item">
-                <i class="bi bi-grid"></i> <span>Dashboard</span>
-            </a>
-            
-            <a href="merchant-orders.html" class="nav-item">
-                <i class="bi bi-box-seam"></i> <span>Orders</span>
-            </a>
-
+            <a href="merchant-dashboard.html" class="nav-item"><i class="bi bi-grid"></i> <span>Dashboard</span></a>
+            <a href="merchant-orders.html" class="nav-item"><i class="bi bi-box-seam"></i> <span>Orders</span></a>
             <a href="merchant-bookings.html" class="nav-item active">
                 <i class="bi bi-clipboard-check"></i> <span>Booking Mgmt</span>
                 <span class="badge" id="actionNeededBadge" style="display:none;">0</span>
             </a>
-            
-            <a href="merchant-services.html" class="nav-item">
-                <i class="bi bi-gift"></i> <span>My Services</span>
-            </a>
-            <a href="merchant-earnings.html" class="nav-item">
-                <i class="bi bi-currency-exchange"></i> <span>Earnings</span>
-            </a>
-            <a href="merchant-reviews.html" class="nav-item">
-                <i class="bi bi-star"></i> <span>Reviews</span>
-            </a>
-            <a href="merchant-profile.html" class="nav-item">
-                <i class="bi bi-person"></i> <span>Profile</span>
-            </a>
-            <a href="merchant-settings.html" class="nav-item">
-                <i class="bi bi-gear"></i> <span>Settings</span>
-            </a>
+            <a href="merchant-services.html" class="nav-item"><i class="bi bi-gift"></i> <span>My Services</span></a>
+            <a href="merchant-earnings.html" class="nav-item"><i class="bi bi-currency-exchange"></i> <span>Earnings</span></a>
+            <a href="merchant-reviews.html" class="nav-item"><i class="bi bi-star"></i> <span>Reviews</span></a>
+            <a href="merchant-profile.html" class="nav-item"><i class="bi bi-person"></i> <span>Profile</span></a>
+            <a href="merchant-settings.html" class="nav-item"><i class="bi bi-gear"></i> <span>Settings</span></a>
             <div class="nav-divider"></div>
-            <a href="#" class="nav-item" onclick="merchantLogout(); return false;">
-                <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
-            </a>
+            <a href="#" class="nav-item" onclick="merchantLogout(); return false;"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
         </nav>
     </aside>
     
     <div class="merchant-content">
         <header class="merchant-header">
             <div class="header-left">
-                <h1><i class="bi bi-clipboard-check"></i> Booking Management</h1>
-                <p>Process your active orders</p>
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1 style="margin:0; font-size:18px; font-weight:600; color:#0f172a;"><i class="bi bi-clipboard-check"></i> Booking Management</h1>
+                        <p style="margin:4px 0 0 0; font-size:13px; color:#64748b;">Process your active orders</p>
+                    </div>
+                </div>
             </div>
             
             <div class="header-right">
-                <div class="merchant-user-info"> <div class="user-avatar">
+                <div class="merchant-user-info"> 
+                    <div class="user-avatar">
                         <i class="bi bi-shop"></i>
                     </div>
                     <div>
@@ -91,100 +120,99 @@
                         <div class="user-role">Partner</div>
                     </div>
                 </div>
-                <button id="sidebarToggle" style="margin-left:15px; background:none; border:none; font-size:24px; display:none;"><i class="bi bi-list"></i></button>
             </div>
         </header>
         
         <main class="merchant-main">
             
-            <div class="stat-card" style="margin-bottom: 24px; padding: 15px;">
-                <div style="display: flex; gap: 10px; overflow-x: auto; align-items: center;">
-                    <div style="flex: 1; position: relative;">
-                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 10px; color: #999;"></i>
-                        <input type="text" id="searchInput" placeholder="Search orders..." onkeyup="searchBookings()" style="width: 90%; padding: 8px 8px 8px 35px; border: 1px solid #ddd; border-radius: 6px;">
-                    </div>
-                    
-                    <select id="statusFilter" onchange="filterBookings()" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                        <option value="">All Active</option>
-                        <option value="pending">New Request</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="processing">Processing</option>
-                        <option value="out_for_delivery">Delivery</option>
-                    </select>
-                    
-                    <button onclick="loadBookings()" style="padding: 8px 15px; background: #000; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </button>
+            <div class="filters-bar">
+                <div class="admin-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search orders..." onkeyup="searchBookings()">
                 </div>
+                
+                <select id="statusFilter" class="admin-filter-select" onchange="filterBookings()">
+                    <option value="">All Active</option>
+                    <option value="pending">New Request</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="processing">Processing</option>
+                    <option value="out_for_delivery">Delivery</option>
+                </select>
+                
+                <button onclick="loadBookings()" class="merchant-btn merchant-btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
             </div>
 
-            <div class="stat-card" style="padding: 0; overflow: hidden;">
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead style="background: #f9fafb; border-bottom: 1px solid #eee;">
-                            <tr>
-                                <th style="padding: 15px; text-align: left; font-size: 12px; font-weight: 600; color: #666;">REF #</th>
-                                <th style="padding: 15px; text-align: left; font-size: 12px; font-weight: 600; color: #666;">PACKAGE</th>
-                                <th style="padding: 15px; text-align: left; font-size: 12px; font-weight: 600; color: #666;">DUE DATE</th>
-                                <th style="padding: 15px; text-align: left; font-size: 12px; font-weight: 600; color: #666;">STATUS</th>
-                                <th style="padding: 15px; text-align: left; font-size: 12px; font-weight: 600; color: #666;">ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bookingsTableBody">
-                            <tr><td colspan="5" style="text-align: center; padding: 40px; color: #666;">Loading active bookings...</td></tr>
-                        </tbody>
-                    </table>
+            <div class="merchant-card">
+                <div class="merchant-card-body no-padding">
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>REF #</th>
+                                    <th>PACKAGE</th>
+                                    <th>RECIPIENT</th>
+                                    <th>DUE DATE</th>
+                                    <th>STATUS</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">Loading active bookings...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             
         </main>
     </div>
 
-    <div id="jobModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+    <div id="jobModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; overflow-y: auto;">
         <div class="ticket-modal">
             <div class="ticket-header">
                 <div>
-                    <h3 style="margin: 0; font-size: 18px;" id="modalRef">#ORD-000</h3>
-                    <small style="color: #666;" id="modalDate">Due: Jan 1, 2026</small>
+                    <h3 style="margin: 0; font-size: 18px; color: #0f172a;" id="modalRef">#ORD-000</h3>
+                    <small style="color: #64748b;" id="modalDate">Due: Jan 1, 2026</small>
                 </div>
-                <button onclick="closeJobModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                <button onclick="closeJobModal()" style="background: none; border: none; font-size: 24px; color: #64748b; cursor: pointer;">&times;</button>
             </div>
             
             <div class="ticket-body">
                 <div class="progress-track" id="statusTracker"></div>
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
-                    <h4 style="margin: 0 0 15px 0; font-size: 13px; text-transform: uppercase; color: #666; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Requirements</h4>
+                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h4 style="margin: 0 0 15px 0; font-size: 13px; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Requirements</h4>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div>
-                            <label style="font-size: 11px; font-weight: 700; color: #666; display: block; margin-bottom: 4px;">PACKAGE</label>
-                            <div id="modalPackage" style="font-weight: 500;">-</div>
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">PACKAGE</label>
+                            <div id="modalPackage" style="font-weight: 600; color: #0f172a;">-</div>
                         </div>
                         <div>
-                            <label style="font-size: 11px; font-weight: 700; color: #666; display: block; margin-bottom: 4px;">RECIPIENT</label>
-                            <div id="modalRecipient" style="font-weight: 500;">-</div>
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">RECIPIENT</label>
+                            <div id="modalRecipient" style="font-weight: 600; color: #0f172a;">-</div>
                         </div>
                         <div>
-                            <label style="font-size: 11px; font-weight: 700; color: #666; display: block; margin-bottom: 4px;">ADDRESS</label>
-                            <div id="modalAddress" style="font-weight: 500;">-</div>
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">ADDRESS</label>
+                            <div id="modalAddress" style="font-weight: 600; color: #0f172a;">-</div>
                         </div>
                         <div>
-                            <label style="font-size: 11px; font-weight: 700; color: #666; display: block; margin-bottom: 4px;">PHONE</label>
-                            <div id="modalPhone" style="font-weight: 500;">-</div>
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">PHONE</label>
+                            <div id="modalPhone" style="font-weight: 600; color: #0f172a;">-</div>
                         </div>
                     </div>
 
                     <div style="margin-top: 20px;">
-                        <label style="font-size: 11px; font-weight: 700; color: #666; display: block; margin-bottom: 4px;">INSTRUCTIONS</label>
-                        <div id="modalInstructions" style="background: #fff; padding: 10px; border: 1px solid #eee; border-radius: 6px; font-style: italic; color: #333;">
+                        <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">INSTRUCTIONS</label>
+                        <div id="modalInstructions" style="background: #fff; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-style: italic; color: #334155;">
                             None.
                         </div>
                     </div>
                 </div>
 
-                <div class="action-buttons" id="actionButtons">
-                    </div>
+                <div class="action-buttons" id="actionButtons"></div>
             </div>
         </div>
     </div>
@@ -197,11 +225,10 @@
     <script src="js/merchant-bookings.js"></script>
     
     <script>
-        // Simple Sidebar Toggle for Mobile
         const toggleBtn = document.getElementById('sidebarToggle');
         if(toggleBtn) {
             toggleBtn.addEventListener('click', () => {
-                document.getElementById('adminSidebar').classList.toggle('open'); // Using 'open' class from your CSS
+                document.getElementById('adminSidebar').classList.toggle('active'); 
             });
         }
     </script>

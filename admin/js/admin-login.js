@@ -281,8 +281,9 @@ async function handleAdminRegisterSubmit(e) {
  * Handle forgot password click
  */
 function handleForgotPassword(e) {
+    // This is handled by the direct link in HTML now, but kept to prevent errors if invoked
     e.preventDefault();
-    showToast('Password reset feature coming soon! Contact your system administrator.', 'info');
+    window.location.href = 'admin-forgot-password.html';
 }
 
 /**
@@ -292,6 +293,20 @@ function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
+
+// Password Toggle Helper
+window.togglePasswordVisibility = function(inputId, iconElement) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        iconElement.classList.remove('bi-eye-slash');
+        iconElement.classList.add('bi-eye');
+    } else {
+        input.type = 'password';
+        iconElement.classList.remove('bi-eye');
+        iconElement.classList.add('bi-eye-slash');
+    }
+};
 
 // Simple Toast fallback if utils.js isn't loaded
 if (typeof showToast === 'undefined') {

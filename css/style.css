@@ -22,6 +22,21 @@ body {
     padding: 0 40px;
 }
 
+/* Fixes overlapping Next/Previous buttons */
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+    padding-bottom: 20px;
+    clear: both;
+}
+
+.form-navigation button {
+    flex: 1; 
+    max-width: 200px; 
+}
+
 /* Navigation */
 .navbar {
     background: #ffffff;
@@ -39,16 +54,18 @@ body {
     align-items: center;
 }
 
+/* FIX: Grey background and padding removed from logo */
 .logo {
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.5px;
     color: #000000;
-    background: #e0e0e0;
-    padding: 12px 24px;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
 }
-
 .nav-links {
     display: flex;
     list-style: none;

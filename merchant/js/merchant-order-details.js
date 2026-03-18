@@ -1,6 +1,6 @@
 /**
  * Merchant Order Details JavaScript
- * Handles order details display and status updates with delivery tracking
+ * Handles order details display and status updates with visual Pizza Tracker
  */
 
 let currentMerchant = null;
@@ -32,7 +32,7 @@ async function initOrderDetails() {
         
         // Update merchant name
         const nameEl = document.getElementById('merchantDisplayName');
-        if (nameEl) nameEl.textContent = currentMerchant.businessName;
+        if (nameEl) nameEl.textContent = currentMerchant.business_name;
         
         // Load order details
         await loadOrderDetails();
@@ -48,7 +48,7 @@ async function loadOrderDetails() {
     try {
         showLoading();
         
-        const { data: order, error } = await merchantSupabase
+        const { data: order, error } = await MerchantAuth.getSupabase()
             .from('bookings')
             .select('*')
             .eq('id', orderId)
@@ -71,15 +71,15 @@ async function loadOrderDetails() {
             orderIdDisplay.textContent = `Order #${order.id.substring(0, 8).toUpperCase()}`;
         }
         
-        // Display order information
+        // Display components
         displayOrderInfo();
         displayCustomerInfo();
         displayOrderSummary();
         displayStatusActions();
         displaySpecialInstructions();
         
-        // Load delivery tracking
-        await loadDeliveryTracking();
+        // Load visual delivery tracking
+        renderDeliveryTracker();
         
         hideLoading();
         
@@ -100,34 +100,34 @@ function displayOrderInfo() {
     
     orderInfo.innerHTML = `
         <div>
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Order Date</div>
-            <div style="font-weight: 600; color: #000;">${formatDate(orderDate, 'long')}</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Order Date</div>
+            <div style="font-weight: 600; color: #0f172a;">${formatDate(orderDate, 'long')}</div>
         </div>
         
         <div>
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Time</div>
-            <div style="font-weight: 600; color: #000;">${currentOrder.surprise_time || 'Not specified'}</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Time</div>
+            <div style="font-weight: 600; color: #0f172a;">${currentOrder.surprise_time || 'Not specified'}</div>
         </div>
         
         <div>
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Location</div>
-            <div style="font-weight: 600; color: #000;">${currentOrder.location || 'Not specified'}</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Location</div>
+            <div style="font-weight: 600; color: #0f172a;">${currentOrder.location || 'Not specified'}</div>
         </div>
         
         <div>
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Surprise Type</div>
-            <div style="font-weight: 600; color: #000;">${currentOrder.surprise_type || 'General'}</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Surprise Type</div>
+            <div style="font-weight: 600; color: #0f172a;">${currentOrder.surprise_type || 'General'}</div>
         </div>
         
         <div>
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Created</div>
-            <div style="font-weight: 600; color: #000;">${formatDate(createdDate, 'short')}</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Created</div>
+            <div style="font-weight: 600; color: #0f172a;">${formatDate(createdDate, 'short')}</div>
         </div>
         
         <div>
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Status</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Status</div>
             <div>
-                <span style="padding: 6px 12px; background: ${getStatusColor(currentOrder.status)}15; color: ${getStatusColor(currentOrder.status)}; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase;">
+                <span style="padding: 4px 10px; background: ${getStatusColor(currentOrder.status)}15; color: ${getStatusColor(currentOrder.status)}; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
                     ${currentOrder.status}
                 </span>
             </div>
@@ -142,33 +142,29 @@ function displayCustomerInfo() {
     
     customerInfo.innerHTML = `
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Recipient Name</div>
-            <div style="font-weight: 600; color: #000; font-size: 16px;">${currentOrder.recipient_name}</div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Recipient Name</div>
+            <div style="font-weight: 600; color: #0f172a; font-size: 16px;">${currentOrder.recipient_name}</div>
         </div>
         
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Phone Number</div>
-            <div style="font-weight: 600; color: #000;">
-                <a href="tel:${currentOrder.recipient_phone}" style="color: #000; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Phone Number</div>
+            <div style="font-weight: 600; color: #0f172a;">
+                <a href="tel:${currentOrder.recipient_phone}" style="color: #0f172a; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                     <i class="bi bi-telephone"></i> ${currentOrder.recipient_phone}
                 </a>
             </div>
         </div>
         
         ${currentOrder.recipient_email ? `
-            <div style="margin-bottom: 20px;">
-                <div style="font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Email</div>
-                <div style="font-weight: 600; color: #000; word-break: break-all;">
-                    <a href="mailto:${currentOrder.recipient_email}" style="color: #000; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <div style="margin-bottom: 8px;">
+                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Email</div>
+                <div style="font-weight: 600; color: #0f172a; word-break: break-all;">
+                    <a href="mailto:${currentOrder.recipient_email}" style="color: #0f172a; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                         <i class="bi bi-envelope"></i> ${currentOrder.recipient_email}
                     </a>
                 </div>
             </div>
         ` : ''}
-        
-        <button onclick="window.location.href='merchant-messages.html?order=${currentOrder.id}'" style="width: 100%; padding: 12px; background: #f0f0f0; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px;">
-            <i class="bi bi-chat-dots"></i> Message Customer
-        </button>
     `;
 }
 
@@ -182,22 +178,22 @@ function displayOrderSummary() {
     const netAmount = budget - platformFee;
     
     orderSummary.innerHTML = `
-        <div style="padding: 16px; background: #f9f9f9; border-radius: 8px; margin-bottom: 16px;">
+        <div style="padding: 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: #666;">Order Amount</span>
-                <span style="font-weight: 600;">${formatCurrency(budget, 'NGN')}</span>
+                <span style="color: #64748b;">Order Amount</span>
+                <span style="font-weight: 600; color: #0f172a;">${formatCurrency(budget, 'NGN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0;">
-                <span style="color: #666;">Platform Fee (10%)</span>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                <span style="color: #64748b;">Platform Fee (10%)</span>
                 <span style="font-weight: 600; color: #ef4444;">-${formatCurrency(platformFee, 'NGN')}</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 700; font-size: 16px;">Your Earnings</span>
-                <span style="font-weight: 700; font-size: 20px; color: #22c55e;">${formatCurrency(netAmount, 'NGN')}</span>
+                <span style="font-weight: 700; font-size: 14px; color: #0f172a;">Your Earnings</span>
+                <span style="font-weight: 700; font-size: 18px; color: #16a34a;">${formatCurrency(netAmount, 'NGN')}</span>
             </div>
         </div>
         
-        <div style="font-size: 12px; color: #666; text-align: center;">
+        <div style="font-size: 11px; color: #94a3b8; text-align: center;">
             <i class="bi bi-info-circle"></i> Payment will be released after successful delivery
         </div>
     `;
@@ -212,17 +208,16 @@ function displayStatusActions() {
     const status = currentOrder.status;
     const uploadPhotoCard = document.getElementById('uploadPhotoCard');
     
-    // Define available status transitions
     const statusWorkflow = {
         'pending': [
-            { next: 'confirmed', label: 'Accept Order', icon: 'check-circle', color: '#3b82f6' },
+            { next: 'confirmed', label: 'Accept Order', icon: 'check-circle', color: '#16a34a' },
             { next: 'cancelled', label: 'Decline Order', icon: 'x-circle', color: '#ef4444' }
         ],
         'confirmed': [
-            { next: 'in-progress', label: 'Start Delivery', icon: 'truck', color: '#8b5cf6' }
+            { next: 'in-progress', label: 'Start Delivery', icon: 'truck', color: '#0f172a' }
         ],
         'in-progress': [
-            { next: 'completed', label: 'Mark as Delivered', icon: 'check-circle-fill', color: '#22c55e' }
+            { next: 'completed', label: 'Mark as Delivered', icon: 'check-circle-fill', color: '#16a34a' }
         ]
     };
     
@@ -235,36 +230,35 @@ function displayStatusActions() {
         statusButtonsContainer.innerHTML = availableActions.map(action => `
             <button 
                 onclick="updateOrderStatus('${action.next}')" 
-                style="flex: 1; padding: 16px 24px; background: ${action.color}; color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; min-width: 180px;"
-                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'"
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                style="flex: 1; padding: 14px 20px; background: ${action.color}; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s;"
+                onmouseover="this.style.opacity='0.9'"
+                onmouseout="this.style.opacity='1'"
             >
-                <i class="bi bi-${action.icon}" style="font-size: 20px;"></i>
+                <i class="bi bi-${action.icon}"></i>
                 ${action.label}
             </button>
         `).join('');
     }
     
-    // Show upload photo card for in-progress or completed orders
+    // Show upload photo card only for in-progress orders so they can attach proof before marking completed
     if (uploadPhotoCard) {
         uploadPhotoCard.style.display = (status === 'in-progress' || status === 'completed') ? 'block' : 'none';
     }
 }
 
-// Display special instructions
 function displaySpecialInstructions() {
     const card = document.getElementById('specialInstructionsCard');
     const instructions = document.getElementById('specialInstructions');
     
-    if (currentOrder.special_instructions) {
+    if (currentOrder.special_instructions || currentOrder.special_message) {
         if (card) card.style.display = 'block';
-        if (instructions) instructions.textContent = currentOrder.special_instructions;
+        if (instructions) instructions.textContent = currentOrder.special_instructions || currentOrder.special_message;
     } else {
         if (card) card.style.display = 'none';
     }
 }
 
-// Update order status
+// Update order status (No tracking table needed!)
 async function updateOrderStatus(newStatus) {
     if (!confirm(`Are you sure you want to update the status to "${newStatus}"?`)) {
         return;
@@ -273,50 +267,29 @@ async function updateOrderStatus(newStatus) {
     try {
         showToast('Updating status...', 'info');
         
-        // Update order status in database
-        const { error: updateError } = await merchantSupabase
+        // If marking as completed, check if they uploaded a photo
+        const updateData = {
+            status: newStatus,
+            updated_at: new Date().toISOString()
+        };
+
+        // Attach photo to order if uploaded
+        if (uploadedPhoto && newStatus === 'completed') {
+            updateData.delivery_photo_url = uploadedPhoto; 
+        }
+
+        // Update order status in database directly
+        const { error: updateError } = await MerchantAuth.getSupabase()
             .from('bookings')
-            .update({
-                status: newStatus,
-                updated_at: new Date().toISOString(),
-                [`${newStatus}_at`]: new Date().toISOString()
-            })
+            .update(updateData)
             .eq('id', orderId);
         
         if (updateError) throw updateError;
         
-        // Create delivery tracking entry
-        const trackingStatus = {
-            'confirmed': 'preparing',
-            'in-progress': 'out-for-delivery',
-            'completed': 'delivered'
-        };
-        
-        if (trackingStatus[newStatus]) {
-            const { error: trackingError } = await merchantSupabase
-                .from('delivery_tracking')
-                .insert([
-                    {
-                        booking_id: orderId,
-                        merchant_id: currentMerchant.id,
-                        status: trackingStatus[newStatus],
-                        notes: `Status updated to ${newStatus}`,
-                        photo_url: uploadedPhoto,
-                        created_at: new Date().toISOString()
-                    }
-                ]);
-            
-            if (trackingError) {
-                console.error('Tracking entry error:', trackingError);
-            }
-        }
-        
         showToast('Status updated successfully!', 'success');
         
-        // Reload order details
+        // Reload order details (this automatically advances the tracker!)
         await loadOrderDetails();
-        
-        // TODO: Send email notification to customer
         
     } catch (error) {
         console.error('Update status error:', error);
@@ -324,74 +297,76 @@ async function updateOrderStatus(newStatus) {
     }
 }
 
-// Load delivery tracking timeline
-async function loadDeliveryTracking() {
-    try {
-        const { data: tracking, error } = await merchantSupabase
-            .from('delivery_tracking')
-            .select('*')
-            .eq('booking_id', orderId)
-            .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        const timeline = document.getElementById('deliveryTimeline');
-        if (!timeline) return;
-        
-        if (!tracking || tracking.length === 0) {
-            timeline.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; color: #666;">
-                    <i class="bi bi-clock-history" style="font-size: 48px; color: #e0e0e0; margin-bottom: 16px; display: block;"></i>
-                    <p style="margin: 0;">No tracking updates yet</p>
-                </div>
-            `;
-            return;
-        }
-        
-        const statusIcons = {
-            'preparing': 'hourglass-split',
-            'out-for-delivery': 'truck',
-            'delivered': 'check-circle-fill',
-            'failed': 'x-circle'
-        };
-        
-        const statusColors = {
-            'preparing': '#f59e0b',
-            'out-for-delivery': '#8b5cf6',
-            'delivered': '#22c55e',
-            'failed': '#ef4444'
-        };
-        
-        timeline.innerHTML = tracking.map((entry, index) => `
-            <div style="display: flex; gap: 16px; position: relative; ${index < tracking.length - 1 ? 'padding-bottom: 24px;' : ''}">
-                ${index < tracking.length - 1 ? `
-                    <div style="position: absolute; left: 19px; top: 48px; bottom: 0; width: 2px; background: #e0e0e0;"></div>
+// VISUAL PIZZA TRACKER
+function renderDeliveryTracker() {
+    const timeline = document.getElementById('deliveryTimeline');
+    if (!timeline || !currentOrder) return;
+    
+    const status = currentOrder.status;
+
+    // Handle Cancelled/Declined State
+    if (status === 'cancelled' || status === 'rejected') {
+        timeline.innerHTML = `
+            <div style="text-align: center; padding: 30px 20px; background: #fee2e2; border-radius: 8px;">
+                <i class="bi bi-x-circle-fill" style="font-size: 40px; color: #dc2626; margin-bottom: 12px; display: block;"></i>
+                <h4 style="margin: 0 0 8px 0; color: #991b1b;">Order Cancelled</h4>
+                <p style="margin: 0; font-size: 13px; color: #b91c1c;">This order will not be fulfilled.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Normal Delivery Steps
+    const steps = [
+        { id: 'pending', label: 'Order Received', icon: 'receipt', color: '#3b82f6' },
+        { id: 'confirmed', label: 'Preparing Order', icon: 'box-seam', color: '#f59e0b' },
+        { id: 'in-progress', label: 'Out for Delivery', icon: 'truck', color: '#8b5cf6' },
+        { id: 'completed', label: 'Delivered', icon: 'check-circle-fill', color: '#16a34a' }
+    ];
+
+    // Find current progress
+    let currentStepIndex = steps.findIndex(s => s.id === status);
+    if (currentStepIndex === -1) currentStepIndex = 0; // Fallback
+
+    let html = `<div style="display: flex; flex-direction: column; gap: 0;">`;
+
+    steps.forEach((step, index) => {
+        const isPast = index < currentStepIndex;
+        const isCurrent = index === currentStepIndex;
+        const isFuture = index > currentStepIndex;
+
+        let iconColor = isFuture ? '#cbd5e1' : step.color;
+        let bgColor = isFuture ? '#f8fafc' : `${step.color}15`;
+        let textColor = isFuture ? '#94a3b8' : '#0f172a';
+        let lineBg = isPast ? step.color : '#e2e8f0';
+
+        html += `
+            <div style="display: flex; gap: 16px; position: relative; min-height: 70px;">
+                ${index < steps.length - 1 ? `
+                    <div style="position: absolute; left: 19px; top: 40px; bottom: -10px; width: 2px; background: ${lineBg}; z-index: 0; transition: background 0.3s;"></div>
                 ` : ''}
-                
-                <div style="width: 40px; height: 40px; background: ${statusColors[entry.status] || '#6b7280'}15; border: 2px solid ${statusColors[entry.status] || '#6b7280'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
-                    <i class="bi bi-${statusIcons[entry.status] || 'circle'}" style="font-size: 18px; color: ${statusColors[entry.status] || '#6b7280'};"></i>
+
+                <div style="width: 40px; height: 40px; background: ${bgColor}; border: 2px solid ${isFuture ? '#e2e8f0' : step.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; transition: all 0.3s;">
+                    <i class="bi bi-${step.icon}" style="font-size: 16px; color: ${iconColor};"></i>
                 </div>
-                
-                <div style="flex: 1; padding-top: 6px;">
-                    <div style="font-weight: 700; color: #000; margin-bottom: 4px; text-transform: capitalize;">
-                        ${entry.status.replace('-', ' ')}
+
+                <div style="flex: 1; padding-top: 10px;">
+                    <div style="font-weight: ${isCurrent ? '700' : '600'}; color: ${textColor}; font-size: 14px; transition: color 0.3s;">
+                        ${step.label}
                     </div>
-                    ${entry.notes ? `
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">${entry.notes}</div>
-                    ` : ''}
-                    <div style="color: #999; font-size: 12px;">
-                        ${formatDate(new Date(entry.created_at), 'long')} at ${new Date(entry.created_at).toLocaleTimeString()}
-                    </div>
-                    ${entry.photo_url ? `
-                        <img src="${entry.photo_url}" style="width: 100%; max-width: 300px; border-radius: 8px; margin-top: 12px; cursor: pointer;" onclick="window.open('${entry.photo_url}', '_blank')" />
+                    ${isCurrent ? `<div style="color: ${step.color}; font-size: 12px; margin-top: 4px; font-weight: 500;">Current Status</div>` : ''}
+                    ${isPast ? `<div style="color: #64748b; font-size: 12px; margin-top: 4px;"><i class="bi bi-check2"></i> Completed</div>` : ''}
+                    
+                    ${(step.id === 'completed' && currentOrder.delivery_photo_url && isCurrent) ? `
+                        <img src="${currentOrder.delivery_photo_url}" style="width: 100%; max-width: 200px; border-radius: 8px; margin-top: 12px; cursor: pointer; border: 1px solid #e2e8f0;" onclick="window.open('${currentOrder.delivery_photo_url}', '_blank')" />
                     ` : ''}
                 </div>
             </div>
-        `).join('');
-        
-    } catch (error) {
-        console.error('Load tracking error:', error);
-    }
+        `;
+    });
+
+    html += `</div>`;
+    timeline.innerHTML = html;
 }
 
 // Handle photo upload
@@ -399,13 +374,12 @@ async function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    // Validate file
     if (!file.type.startsWith('image/')) {
         showToast('Please select an image file', 'error');
         return;
     }
     
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) { 
         showToast('Image size should be less than 5MB', 'error');
         return;
     }
@@ -413,22 +387,19 @@ async function handlePhotoUpload(event) {
     try {
         showToast('Uploading photo...', 'info');
         
-        // Upload to Supabase Storage
         const fileName = `delivery_${orderId}_${Date.now()}.${file.name.split('.').pop()}`;
-        const { data, error } = await merchantSupabase.storage
+        const { data, error } = await MerchantAuth.getSupabase().storage
             .from('delivery-photos')
             .upload(fileName, file);
         
         if (error) throw error;
         
-        // Get public URL
-        const { data: urlData } = merchantSupabase.storage
+        const { data: urlData } = MerchantAuth.getSupabase().storage
             .from('delivery-photos')
             .getPublicUrl(fileName);
         
         uploadedPhoto = urlData.publicUrl;
         
-        // Show preview
         const preview = document.getElementById('photoPreview');
         const previewContainer = document.getElementById('deliveryPhotoPreview');
         if (preview && previewContainer) {
@@ -436,7 +407,7 @@ async function handlePhotoUpload(event) {
             previewContainer.style.display = 'block';
         }
         
-        showToast('Photo uploaded successfully!', 'success');
+        showToast('Photo uploaded! Click "Mark as Delivered" to save.', 'success');
         
     } catch (error) {
         console.error('Photo upload error:', error);
@@ -464,10 +435,10 @@ function getStatusColor(status) {
         'pending': '#f59e0b',
         'confirmed': '#3b82f6',
         'in-progress': '#8b5cf6',
-        'completed': '#22c55e',
+        'completed': '#16a34a',
         'cancelled': '#ef4444'
     };
-    return colors[status] || '#6b7280';
+    return colors[status] || '#64748b';
 }
 
 function formatCurrency(amount, currency = 'NGN') {
@@ -501,21 +472,6 @@ function formatDate(date, format = 'default') {
     }
     
     return date.toLocaleDateString();
-}
-
-async function merchantLogout() {
-    if (confirm('Are you sure you want to logout?')) {
-        try {
-            await MerchantAuth.logout();
-            showToast('Logged out successfully', 'success');
-            setTimeout(() => {
-                window.location.href = 'merchant-login.html';
-            }, 1000);
-        } catch (error) {
-            console.error('Logout error:', error);
-            showToast('Logout failed', 'error');
-        }
-    }
 }
 
 // Initialize on page load

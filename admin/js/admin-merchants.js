@@ -1,6 +1,6 @@
 /**
  * Admin Merchants Management
- * Handles listing, verifying, and suspending merchants.
+ * Handles listing, verifying, suspending merchants, and searching.
  */
 
 let allMerchants = [];
@@ -25,7 +25,7 @@ async function loadMerchants() {
 
     try {
         // Use the helper function if available, or fallback to global
-        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : window.supabaseAdmin;
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabaseAdmin);
         
         if (!sb) throw new Error('Supabase client not initialized');
 
@@ -42,7 +42,7 @@ async function loadMerchants() {
 
     } catch (err) {
         console.error('Load Error:', err);
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger" style="padding:30px;">Error: ${err.message}</td></tr>`;
     }
 }
 
@@ -54,7 +54,7 @@ function renderMerchants(list) {
     if (!tbody) return;
 
     if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:30px; color:#666;">No registered merchants found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:30px; color:#666;">No registered merchants found matching your search.</td></tr>';
         return;
     }
 
@@ -96,6 +96,31 @@ function renderMerchants(list) {
 }
 
 // ============================================
+// 2.5 SEARCH LOGIC (FIX)
+// ============================================
+window.filterMerchants = function() {
+    const searchInput = document.getElementById('searchMerchant');
+    if (!searchInput) return;
+    
+    const term = searchInput.value.toLowerCase().trim();
+    
+    if (!term) {
+        renderMerchants(allMerchants);
+        return;
+    }
+    
+    const filtered = allMerchants.filter(m => {
+        const businessName = (m.business_name || '').toLowerCase();
+        const ownerName = (m.owner_name || '').toLowerCase();
+        const email = (m.email || '').toLowerCase();
+        
+        return businessName.includes(term) || ownerName.includes(term) || email.includes(term);
+    });
+    
+    renderMerchants(filtered);
+}
+
+// ============================================
 // 3. STATS & ACTIONS
 // ============================================
 function updateStats(list) {
@@ -131,9 +156,21 @@ window.viewMerchant = function(id) {
     const titleEl = document.getElementById('modalTitle');
     const contentEl = document.getElementById('modalContent');
     const modal = document.getElementById('docModal');
+    const approveBtn = document.getElementById('approveBtn');
 
     if(titleEl) titleEl.textContent = m.business_name;
     if(contentEl) contentEl.innerHTML = html;
+    
+    // FIX: Hook up the approve button in the modal
+    if (approveBtn) {
+        if (m.verification_status !== 'verified') {
+            approveBtn.style.display = 'block';
+            approveBtn.onclick = () => verifyMerchant(m.id);
+        } else {
+            approveBtn.style.display = 'none';
+        }
+    }
+
     if(modal) modal.style.display = 'flex';
 }
 
@@ -141,7 +178,7 @@ function getDocUrl(path) {
     // Basic helper to get URL if it's just a path string
     if (!path) return '#';
     if (path.startsWith('http')) return path;
-    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : window.supabaseAdmin;
+    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabaseAdmin);
     const { data } = sb.storage.from('merchant-documents').getPublicUrl(path);
     return data.publicUrl;
 }
@@ -150,7 +187,7 @@ function getDocUrl(path) {
 window.verifyMerchant = async function(id) {
     if(!confirm('Approve this merchant and activate account?')) return;
     
-    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : window.supabaseAdmin;
+    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabaseAdmin);
     const { error } = await sb.from('merchants').update({ 
         verification_status: 'verified', 
         is_active: true,
@@ -158,12 +195,20 @@ window.verifyMerchant = async function(id) {
     }).eq('id', id);
     
     if(!error) {
-        alert('Merchant Verified Successfully!');
+        if (typeof showToast === 'function') {
+            showToast('Merchant Verified Successfully!', 'success');
+        } else {
+            alert('Merchant Verified Successfully!');
+        }
         const modal = document.getElementById('docModal');
         if(modal) modal.style.display = 'none';
-        loadMerchants();
+        loadMerchants(); // Reloads table to reflect changes
     } else {
-        alert('Error: ' + error.message);
+        if (typeof showToast === 'function') {
+            showToast('Error: ' + error.message, 'error');
+        } else {
+            alert('Error: ' + error.message);
+        }
     }
 }
 
@@ -171,14 +216,25 @@ window.verifyMerchant = async function(id) {
 window.suspendMerchant = async function(id) {
     if(!confirm('Suspend this merchant account? They will lose access.')) return;
     
-    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : window.supabaseAdmin;
+    const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabaseAdmin);
     const { error } = await sb.from('merchants').update({ 
         is_active: false,
-        status: 'suspended' 
+        status: 'suspended',
+        verification_status: 'suspended'
     }).eq('id', id);
     
-    if(!error) loadMerchants();
-    else alert('Error: ' + error.message);
+    if(!error) {
+        if (typeof showToast === 'function') {
+            showToast('Merchant suspended.', 'success');
+        }
+        loadMerchants();
+    } else {
+        if (typeof showToast === 'function') {
+            showToast('Error: ' + error.message, 'error');
+        } else {
+            alert('Error: ' + error.message);
+        }
+    }
 }
 
 // Close Modal Helper

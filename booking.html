@@ -4,26 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Surprise - Wow Surprises</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/loginstyles.css">
-    <link rel="stylesheet" href="css/booking.css">
+    <link rel="stylesheet" href="css/bookings.css">
     <link rel="stylesheet" href="css/booking-integration.css">
-    
-    <!-- Flutterwave Inline JS -->
+
+    <style>
+        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+
+        @media (max-width: 768px) {
+            #mobileMenuBtn { display: block; }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                gap: 15px;
+            }
+
+            .nav-links.active { display: flex; }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+            }
+
+            .nav-links li span {
+                font-weight: 700;
+                display: block;
+                padding: 10px 0;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* FIX: Progress steps 1-5 overlap on small screens */
+        @media (max-width: 600px) {
+            .progress-steps {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 0;
+                overflow: visible;
+            }
+
+            .progress-steps::before {
+                top: 16px;
+            }
+
+            .step {
+                min-width: 0;
+                flex: none;
+                gap: 6px;
+            }
+
+            .step-number {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+
+            .step-label {
+                font-size: 10px;
+                word-break: break-word;
+                line-height: 1.2;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .step-label { display: none; }
+            .step-number { width: 28px; height: 28px; font-size: 12px; }
+            .progress-steps::before { top: 14px; }
+        }
+
+        /* FIX: navigation.js injects a red logout button — suppress it, auth handled below */
+        #loginStatus { display: none !important; }
+    </style>
+
     <script src="https://checkout.flutterwave.com/v3.js"></script>
-    
-    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <nav class="navbar">
         <div class="container">
-            <div class="logo">LOGO</div>
-            <ul class="nav-links">
+            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
+                <img src="images/logo.png" alt="WOW Surprises"
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
+            </a>
+
+            <button id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html" class="active">Custom Package</a></li>
+                <li><a href="custom-package.html">Custom Package</a></li>
                 <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
         </div>
     </nav>
@@ -34,7 +123,6 @@
             <p>Fill in the details to create an unforgettable moment</p>
         </div>
 
-        <!-- Progress Steps -->
         <div class="progress-steps">
             <div class="step active" data-step="1">
                 <div class="step-number">1</div>
@@ -58,14 +146,10 @@
             </div>
         </div>
 
-        <!-- Package Summary -->
         <div id="packageSummary" class="package-summary">
-            <!-- Will be populated dynamically -->
         </div>
 
-        <!-- Booking Form -->
         <div id="bookingForm" class="booking-form">
-            <!-- Step 1: Recipient Details -->
             <div class="form-step active" data-step="1">
                 <h2><i class="bi bi-person-circle"></i> Recipient Details</h2>
                 <div class="form-group">
@@ -93,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- Step 2: Date & Time -->
             <div class="form-step" data-step="2">
                 <h2><i class="bi bi-calendar-event"></i> Select Date & Time</h2>
                 <div class="form-row">
@@ -102,8 +185,25 @@
                         <input type="date" id="surpriseDate" required>
                     </div>
                     <div class="form-group">
-                        <label for="surpriseTime" class="required">Surprise Time</label>
-                        <input type="time" id="surpriseTime" required>
+                        <label class="required">Surprise Time</label>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="surpriseHour" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: white;">
+                                <option value="">Hour</option>
+                                <option value="01">01</option><option value="02">02</option><option value="03">03</option>
+                                <option value="04">04</option><option value="05">05</option><option value="06">06</option>
+                                <option value="07">07</option><option value="08">08</option><option value="09">09</option>
+                                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                            </select>
+                            <select id="surpriseMinute" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: white;">
+                                <option value="">Min</option>
+                                <option value="00">00</option><option value="15">15</option>
+                                <option value="30">30</option><option value="45">45</option>
+                            </select>
+                            <select id="surpriseAmPm" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: white;">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -133,7 +233,6 @@
                 </div>
             </div>
 
-            <!-- Step 3: Personalization -->
             <div class="form-step" data-step="3">
                 <h2><i class="bi bi-chat-heart"></i> Personalize Your Surprise</h2>
                 <div class="form-group">
@@ -192,13 +291,11 @@
                 </div>
             </div>
 
-            <!-- Step 4: Payment -->
             <div class="form-step" data-step="4">
                 <h2><i class="bi bi-credit-card"></i> Choose Payment Method</h2>
                 <p class="payment-subtitle">Select your preferred payment method to complete your booking</p>
                 
                 <div class="payment-methods">
-                    <!-- Flutterwave Card Payment -->
                     <div class="payment-method-card">
                         <div class="payment-method-header">
                             <div class="payment-icon flutterwave-color">
@@ -219,7 +316,6 @@
                         </button>
                     </div>
 
-                    <!-- Flutterwave Bank Transfer -->
                     <div class="payment-method-card">
                         <div class="payment-method-header">
                             <div class="payment-icon bank-color">
@@ -240,7 +336,6 @@
                         </button>
                     </div>
 
-                    <!-- Flutterwave USSD -->
                     <div class="payment-method-card">
                         <div class="payment-method-header">
                             <div class="payment-icon ussd-color">
@@ -269,7 +364,6 @@
                 </div>
             </div>
 
-            <!-- Step 5: Confirmation -->
             <div class="form-step" data-step="5">
                 <div class="success-message">
                     <i class="bi bi-check-circle-fill"></i>
@@ -282,7 +376,6 @@
                 </div>
                 
                 <div id="bookingReview" class="booking-review">
-                    <!-- Will be populated dynamically -->
                 </div>
 
                 <div class="form-navigation confirmation-actions">
@@ -297,11 +390,112 @@
         </div>
     </main>
 
-   <!-- Scripts -->
+    <style>
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .review-modal-content {
+            background: white; padding: 40px 30px; border-radius: 16px;
+            width: 90%; max-width: 450px; position: relative; text-align: center;
+            transform: translateY(20px); transition: transform 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .modal-overlay.show .review-modal-content { transform: translateY(0); }
+        .close-modal-btn {
+            position: absolute; top: 15px; right: 15px; background: #f5f5f5; 
+            border: none; border-radius: 50%; width: 30px; height: 30px;
+            font-size: 14px; cursor: pointer; color: #666;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .close-modal-btn:hover { background: #e0e0e0; }
+        .booking-stars i { font-size: 36px; color: #e4e5e9; cursor: pointer; transition: 0.2s; margin: 0 5px; }
+    </style>
+
+    <div id="bookingReviewModal" class="modal-overlay">
+        <div class="review-modal-content">
+            <button class="close-modal-btn" onclick="closeReviewModal()">X</button>
+            <div style="font-size: 40px; margin-bottom: 10px;" id="modalEmoji">✨</div>
+            <h2 id="reviewModalTitle" style="margin-bottom: 10px;">How was your booking experience?</h2>
+            <p style="color: #666; margin-bottom: 20px;">Your feedback helps us create better surprises.</p>
+            
+            <div class="booking-stars" id="bookingStarContainer" style="margin-bottom: 20px;">
+                <i class="bi bi-star-fill" data-val="1"></i>
+                <i class="bi bi-star-fill" data-val="2"></i>
+                <i class="bi bi-star-fill" data-val="3"></i>
+                <i class="bi bi-star-fill" data-val="4"></i>
+                <i class="bi bi-star-fill" data-val="5"></i>
+            </div>
+            <input type="hidden" id="bookingRatingValue">
+            
+            <textarea id="bookingReviewComment" class="form-control" rows="3" placeholder="Tell us what you loved, or what went wrong..." style="margin-bottom: 20px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;"></textarea>
+            
+            <button type="button" class="btn-primary" id="submitBookingReviewBtn" onclick="submitBookingReview()" style="width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 8px; border: none; cursor: pointer;">Submit Feedback</button>
+            <button type="button" onclick="closeReviewModal()" style="width: 100%; padding: 10px; background: transparent; color: #888; border: none; cursor: pointer;">No thanks, maybe later</button>
+        </div>
+    </div>
+
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/supabaseApi.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/booking.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const toggleBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const icon = toggleBtn?.querySelector('i');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.replace('bi-list', 'bi-x-lg');
+                } else {
+                    icon.classList.replace('bi-x-lg', 'bi-list');
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                icon.classList.replace('bi-x-lg', 'bi-list');
+            }
+        });
+
+        // Auth: match index.html pattern exactly (no name display, no red button)
+        try {
+            const authLink = document.getElementById('authLink');
+            const client = window.sbClient || window.supabase;
+            if (client) {
+                const { data } = await client.auth.getSession();
+                if (data?.session?.user) {
+                    // Hi, Name logic removed. Auth state update only.
+                    authLink.textContent = 'Logout';
+                    authLink.href = '#';
+                    authLink.style.display = '';
+                    authLink.onclick = async (e) => {
+                        e.preventDefault();
+                        if (confirm('Logout?')) {
+                            await client.auth.signOut();
+                            localStorage.removeItem('currentUser');
+                            window.location.reload();
+                        }
+                    };
+                } else {
+                    // Ensure login link is visible if navigation.js hid it
+                    authLink.style.display = '';
+                }
+            }
+        } catch (error) { console.error('Auth error:', error); }
+    });
+    </script>
 </body>
 </html>

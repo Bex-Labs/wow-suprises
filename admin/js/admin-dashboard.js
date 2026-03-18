@@ -1,6 +1,6 @@
 /**
  * WOW Surprises - Admin Dashboard FINAL VERSION
- * Fixed: 'Active Users' card now correctly fetches 'client' role instead of 'user'
+ * Fixed: 'Recent Bookings' now properly falls back to booking.package_name and booking.customer_name
  */
 
 let bookingTrendsChart = null;
@@ -79,7 +79,7 @@ async function loadCacheData() {
 }
 
 // ==========================================
-// HELPER FUNCTIONS
+// HELPER FUNCTIONS (FIXED FALLBACKS)
 // ==========================================
 
 function getBookingStatus(booking) {
@@ -94,14 +94,22 @@ function getTotalAmount(booking) {
     return parseFloat(booking.total_amount || booking.amount || booking.price || 0);
 }
 
-function getUserName(userId) {
-    const user = usersCache[userId];
-    return user ? (user.full_name || user.name || 'Unknown User') : 'Unknown User';
+function getUserName(booking) {
+    const user = usersCache[booking.user_id];
+    if (user && (user.full_name || user.name)) {
+        return user.full_name || user.name;
+    }
+    // Fallback if ID lookup fails
+    return booking.customer_name || booking.recipient_name || 'Guest User';
 }
 
-function getPackageName(packageId) {
-    const pkg = packagesCache[packageId];
-    return pkg ? (pkg.title || pkg.name || 'Unknown Package') : 'Unknown Package';
+function getPackageName(booking) {
+    const pkg = packagesCache[booking.package_id];
+    if (pkg && (pkg.title || pkg.name)) {
+        return pkg.title || pkg.name;
+    }
+    // Fallback if ID lookup fails
+    return booking.package_name || 'Custom Package';
 }
 
 function getPackageCategory(packageId) {
@@ -120,7 +128,6 @@ async function loadStatistics() {
         // Fetch bookings and users separately
         const [bookingsResult, usersResult] = await Promise.all([
             sb.from('bookings').select('*'),
-            // FIX: Changed 'user' to 'client' to match your database role
             sb.from('profiles').select('*').eq('role', 'client') 
         ]);
         
@@ -140,8 +147,7 @@ async function loadStatistics() {
             .reduce((sum, b) => sum + getTotalAmount(b), 0);
         document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
         
-        // 3. Active Users (FIX: Now using the correct 'client' list)
-        // We check if status is 'active' OR if status is undefined (assume active for legacy)
+        // 3. Active Users
         const activeUsers = users.filter(u => u.status === 'active' || !u.status).length;
         document.getElementById('activeUsers').textContent = activeUsers;
         
@@ -202,7 +208,6 @@ function updateTrendUI(elementId, value) {
     if (!el) return;
     
     el.textContent = Math.abs(value) + '%';
-    // You can add logic here to change color/icon based on positive/negative
 }
 
 // ==========================================
@@ -268,7 +273,7 @@ async function loadBookingTrends(days = 30) {
                     },
                     {
                         label: 'Revenue (₦)',
-                        data: Object.values(revenueByDate), // No longer dividing by 1000 for accuracy
+                        data: Object.values(revenueByDate),
                         borderColor: '#22c55e',
                         backgroundColor: 'rgba(34, 197, 94, 0.1)',
                         tension: 0.4,
@@ -325,7 +330,6 @@ async function loadRevenueByCategory() {
         if (!ctx) return;
         
         if (labels.length === 0) {
-            // Optional: Show placeholder if no data
             return; 
         }
         
@@ -375,24 +379,25 @@ async function loadRecentBookings() {
         
         let html = '<div class="list-group">';
         bookings.forEach(booking => {
-            const userName = getUserName(booking.user_id);
-            const packageName = getPackageName(booking.package_id);
+            // FIX: Now uses the smart fallback helpers
+            const userName = getUserName(booking);
+            const packageName = getPackageName(booking);
+            
             const status = getBookingStatus(booking);
-            // Badge color mapping
             const statusColors = { completed:'success', confirmed:'info', cancelled:'danger', pending:'warning' };
             const badgeColor = statusColors[status] || 'secondary';
             
             html += `
                 <div class="list-item" style="padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-weight: 600;">${packageName}</div>
-                        <div style="font-size: 12px; color: #666;">
+                        <div style="font-weight: 600; color: #0f172a;">${packageName}</div>
+                        <div style="font-size: 12px; color: #64748b;">
                             <i class="bi bi-person"></i> ${userName} &bull; ${formatDate(booking.created_at)}
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <span class="badge badge-${badgeColor}" style="margin-bottom: 4px; display: inline-block;">${status}</span>
-                        <div style="font-weight: 600;">${formatCurrency(getTotalAmount(booking))}</div>
+                        <span class="badge badge-${badgeColor}" style="margin-bottom: 4px; display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;">${status}</span>
+                        <div style="font-weight: 600; color: #0f172a;">${formatCurrency(getTotalAmount(booking))}</div>
                     </div>
                 </div>
             `;
@@ -412,20 +417,33 @@ async function loadRecentBookings() {
 async function loadTopPackages() {
     try {
         const sb = getSupabaseAdmin();
-        const { data: bookings } = await sb.from('bookings').select('package_id');
+        const { data: bookings } = await sb.from('bookings').select('package_id, package_name');
         
         const packageCounts = {};
+        const packageInfo = {};
+        
         (bookings || []).forEach(b => {
-            const pid = b.package_id;
-            if(pid) packageCounts[pid] = (packageCounts[pid] || 0) + 1;
+            const key = b.package_id || b.package_name || 'custom';
+            
+            packageCounts[key] = (packageCounts[key] || 0) + 1;
+            
+            if (!packageInfo[key]) {
+                if (b.package_id && packagesCache[b.package_id]) {
+                    packageInfo[key] = packagesCache[b.package_id];
+                } else {
+                    packageInfo[key] = {
+                        title: b.package_name || 'Custom Package',
+                        category: 'General'
+                    };
+                }
+            }
         });
         
         const topPackages = Object.keys(packageCounts)
-            .map(pkgId => ({
-                ...packagesCache[pkgId],
-                count: packageCounts[pkgId]
+            .map(key => ({
+                ...packageInfo[key],
+                count: packageCounts[key]
             }))
-            .filter(pkg => pkg.id) // Filter out nulls if package deleted
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
             
@@ -439,15 +457,15 @@ async function loadTopPackages() {
         
         let html = '<div class="list-group">';
         topPackages.forEach((pkg, idx) => {
-            const title = pkg.title || pkg.name || 'Unknown';
+            const title = pkg.title || pkg.name || 'Unknown Package';
             html += `
                 <div class="list-item" style="padding: 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px;">
-                    <div style="background: #f0f0f0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">${idx+1}</div>
+                    <div style="background: #f1f5f9; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #0f172a;">${idx+1}</div>
                     <div style="flex: 1;">
-                        <div style="font-weight: 600;">${title}</div>
-                        <div style="font-size: 12px; color: #666;">${pkg.category || 'General'}</div>
+                        <div style="font-weight: 600; color: #0f172a;">${title}</div>
+                        <div style="font-size: 12px; color: #64748b;">${pkg.category || 'General'}</div>
                     </div>
-                    <div style="font-weight: 600;">${pkg.count} bookings</div>
+                    <div style="font-weight: 600; color: #0f172a;">${pkg.count} bookings</div>
                 </div>
             `;
         });

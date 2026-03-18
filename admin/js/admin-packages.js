@@ -1,6 +1,6 @@
 /**
  * Admin Packages Management - REAL MERCHANT DATA VERSION
- * Fixes: Status Count (0 issue), Image 404s, and Case Sensitivity
+ * Fixes: Status Count (0 issue), Image 404s, Case Sensitivity, PDF Export, and CATEGORY COLUMN SYNC
  */
 
 let allPackages = [];
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ========================================
-// HELPER: Normalize Status (The Fix)
+// HELPER: Normalize Status
 // ========================================
 function normalizeStatus(status) {
     if (!status) return 'inactive'; // Handle null/undefined
@@ -33,7 +33,7 @@ function normalizeStatus(status) {
     const s = String(status).toLowerCase().trim();
     
     // Accept ANY of these as "Active"
-    const activeKeywords = ['active', 'published', 'true', '1', 'enabled', 'available', 'yes'];
+    const activeKeywords = ['active', 'published', 'true', '1', 'enabled', 'available', 'yes', 't'];
     
     if (activeKeywords.includes(s)) {
         return 'active';
@@ -60,7 +60,7 @@ async function loadAdminName() {
 }
 
 // ========================================
-// FUNCTION 2: Load All Packages
+// FUNCTION 2: Load All Packages (FIXED CATEGORY MAPPING)
 // ========================================
 async function loadAllPackages() {
     try {
@@ -80,16 +80,13 @@ async function loadAllPackages() {
         
         // MAP DATA & NORMALIZE STATUS
         allPackages = services.map(svc => {
-            // ★ DEBUG: This will show exactly what string is in your DB
-            console.log(`🔍 Package "${svc.service_name}" - Raw Status in DB: [${svc.status}]`);
-            
             return {
                 id: svc.id,
                 title: svc.service_name,
-                category: svc.category,
+                // FIX: explicitly check for 'service_category' (Merchant format) AND 'category'
+                category: svc.service_category || svc.category || '',
                 price: svc.base_price,
-                status: normalizeStatus(svc.status), // Use smart normalizer
-                // ★ FIX: Use online placeholder if image is missing/broken
+                status: normalizeStatus(svc.is_active || svc.status),
                 image_url: svc.image_url || 'https://placehold.co/600x400/e2e8f0/64748b?text=No+Image',
                 description: svc.description,
                 merchantName: svc.merchants?.business_name || 'System Admin',
@@ -101,10 +98,7 @@ async function loadAllPackages() {
 
         filteredPackages = [...allPackages];
         
-        // Count active packages
-        const activeCount = allPackages.filter(p => p.status === 'active').length;
-        console.log(`✅ Loaded ${allPackages.length} packages. Active: ${activeCount}`);
-        
+        // Load accurate booking counts via IDs
         await loadBookingCounts();
         
         updateStats(); 
@@ -124,19 +118,31 @@ async function loadAllPackages() {
 async function loadBookingCounts() {
     try {
         const sb = window.sbClient;
-        const { data: bookings } = await sb.from('bookings').select('package_name');
+        
+        // Fetch the actual package_id, not just the string name
+        const { data: bookings, error } = await sb
+            .from('bookings')
+            .select('package_id, package_name');
+            
+        if (error) throw error;
         
         const counts = {};
         if (bookings) {
             bookings.forEach(b => {
-                if(b.package_name) counts[b.package_name] = (counts[b.package_name] || 0) + 1;
+                // Group by ID first for accuracy, fallback to name string
+                const key = b.package_id || b.package_name;
+                if(key) counts[key] = (counts[key] || 0) + 1;
             });
         }
         
+        // Map the counts back to the packages
         allPackages.forEach(pkg => {
-            pkg.bookingCount = counts[pkg.title] || 0;
+            pkg.bookingCount = counts[pkg.id] || counts[pkg.title] || 0;
         });
-    } catch (e) { console.error('Error counting bookings:', e); }
+        
+    } catch (e) { 
+        console.error('Error counting bookings:', e); 
+    }
 }
 
 // ========================================
@@ -205,13 +211,13 @@ function displayPackages(packages) {
                     <div class="package-bookings-admin"><i class="bi bi-calendar-check"></i> ${pkg.bookingCount} bookings</div>
                 </div>
                 <div class="package-actions-admin">
-                    <button class="btn-icon" onclick="viewPackage('${pkg.id}')"><i class="bi bi-eye"></i></button>
-                    <button class="btn-icon" onclick="editPackage('${pkg.id}')"><i class="bi bi-pencil"></i></button>
+                    <button class="btn-icon" onclick="viewPackage('${pkg.id}')" title="View details"><i class="bi bi-eye"></i></button>
+                    <button class="btn-icon" onclick="editPackage('${pkg.id}')" title="Edit package"><i class="bi bi-pencil"></i></button>
                     <button class="btn-icon ${pkg.status === 'active' ? 'btn-warning' : 'btn-success'}" 
-                            onclick="togglePackageStatus('${pkg.id}')">
-                        <i class="bi bi-${pkg.status === 'active' ? 'pause-circle' : 'play-circle'}"></i>
+                            onclick="togglePackageStatus('${pkg.id}')" title="${pkg.status === 'active' ? 'Deactivate' : 'Activate'} package">
+                        <i class="bi bi-${pkg.status === 'active' ? 'eye-slash' : 'eye'}"></i>
                     </button>
-                    <button class="btn-icon btn-danger" onclick="confirmDeletePackage('${pkg.id}')"><i class="bi bi-trash"></i></button>
+                    <button class="btn-icon btn-danger" onclick="confirmDeletePackage('${pkg.id}')" title="Delete package"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </div>
@@ -219,7 +225,7 @@ function displayPackages(packages) {
 }
 
 // ========================================
-// CRUD OPERATIONS
+// CRUD OPERATIONS (FIXED DB COLUMNS)
 // ========================================
 
 function openCreatePackageModal() {
@@ -251,16 +257,77 @@ function editPackage(id) {
     document.getElementById('packageModal').style.display = 'block';
 }
 
+// View Package Function
+function viewPackage(id) {
+    const pkg = allPackages.find(p => p.id === id);
+    if (!pkg) return;
+    
+    const viewModalBody = document.getElementById('viewModalBody');
+    const featuresList = Array.isArray(pkg.features) && pkg.features.length > 0 
+        ? pkg.features.map(f => `<li><i class="bi bi-check2"></i> ${f}</li>`).join('') 
+        : '<li>No specific features listed.</li>';
+
+    viewModalBody.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <img src="${pkg.image_url}" alt="${pkg.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
+            <div>
+                <h3 style="margin-bottom: 5px;">${pkg.title}</h3>
+                <div style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; background: #f0fdf4; color: #166534; margin-bottom: 15px;">
+                    ${formatCurrency(pkg.price)}
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f8fafc; padding: 15px; border-radius: 8px;">
+                <div><strong>Category:</strong> <span style="text-transform: capitalize;">${pkg.category || 'N/A'}</span></div>
+                <div><strong>Status:</strong> <span style="text-transform: capitalize; color: ${pkg.status === 'active' ? 'green' : 'red'}">${pkg.status}</span></div>
+                <div><strong>Merchant:</strong> ${pkg.merchantName}</div>
+                <div><strong>Bookings:</strong> ${pkg.bookingCount}</div>
+            </div>
+            
+            <div>
+                <h4>Description</h4>
+                <p style="color: #4b5563; line-height: 1.6;">${pkg.description || 'No description provided.'}</p>
+            </div>
+            
+            <div>
+                <h4>Included Features</h4>
+                <ul style="list-style: none; padding: 0; display: grid; gap: 8px;">
+                    ${featuresList}
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('viewModal').style.display = 'block';
+}
+
+// Create/Update functionality and DB constraints
 async function savePackage(e) {
     e.preventDefault();
     const fd = new FormData(e.target);
     const features = fd.get('features').split('\n').filter(f => f.trim());
     
+    // Check for admin merchant account
+    let adminMerchantId = null;
+    try {
+        const { data: adminMerchant } = await window.sbClient
+            .from('merchants')
+            .select('id')
+            .eq('business_name', 'WOW Admin') 
+            .maybeSingle();
+            
+        adminMerchantId = adminMerchant ? adminMerchant.id : null;
+    } catch (e) {
+        console.warn('Could not find admin merchant ID');
+    }
+    
     const data = {
         service_name: fd.get('title'),
-        category: fd.get('category'),
+        // FIX: Save category to the correct 'service_category' column in Supabase
+        service_category: fd.get('category').toLowerCase(),
         base_price: parseFloat(fd.get('price')),
-        status: normalizeStatus(fd.get('status')), // Normalize on save too
+        is_active: fd.get('status') === 'active', 
+        status: fd.get('status'), 
         image_url: fd.get('image_url') || 'https://placehold.co/600x400/e2e8f0/64748b?text=No+Image',
         description: fd.get('description'),
         features: features,
@@ -270,37 +337,62 @@ async function savePackage(e) {
     try {
         if (isEditMode && currentPackage) {
             await window.sbClient.from('merchant_services').update(data).eq('id', currentPackage.id);
-            showToast('Updated successfully', 'success');
+            if(typeof showToast === 'function') showToast('Updated successfully', 'success');
         } else {
             data.created_at = new Date().toISOString();
+            
+            if (adminMerchantId) data.merchant_id = adminMerchantId;
+            
             await window.sbClient.from('merchant_services').insert([data]);
-            showToast('Created successfully', 'success');
+            if(typeof showToast === 'function') showToast('Created successfully', 'success');
         }
+        
         closePackageModal();
-        loadAllPackages();
-    } catch (err) { console.error(err); showToast('Save failed', 'error'); }
+        await loadAllPackages();
+        
+    } catch (err) { 
+        console.error(err); 
+        if(typeof showToast === 'function') {
+            showToast('Save failed: ' + (err.message || 'Unknown error'), 'error'); 
+        } else {
+            alert('Save failed: ' + (err.message || 'Unknown error'));
+        }
+    }
 }
 
+// Fixed toggle logic
 async function togglePackageStatus(id) {
     const pkg = allPackages.find(p => p.id === id);
     const newStatus = pkg.status === 'active' ? 'inactive' : 'active';
+    const newIsActive = newStatus === 'active';
+    
     try {
-        await window.sbClient.from('merchant_services').update({ status: newStatus }).eq('id', id);
-        showToast('Status updated', 'success');
-        loadAllPackages();
-    } catch (e) { showToast(e.message, 'error'); }
+        await window.sbClient.from('merchant_services').update({ 
+            status: newStatus,
+            is_active: newIsActive 
+        }).eq('id', id);
+        
+        if(typeof showToast === 'function') showToast(`Package is now ${newStatus}`, 'success');
+        await loadAllPackages(); // Reload immediately
+    } catch (e) { 
+        if(typeof showToast === 'function') showToast(e.message, 'error'); 
+    }
 }
 
 async function deletePackage(id) {
     try {
         await window.sbClient.from('merchant_services').delete().eq('id', id);
-        showToast('Deleted', 'success');
-        loadAllPackages();
-    } catch (e) { showToast('Delete failed', 'error'); }
+        if(typeof showToast === 'function') showToast('Deleted successfully', 'success');
+        await loadAllPackages();
+    } catch (e) { 
+        if(typeof showToast === 'function') showToast('Delete failed', 'error'); 
+    }
 }
 
 function confirmDeletePackage(id) {
-    if(confirm('Delete this service?')) deletePackage(id);
+    if(confirm('Are you sure you want to permanently delete this service?')) {
+        deletePackage(id);
+    }
 }
 
 // ========================================
@@ -316,31 +408,158 @@ window.onclick = function(e) {
 function formatCurrency(val) { return '₦' + parseFloat(val).toLocaleString('en-NG'); }
 function truncateText(t, l) { return t.length > l ? t.substring(0, l) + '...' : t; }
 
-// Filters
+// ========================================
+// FILTERS & SORTING
+// ========================================
+
 function searchPackages() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
-    filteredPackages = allPackages.filter(p => p.title.toLowerCase().includes(term));
-    displayPackages(filteredPackages);
+    filterAndSortPackages();
 }
+
 function filterPackages() {
-    const cat = document.getElementById('categoryFilter').value;
-    const stat = document.getElementById('statusFilter').value;
-    filteredPackages = allPackages.filter(p => (!cat || p.category === cat) && (!stat || p.status === stat));
-    displayPackages(filteredPackages);
+    filterAndSortPackages();
 }
+
 function sortPackages() {
+    filterAndSortPackages();
+}
+
+// Unified Filter and Sort pipeline
+function filterAndSortPackages() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const cat = document.getElementById('categoryFilter').value.toLowerCase();
+    const stat = document.getElementById('statusFilter').value.toLowerCase();
     const order = document.getElementById('sortOrder').value;
-    filteredPackages.sort((a,b) => {
-        if(order === 'price-low') return a.price - b.price;
-        if(order === 'price-high') return b.price - a.price;
+    
+    // 1. Filter
+    filteredPackages = allPackages.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(term) || (p.merchantName && p.merchantName.toLowerCase().includes(term));
+        const matchesCategory = !cat || (p.category && p.category.toLowerCase() === cat);
+        const matchesStatus = !stat || p.status === stat;
+        
+        return matchesSearch && matchesCategory && matchesStatus;
+    });
+    
+    // 2. Sort 
+    filteredPackages.sort((a, b) => {
+        if (order === 'name') {
+            return a.title.localeCompare(b.title);
+        }
+        if (order === 'price-low') {
+            return parseFloat(a.price || 0) - parseFloat(b.price || 0);
+        }
+        if (order === 'price-high') {
+            return parseFloat(b.price || 0) - parseFloat(a.price || 0);
+        }
+        if (order === 'popular') {
+            return (b.bookingCount || 0) - (a.bookingCount || 0);
+        }
+        if (order === 'oldest') {
+            return new Date(a.created_at) - new Date(b.created_at);
+        }
+        // default: newest
         return new Date(b.created_at) - new Date(a.created_at);
     });
+    
     displayPackages(filteredPackages);
 }
+
 function clearFilters() {
     document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('sortOrder').value = 'newest';
+    
     filteredPackages = [...allPackages];
-    displayPackages(filteredPackages);
+    filterAndSortPackages();
 }
-function refreshPackages() { loadAllPackages(); }
-function exportPackages() { alert("Exporting..."); }
+
+async function refreshPackages() { 
+    await loadAllPackages(); 
+    if(typeof showToast === 'function') showToast('Packages refreshed', 'success');
+}
+
+// ========================================
+// EXPORT TO PDF (jsPDF + AutoTable)
+// ========================================
+function exportPackages() {
+    try {
+        if (!filteredPackages || filteredPackages.length === 0) {
+            if (typeof showToast === 'function') showToast('No packages found to export.', 'warning');
+            return;
+        }
+
+        if (typeof showToast === 'function') showToast('Generating PDF Document...', 'info');
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setProperties({
+            title: 'WOW Surprises - Packages Report',
+            subject: 'Packages List',
+            author: 'WOW Admin'
+        });
+
+        doc.setFontSize(20);
+        doc.setTextColor(0, 0, 0);
+        doc.text('WOW Surprises - Packages Report', 14, 22);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        doc.text(`Generated on: ${date}`, 14, 30);
+        doc.text(`Total Packages: ${filteredPackages.length}`, 14, 36);
+
+        const tableColumns = ["Package Name", "Category", "Merchant", "Price (NGN)", "Status", "Bookings"];
+        const tableRows = [];
+
+        filteredPackages.forEach(pkg => {
+            const packageData = [
+                pkg.title || 'N/A',
+                (pkg.category || 'General').toUpperCase(),
+                pkg.merchantName || 'System Admin',
+                pkg.price ? pkg.price.toLocaleString('en-NG') : '0',
+                (pkg.status || 'inactive').toUpperCase(),
+                pkg.bookingCount || 0
+            ];
+            tableRows.push(packageData);
+        });
+
+        doc.autoTable({
+            head: [tableColumns],
+            body: tableRows,
+            startY: 45, 
+            theme: 'grid',
+            styles: { 
+                fontSize: 9, 
+                cellPadding: 3,
+                font: 'helvetica'
+            },
+            headStyles: { 
+                fillColor: [0, 0, 0], 
+                textColor: [255, 255, 255], 
+                fontStyle: 'bold' 
+            },
+            alternateRowStyles: { 
+                fillColor: [248, 250, 252] 
+            },
+            columnStyles: {
+                3: { halign: 'right' }, 
+                4: { halign: 'center' }, 
+                5: { halign: 'center' }  
+            }
+        });
+
+        doc.save(`WOW_Packages_Report_${new Date().getTime()}.pdf`);
+
+        if (typeof showToast === 'function') showToast('PDF Exported Successfully!', 'success');
+
+    } catch (error) {
+        console.error('❌ Export Error:', error);
+        if (typeof showToast === 'function') {
+            showToast('Failed to generate PDF. Check console for details.', 'error');
+        } else {
+            alert('Failed to generate PDF. Error: ' + error.message);
+        }
+    }
+}

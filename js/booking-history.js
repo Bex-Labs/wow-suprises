@@ -1,4 +1,7 @@
-// Booking History JavaScript - Integrated with Supabase
+// Booking History JavaScript - Integrated with Supabase - SECURED VERSION
+// Fixes: Secured Data Leak (Users only see their own bookings)
+// Fixes: Removed UI Screen Jumping on filter clicks
+// FIXED: Updated to use window.sbClient
 
 let allBookings = [];
 let filteredBookings = [];
@@ -15,46 +18,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Check authentication and load bookings
 async function checkAuthAndLoadBookings() {
-    // 1. Try getting user from Utils or LocalStorage
-    const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : JSON.parse(localStorage.getItem('currentUser'));
+    // 💥 FIX: Use the updated window.sbClient
+    const supabase = window.sbClient || window.supabase;
     
-    // 2. Also verify with Supabase
-    if (typeof API !== 'undefined' && API.auth) {
-        try {
-            const authenticated = await API.auth.isAuthenticated();
-            if (!authenticated && !user) {
-                showNotLoggedIn();
-                return;
-            }
-        } catch (error) {
-            console.error('Auth check error:', error);
-            if (!user) {
-                showNotLoggedIn();
-                return;
-            }
-        }
-    } else if (!user) {
+    if (!supabase) {
+        console.error("Supabase client not found.");
+        showToast("Database connection error.", "error");
+        return;
+    }
+
+    const { data: authData, error } = await supabase.auth.getUser();
+
+    if (error || !authData?.user) {
         showNotLoggedIn();
         return;
     }
     
-    // 3. Load bookings from database
-    await loadBookings();
+    // 3. Load bookings from database securely
+    await loadBookings(authData.user.id);
     
     // 4. Subscribe to real-time updates
-    subscribeToBookingUpdates();
+    subscribeToBookingUpdates(authData.user.id);
 }
 
-// Load bookings from Supabase database
-async function loadBookings() {
+// 💥 THE SECURITY FIX: Explicitly query ONLY the logged-in user's data
+async function loadBookings(userId) {
     showLoading(true);
     
     try {
-        // Fetch bookings from Supabase
-        const bookings = await API.bookings.getBookings();
+        const supabase = window.sbClient || window.supabase;
         
-        // Debugging: Log data to console to verify column names
-        console.log("Loaded Bookings:", bookings);
+        // SECURE FETCH: .eq('user_id', userId) guarantees no data leaks!
+        const { data: bookings, error } = await supabase
+            .from('bookings')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        
+        console.log("🔒 Secured Bookings Loaded:", bookings?.length || 0);
 
         allBookings = bookings || [];
         filteredBookings = bookings || [];
@@ -68,7 +71,7 @@ async function loadBookings() {
         
     } catch (error) {
         console.error('Error loading bookings:', error);
-        showToast('Failed to load bookings: ' + error.message, 'error');
+        showToast('Failed to load bookings.', 'error');
         showEmptyState();
     } finally {
         showLoading(false);
@@ -141,7 +144,7 @@ function displayBookings(bookings) {
         const status = (booking.status || 'pending').toLowerCase();
         const canCancel = status === 'pending' || status === 'confirmed';
         
-        // --- FIX: Safe Date/Time Handling ---
+        // Safe Date/Time Handling
         const displayDate = booking.delivery_date ? formatDate(booking.delivery_date) : '<span style="color:#999">Pending</span>';
         const displayTime = booking.delivery_time ? booking.delivery_time : '<span style="color:#999">Pending</span>';
         const displayPrice = booking.package_price ? formatPrice(parseFloat(booking.package_price)) : '₦0.00';
@@ -344,10 +347,14 @@ function clearFilters() {
 // View booking details
 async function viewBookingDetails(bookingId) {
     try {
-        // Fetch booking details from database
-        const booking = await API.bookings.getBooking(bookingId);
-        
-        if (!booking) {
+        const supabase = window.sbClient || window.supabase;
+        const { data: booking, error } = await supabase
+            .from('bookings')
+            .select('*')
+            .eq('id', bookingId)
+            .single();
+            
+        if (error || !booking) {
             showToast('Booking not found', 'error');
             return;
         }
@@ -356,7 +363,6 @@ async function viewBookingDetails(bookingId) {
         const modal = document.getElementById('viewModal');
         const detailsDiv = document.getElementById('bookingDetails');
         
-        // --- FIX: Safe Date/Time Handling for Modal ---
         const displayDate = booking.delivery_date ? formatDate(booking.delivery_date) : 'Pending';
         const displayTime = booking.delivery_time ? booking.delivery_time : 'Pending';
         const displayPrice = booking.package_price ? formatPrice(parseFloat(booking.package_price)) : '₦0.00';
@@ -458,7 +464,7 @@ async function viewBookingDetails(bookingId) {
         
     } catch (error) {
         console.error('Error viewing booking:', error);
-        showToast('Failed to load booking details: ' + error.message, 'error');
+        showToast('Failed to load booking details.', 'error');
     }
 }
 
@@ -473,30 +479,33 @@ async function confirmCancellation() {
     if (!selectedBookingId) return;
     
     try {
-        // Show loading
         const btn = document.querySelector('#cancelModal .btn-danger');
         if (btn) {
             btn.disabled = true;
             btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Cancelling...';
         }
         
-        // Cancel booking in database
-        await API.bookings.cancelBooking(selectedBookingId);
+        const supabase = window.sbClient || window.supabase;
+        const { error } = await supabase
+            .from('bookings')
+            .update({ 
+                status: 'cancelled', 
+                cancelled_at: new Date().toISOString() 
+            })
+            .eq('id', selectedBookingId);
+            
+        if (error) throw error;
         
         showToast('Booking cancelled successfully', 'success');
         closeCancelModal();
         
         // Reload bookings
-        await loadBookings();
-        
-        // Reapply current filters
-        applyFiltersAndSort();
+        checkAuthAndLoadBookings();
         
     } catch (error) {
         console.error('Error cancelling booking:', error);
-        showToast('Failed to cancel booking: ' + error.message, 'error');
+        showToast('Failed to cancel booking.', 'error');
         
-        // Reset button
         const btn = document.querySelector('#cancelModal .btn-danger');
         if (btn) {
             btn.disabled = false;
@@ -514,35 +523,27 @@ async function refreshBookings() {
     btn.disabled = true;
     btn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Refreshing...';
     
-    await loadBookings();
-    
-    // Reapply current filters
-    if (currentFilter !== 'all' || currentSearchTerm) {
-        applyFiltersAndSort();
-    }
+    await checkAuthAndLoadBookings();
     
     btn.disabled = false;
     btn.innerHTML = originalText;
     showToast('Bookings refreshed', 'success');
 }
 
-// Subscribe to real-time updates
-function subscribeToBookingUpdates() {
-    if (!API || !API.bookings || !API.bookings.subscribeToUpdates) {
-        console.log('Real-time updates not available');
-        return;
-    }
+// Subscribe to real-time updates safely
+function subscribeToBookingUpdates(userId) {
+    const supabase = window.sbClient || window.supabase;
     
-    realtimeSubscription = API.bookings.subscribeToUpdates((payload) => {
-        console.log('Real-time update received:', payload);
-        // Reload bookings when changes occur
-        loadBookings().then(() => {
-            // Reapply filters if any are active
-            if (currentFilter !== 'all' || currentSearchTerm) {
-                applyFiltersAndSort();
-            }
-        });
-    });
+    realtimeSubscription = supabase.channel('custom-all-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings', filter: `user_id=eq.${userId}` },
+        (payload) => {
+            console.log('Real-time update received:', payload);
+            loadBookings(userId);
+        }
+      )
+      .subscribe();
 }
 
 // Close modals
@@ -555,13 +556,25 @@ function closeCancelModal() {
     selectedBookingId = null;
 }
 
-// Show states
+// 💥 THE JUMP BUG FIX: Never hide the list completely, just fade it out!
 function showLoading(show) {
-    if(document.getElementById('loadingState')) 
-        document.getElementById('loadingState').style.display = show ? 'block' : 'none';
+    const loadingState = document.getElementById('loadingState');
+    const bookingsList = document.getElementById('bookingsList');
     
-    if(document.getElementById('bookingsList')) 
-        document.getElementById('bookingsList').style.display = show ? 'none' : 'grid';
+    if (show) {
+        if(loadingState) loadingState.style.display = 'block';
+        if(bookingsList) {
+            bookingsList.style.opacity = '0.3';
+            bookingsList.style.pointerEvents = 'none'; 
+        }
+    } else {
+        if(loadingState) loadingState.style.display = 'none';
+        if(bookingsList) {
+            bookingsList.style.display = 'grid';
+            bookingsList.style.opacity = '1';
+            bookingsList.style.pointerEvents = 'auto';
+        }
+    }
 }
 
 function showEmptyState() {
@@ -570,6 +583,7 @@ function showEmptyState() {
     if(document.getElementById('notLoggedInState')) document.getElementById('notLoggedInState').style.display = 'none';
     if(document.getElementById('emptyState')) document.getElementById('emptyState').style.display = 'block';
     if(document.getElementById('statsSection')) document.getElementById('statsSection').style.display = 'none';
+    if(document.getElementById('bookingsList')) document.getElementById('bookingsList').style.display = 'none';
 }
 
 function showNoResults() {
@@ -577,6 +591,7 @@ function showNoResults() {
     if(document.getElementById('emptyState')) document.getElementById('emptyState').style.display = 'none';
     if(document.getElementById('notLoggedInState')) document.getElementById('notLoggedInState').style.display = 'none';
     if(document.getElementById('noResultsState')) document.getElementById('noResultsState').style.display = 'block';
+    if(document.getElementById('bookingsList')) document.getElementById('bookingsList').style.display = 'none';
 }
 
 function showNotLoggedIn() {
@@ -585,6 +600,7 @@ function showNotLoggedIn() {
     if(document.getElementById('noResultsState')) document.getElementById('noResultsState').style.display = 'none';
     if(document.getElementById('notLoggedInState')) document.getElementById('notLoggedInState').style.display = 'block';
     if(document.getElementById('statsSection')) document.getElementById('statsSection').style.display = 'none';
+    if(document.getElementById('bookingsList')) document.getElementById('bookingsList').style.display = 'none';
 }
 
 // Close modals when clicking outside
@@ -603,9 +619,8 @@ window.onclick = function(event) {
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
     if (realtimeSubscription) {
-        if(typeof realtimeSubscription.unsubscribe === 'function') {
-            realtimeSubscription.unsubscribe();
-        }
+        const supabase = window.sbClient || window.supabase;
+        supabase.removeChannel(realtimeSubscription);
     }
 });
 
@@ -623,7 +638,7 @@ spinStyle.textContent = `
 `;
 document.head.appendChild(spinStyle);
 
-// --- FALLBACK HELPERS (In case utils.js is missing/broken) ---
+// --- FALLBACK HELPERS ---
 
 if (typeof formatDate === 'undefined') {
     window.formatDate = function(dateString) {

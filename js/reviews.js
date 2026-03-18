@@ -1,6 +1,7 @@
 /**
  * Reviews Page Logic
  * Adapts to existing SUPABASE_CONFIG to initialize client
+ * FIXED: Now pointing to 'site_feedback' to avoid package_id constraint errors.
  */
 
 let sbClient = null;
@@ -71,9 +72,9 @@ async function loadReviews() {
     const loader = document.getElementById('loadingReviews');
     
     try {
-        // Fetch reviews from DB
+        // Fetch reviews from the new site_feedback table
         const { data: reviews, error } = await sbClient
-            .from('reviews')
+            .from('site_feedback')
             .select(`
                 *,
                 profiles:user_id ( full_name )
@@ -157,9 +158,9 @@ function initializeForm() {
             
             if (!user) throw new Error('You must be logged in.');
 
-            // Insert to DB
+            // Insert to the new site_feedback table
             const { error } = await sbClient
-                .from('reviews')
+                .from('site_feedback')
                 .insert([{
                     user_id: user.id,
                     rating: parseInt(rating),

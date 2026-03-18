@@ -1,6 +1,6 @@
 /**
- * Admin Analytics JavaScript - FINAL COMPLETE VERSION
- * Features: Charts, Currency Cleaning, Date Sorting, AND Percentage Comparisons
+ * Admin Analytics JavaScript - ORIGINAL STRUCTURE PRESERVED
+ * Fixes: Chart Dropdown Logic, Time Grouping, and PDF Export ONLY
  */
 
 let analyticsData = {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!isAuth) return;
     
     loadAdminName();
-    setDefaultDateRange(365); // Default to 1 year view
+    setDefaultDateRange(365); // RESTORED: Default to 1 year view to show all data
     await loadAnalyticsData();
 });
 
@@ -127,7 +127,7 @@ async function loadAnalyticsData() {
             .lte('created_at', prevEnd.toISOString());
         analyticsData.previousUsers = prevUsers || [];
 
-        // 5. Fetch Packages
+        // 5. Fetch Packages (RESTORED: using 'packages' table as requested)
         const { data: packages, error: packagesError } = await sb
             .from('packages')
             .select('*');
@@ -162,6 +162,22 @@ function formatCurrency(amount) {
 function calculatePercentageChange(current, previous) {
     if (!previous || previous === 0) return current > 0 ? 100 : 0;
     return Math.round(((current - previous) / previous) * 100);
+}
+
+// FIX: Helper to group dates based on dropdown selection
+function getChartGroupKey(dateString, period) {
+    const d = new Date(dateString);
+    if (period === 'daily') {
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else if (period === 'weekly') {
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        const startOfWeek = new Date(d.setDate(diff));
+        return 'Wk of ' + startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else if (period === 'monthly') {
+        return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 // --------------------------------------------------------
@@ -209,16 +225,13 @@ function updateTrendIndicator(elementId, current, previous) {
     const percent = calculatePercentageChange(current, previous);
     const isPositive = percent >= 0;
     const arrow = isPositive ? 'up' : 'down';
-    const colorClass = isPositive ? 'positive' : 'negative'; // Assumes you have CSS for .positive (green) and .negative (red)
-
-    // Using inline style fallback just in case CSS class is missing
     const colorStyle = isPositive ? 'color: #22c55e;' : 'color: #ef4444;';
 
     el.innerHTML = `<i class="bi bi-arrow-${arrow}" style="${colorStyle}"></i> <span style="${colorStyle}">${Math.abs(percent)}%</span>`;
 }
 
 // --------------------------------------------------------
-// 📈 CHARTS
+// 📈 CHARTS (FIXED TIME DROPDOWNS)
 // --------------------------------------------------------
 function renderAllCharts() {
     renderRevenueChart();
@@ -234,17 +247,28 @@ function destroyChart(key) {
     }
 }
 
+// FIX: Expose chart updates to window so HTML onchange can trigger them
+window.updateRevenueChart = function() { renderRevenueChart(); };
+window.updateBookingsChart = function() { renderBookingsChart(); };
+
 function renderRevenueChart() {
     const ctx = document.getElementById('revenueChart');
     if (!ctx) return;
 
+    // FIX: Read the dropdown value
+    const periodSelect = document.getElementById('revenueChartPeriod');
+    const period = periodSelect ? periodSelect.value : 'monthly';
+
     const dailyData = new Map();
     analyticsData.bookings.forEach(b => {
         if((b.status || '').toLowerCase() === 'cancelled') return;
-        const date = new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        
+        // FIX: Group data dynamically based on selection
+        const dateKey = getChartGroupKey(b.created_at, period);
+        
         const val = b.total_amount || b.package_price || b.budget || 0;
-        const current = dailyData.get(date) || 0;
-        dailyData.set(date, current + cleanAmount(val));
+        const current = dailyData.get(dateKey) || 0;
+        dailyData.set(dateKey, current + cleanAmount(val));
     });
 
     const labels = Array.from(dailyData.keys());
@@ -272,11 +296,16 @@ function renderBookingsChart() {
     const ctx = document.getElementById('bookingsChart');
     if (!ctx) return;
 
+    // FIX: Read the dropdown value
+    const periodSelect = document.getElementById('bookingsChartPeriod');
+    const period = periodSelect ? periodSelect.value : 'monthly';
+
     const dailyData = new Map();
     analyticsData.bookings.forEach(b => {
-        const date = new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const current = dailyData.get(date) || 0;
-        dailyData.set(date, current + 1);
+        // FIX: Group data dynamically
+        const dateKey = getChartGroupKey(b.created_at, period);
+        const current = dailyData.get(dateKey) || 0;
+        dailyData.set(dateKey, current + 1);
     });
 
     const labels = Array.from(dailyData.keys());
@@ -417,13 +446,83 @@ function displayTopPerformers() {
 }
 
 // --------------------------------------------------------
-// ♻️ REFRESH
+// ♻️ REFRESH & EXPORT
 // --------------------------------------------------------
-async function refreshAnalytics() {
+window.refreshAnalytics = async function() {
     await loadAnalyticsData();
-    showToast('Dashboard Refreshed', 'success');
+    if(typeof showToast === 'function') showToast('Dashboard Refreshed', 'success');
 }
 
-function exportReport() {
-    alert('PDF Export functionality requires jsPDF configuration.');
+// FIX: Added actual jsPDF Generator instead of alert placeholder
+window.exportReport = function() {
+    try {
+        if(typeof showToast === 'function') showToast('Generating PDF Report...', 'info');
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Document Details
+        doc.setProperties({ title: 'WOW Surprises - Analytics Report' });
+        doc.setFontSize(20);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Analytics & Performance Report', 14, 22);
+
+        // Date Context
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        const startStr = dateRangeStart ? dateRangeStart.toLocaleDateString() : 'N/A';
+        const endStr = dateRangeEnd ? dateRangeEnd.toLocaleDateString() : 'N/A';
+        doc.text(`Reporting Period: ${startStr} to ${endStr}`, 14, 30);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 35);
+
+        // Core Metrics
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Key Metrics Summary', 14, 48);
+
+        doc.setFontSize(11);
+        doc.setTextColor(50, 50, 50);
+        doc.text(`Total Revenue: ${document.getElementById('totalRevenue').textContent}`, 14, 56);
+        doc.text(`Total Bookings: ${document.getElementById('totalBookings').textContent}`, 14, 62);
+        doc.text(`Average Booking Value: ${document.getElementById('avgBookingValue').textContent}`, 14, 68);
+        doc.text(`New Clients Acquired: ${document.getElementById('newClients').textContent}`, 14, 74);
+
+        // Top Packages Table Data
+        const pkgStats = {};
+        analyticsData.bookings.forEach(b => {
+            const name = b.package_name || 'Custom Request';
+            const val = cleanAmount(b.total_amount || b.package_price || b.budget || 0);
+            if(!pkgStats[name]) pkgStats[name] = { count: 0, revenue: 0 };
+            pkgStats[name].count++;
+            pkgStats[name].revenue += val;
+        });
+
+        const topPkgs = Object.entries(pkgStats)
+            .map(([name, stat]) => [name, stat.count.toString(), formatCurrency(stat.revenue)])
+            .sort((a,b) => cleanAmount(b[2]) - cleanAmount(a[2]))
+            .slice(0, 10); // Top 10
+
+        if (topPkgs.length > 0) {
+            doc.autoTable({
+                startY: 85,
+                head: [['Top Performing Packages', 'Total Bookings', 'Revenue Generated']],
+                body: topPkgs,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+                alternateRowStyles: { fillColor: [248, 250, 252] },
+                columnStyles: { 1: { halign: 'center' }, 2: { halign: 'right' } }
+            });
+        }
+
+        doc.save(`WOW_Analytics_Report_${new Date().getTime()}.pdf`);
+        if(typeof showToast === 'function') showToast('Report Exported Successfully!', 'success');
+
+    } catch (error) {
+        console.error('Export Error:', error);
+        if(typeof showToast === 'function') {
+            showToast('Failed to generate PDF. Check console.', 'error');
+        } else {
+            alert('Failed to generate PDF.');
+        }
+    }
 }

@@ -160,7 +160,7 @@ async function saveBusinessInfo(e) {
             description: document.getElementById('businessDescription').value.trim()
         };
 
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update(formData)
             .eq('id', currentMerchant.id);
@@ -193,7 +193,7 @@ async function saveBankDetails(e) {
             return;
         }
 
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update(formData)
             .eq('id', currentMerchant.id);
@@ -228,7 +228,7 @@ async function saveContactInfo(e) {
             social_media: socialData // Saving to JSONB column
         };
 
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update(formData)
             .eq('id', currentMerchant.id);
@@ -291,7 +291,7 @@ async function handleDocumentUpload(event, docType) {
         // Upload to Supabase Storage
         const fileName = `${currentMerchant.id}/${docType}_${Date.now()}`;
         
-        const { data, error } = await merchantSupabase.storage
+        const { data, error } = await MerchantAuth.getSupabase().storage
             .from('merchant-documents') // Ensure this bucket exists
             .upload(fileName, file);
 
@@ -343,7 +343,7 @@ async function submitDocuments() {
         }
 
         // Update merchant with document JSON
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update({
                 documents: uploadedDocuments,
@@ -385,13 +385,13 @@ async function handleAvatarUpload(e) {
         const fileName = `${currentMerchant.id}/avatar_${Date.now()}.${fileExt}`;
 
         // Ensure you have a bucket named 'avatars' in Supabase Storage
-        const { error: uploadError } = await merchantSupabase.storage
+        const { error: uploadError } = await MerchantAuth.getSupabase().storage
             .from('avatars')
             .upload(fileName, file, { upsert: true });
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = merchantSupabase.storage
+        const { data: { publicUrl } } = MerchantAuth.getSupabase().storage
             .from('avatars')
             .getPublicUrl(fileName);
         
@@ -418,7 +418,7 @@ window.deleteProfilePicture = async function() {
 }
 
 async function updateLogoUrlInDB(url) {
-    const { error } = await merchantSupabase
+    const { error } = await MerchantAuth.getSupabase()
         .from('merchants')
         .update({ logo_url: url })
         .eq('id', currentMerchant.id);

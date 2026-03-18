@@ -9,40 +9,65 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/footer.css">
+    <style>
+        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+
+        @media (max-width: 768px) {
+            #mobileMenuBtn { display: block; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                gap: 15px;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
+            .nav-links li span { font-weight: 700; display: block; padding: 10px 0; width: 100%; text-align: center; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo" 
+                <img src="images/logo.png" alt="WOW Surprises Logo"
                      onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
             </a>
-            <ul class="nav-links">
+
+            <button id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="custom-package.html">Custom Package</a></li>
                 <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Page Content -->
     <main class="container" style="padding: 60px 20px; max-width: 900px;">
-        <!-- Breadcrumb -->
         <div style="margin-bottom: 30px; color: #666; font-size: 14px;">
             <a href="index.html" style="color: #666; text-decoration: none;">Home</a>
             <i class="bi bi-chevron-right" style="margin: 0 8px; font-size: 12px;"></i>
             <span style="color: #000; font-weight: 600;">Terms of Service</span>
         </div>
 
-        <!-- Page Header -->
         <div style="text-align: center; margin-bottom: 60px;">
             <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">Terms of Service</h1>
             <p style="font-size: 16px; color: #666;">Last updated: December 15, 2024</p>
         </div>
 
-        <!-- Content -->
         <div style="line-height: 1.8; color: #333;">
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">1. Acceptance of Terms</h2>
@@ -80,7 +105,7 @@
                 <ul style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;">Full payment is required at the time of booking</li>
                     <li style="margin-bottom: 12px;">We accept payment via credit/debit cards, bank transfer, and USSD</li>
-                    <li style="margin-bottom: 12px;">All prices are in Nigerian Naira (₦)</li>
+                    <li style="margin-bottom: 12px;">All prices are in Nigerian Naira (&#x20A6;)</li>
                     <li style="margin-bottom: 12px;">Prices are subject to change without notice</li>
                 </ul>
             </section>
@@ -170,21 +195,12 @@
                     </div>
                     <p>Creating unforgettable moments and bringing joy to every celebration.</p>
                     <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
-                            <i class="bi bi-twitter"></i>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-                            <i class="bi bi-linkedin"></i>
-                        </a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
                     </div>
                 </div>
-
                 <div class="footer-section">
                     <h3>Quick Links</h3>
                     <div class="footer-links">
@@ -195,7 +211,6 @@
                         <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
                     </div>
                 </div>
-
                 <div class="footer-section">
                     <h3>Legal</h3>
                     <div class="footer-links">
@@ -205,26 +220,15 @@
                         <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
                     </div>
                 </div>
-
                 <div class="footer-section">
                     <h3>Contact Us</h3>
                     <div class="footer-contact">
-                        <div class="contact-item">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-telephone-fill"></i>
-                            <a href="tel:+2348012345678">+234 801 234 5678</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-envelope-fill"></i>
-                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
-                        </div>
+                        <div class="contact-item"><i class="bi bi-geo-alt-fill"></i><span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span></div>
+                        <div class="contact-item"><i class="bi bi-telephone-fill"></i><a href="tel:+2348012345678">+234 801 234 5678</a></div>
+                        <div class="contact-item"><i class="bi bi-envelope-fill"></i><a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></div>
                     </div>
                 </div>
             </div>
-
             <div class="footer-bottom">
                 <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
                 <div class="footer-bottom-links">
@@ -237,25 +241,65 @@
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top">
-        <i class="bi bi-arrow-up"></i>
-    </button>
+    <button id="backToTop" title="Back to top" aria-label="Scroll to top"><i class="bi bi-arrow-up"></i></button>
 
     <script>
     (function() {
-        const backToTopButton = document.getElementById('backToTop');
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.add('show');
-            } else {
-                backToTopButton.classList.remove('show');
+        const btn = document.getElementById('backToTop');
+        window.addEventListener('scroll', function() { btn.classList.toggle('show', window.pageYOffset > 300); });
+        btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabaseApi.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const toggleBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const icon = toggleBtn?.querySelector('i');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.replace('bi-list', 'bi-x-lg');
+                } else {
+                    icon.classList.replace('bi-x-lg', 'bi-list');
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                icon.classList.replace('bi-x-lg', 'bi-list');
             }
         });
-        backToTopButton.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    })();
+
+        // Auth: match index.html pattern (no name display, no red button)
+        try {
+            const authLink = document.getElementById('authLink');
+            const client = window.sbClient || window.supabase;
+            if (client) {
+                const { data } = await client.auth.getSession();
+                if (data?.session?.user) {
+                    authLink.textContent = 'Logout';
+                    authLink.href = '#';
+                    authLink.onclick = async (e) => {
+                        e.preventDefault();
+                        if (confirm('Logout?')) {
+                            await client.auth.signOut();
+                            localStorage.removeItem('currentUser');
+                            window.location.reload();
+                        }
+                    };
+                }
+            }
+        } catch (error) { console.error('Auth error:', error); }
+    });
     </script>
 </body>
 </html>

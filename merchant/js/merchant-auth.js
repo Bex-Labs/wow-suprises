@@ -1,7 +1,7 @@
 /**
  * Merchant Authentication Functions
  * Handles all merchant authentication operations
- * FIXED VERSION - Option 2: Trigger-based Registration
+ * FIXED VERSION - Blazing fast session checks & Smart Vercel Subfolder Routing
  */
 
 console.log('🔧 merchant-auth.js loading...');
@@ -11,16 +11,21 @@ if (typeof merchantSupabase === 'undefined' && typeof supabase === 'undefined' &
     console.error('❌ Supabase client not found! Make sure merchant-config.js is loaded first.');
 }
 
-// Create MerchantAuth as a simple object (not a class)
 const MerchantAuth = {
     // Get supabase client
     getSupabase() {
         return window.sbClient || window.merchantSupabase || window.supabase;
     },
 
+    // Helper to get the correct folder path (works on localhost AND Vercel subfolders)
+    getBasePath() {
+        const currentPath = window.location.pathname;
+        const folderPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+        return `${window.location.origin}${folderPath}`;
+    },
+
     /**
-     * Register a new merchant (Trigger-based)
-     * We pass data to Auth Metadata, and the SQL Trigger creates the profile row.
+     * Register a new merchant
      */
     register: async function(merchantData) {
         try {
@@ -29,8 +34,9 @@ const MerchantAuth = {
 
             console.log('🔄 Starting merchant registration...');
 
-            // 1. Sign Up the User
-            // We pass business details in 'options.data' so the SQL Trigger can see them
+            // Dynamically calculate the login URL so it doesn't 404 on Vercel
+            const loginRedirectUrl = `${this.getBasePath()}/merchant-login.html`;
+
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: merchantData.email,
                 password: merchantData.password,
@@ -43,17 +49,13 @@ const MerchantAuth = {
                         address: merchantData.address,
                         category: merchantData.category
                     },
-                    // Ensure this URL is correct for your setup
-                    emailRedirectTo: `${window.location.origin}/merchant-login.html`
+                    // Routes verification emails perfectly to the Merchant Login page
+                    emailRedirectTo: loginRedirectUrl
                 }
             });
 
             if (authError) throw authError;
-
-            // 2. Success! The SQL Trigger handled the database insert.
-            // We just return success to the UI.
             
-            // Check if email confirmation is required (session will be null)
             if (authData.user && !authData.session) {
                 return {
                     success: true,
@@ -62,18 +64,11 @@ const MerchantAuth = {
                 };
             }
 
-            return {
-                success: true,
-                message: 'Registration successful!',
-                data: authData.user
-            };
+            return { success: true, message: 'Registration successful!', data: authData.user };
 
         } catch (error) {
             console.error('❌ Registration error:', error);
-            return {
-                success: false,
-                message: error.message || 'Registration failed.'
-            };
+            return { success: false, message: error.message || 'Registration failed.' };
         }
     },
 
@@ -85,7 +80,6 @@ const MerchantAuth = {
             const supabase = this.getSupabase();
             if (!supabase) throw new Error('Supabase client not available');
 
-            // Attempt login
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password
@@ -93,24 +87,24 @@ const MerchantAuth = {
 
             if (error) throw error;
 
-            // Get merchant profile
             const { data: merchantProfile, error: profileError } = await supabase
                 .from('merchants')
                 .select('*')
-                .eq('email', email) // Safer to look up by email match first
+                .eq('email', email)
                 .maybeSingle();
 
             if (profileError || !merchantProfile) {
-                console.error('❌ Merchant profile not found:', profileError);
                 throw new Error('Merchant profile not found. Please contact support.');
             }
 
-            // Check if merchant is active
             if (!merchantProfile.is_active) {
                 console.warn("⚠️ Account is inactive but login permitted for view-only.");
             }
 
             console.log('✅ Login successful:', merchantProfile.business_name);
+
+            // Cache the profile immediately upon login for instant access
+            localStorage.setItem('merchantData', JSON.stringify(merchantProfile));
 
             return {
                 success: true,
@@ -120,10 +114,7 @@ const MerchantAuth = {
 
         } catch (error) {
             console.error('❌ Login error:', error);
-            return {
-                success: false,
-                message: error.message || 'Invalid email or password'
-            };
+            return { success: false, message: error.message || 'Invalid email or password' };
         }
     },
 
@@ -136,7 +127,7 @@ const MerchantAuth = {
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
             
-            // Clear storage
+            // Clear all cached data
             localStorage.removeItem('merchantData');
             sessionStorage.removeItem('merchantData');
             
@@ -148,7 +139,8 @@ const MerchantAuth = {
     },
 
     /**
-     * Check if user is authenticated (FIXED)
+     * Check if user is authenticated 
+     * Blazing fast session check. No DB queries allowed here!
      */
     isAuthenticated: async function() {
         try {
@@ -158,21 +150,8 @@ const MerchantAuth = {
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
             if (sessionError || !session) return false;
             
-            const { user } = session;
-            
-            // Check metadata
-            if (user.user_metadata?.user_type !== 'merchant') return false;
-            
-            // FIX: Removed .catch() chain, used await + error check
-            const { data: merchantProfile, error } = await supabase
-                .from('merchants')
-                .select('is_active')
-                .eq('user_id', user.id)
-                .maybeSingle(); // Use maybeSingle to avoid 406 error
-            
-            if (error || !merchantProfile) {
-                return false;
-            }
+            // Just verify the JWT token metadata. 
+            if (session.user.user_metadata?.user_type !== 'merchant') return false;
             
             return true;
             
@@ -184,23 +163,34 @@ const MerchantAuth = {
 
     /**
      * Get current merchant profile
+     * Prioritize LocalStorage for instant loading
      */
     getCurrentMerchant: async function() {
         try {
+            // 1. Try to load instantly from cache
+            const cachedData = localStorage.getItem('merchantData');
+            if (cachedData) {
+                try {
+                    return JSON.parse(cachedData);
+                } catch (e) {
+                    console.warn('Corrupt merchant cache, clearing...');
+                    localStorage.removeItem('merchantData');
+                }
+            }
+
+            // 2. Fallback to Database if cache is empty
             const supabase = this.getSupabase();
             if (!supabase) return null;
             
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return null;
             
-            // Try ID match first
             let { data: merchant, error } = await supabase
                 .from('merchants')
                 .select('*')
                 .eq('user_id', user.id)
                 .maybeSingle();
                 
-            // Fallback to email match if ID link is missing (Safety net)
             if (!merchant) {
                 const { data: merchantByEmail } = await supabase
                     .from('merchants')
@@ -210,6 +200,11 @@ const MerchantAuth = {
                 merchant = merchantByEmail;
             }
                 
+            // Cache it for next time
+            if (merchant) {
+                localStorage.setItem('merchantData', JSON.stringify(merchant));
+            }
+
             return merchant;
         } catch (error) {
             console.error('❌ Get merchant error:', error);
@@ -223,8 +218,13 @@ const MerchantAuth = {
     resetPassword: async function(email) {
         try {
             const supabase = this.getSupabase();
+            
+            // Dynamically calculate the reset URL so it doesn't 404 on Vercel
+            const resetRedirectUrl = `${this.getBasePath()}/merchant-reset-password.html?type=recovery`;
+
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/merchant-reset-password.html?type=recovery`
+                // Routes password reset emails back to the exact merchant reset page
+                redirectTo: resetRedirectUrl
             });
 
             if (error) throw error;
@@ -237,8 +237,40 @@ const MerchantAuth = {
     }
 };
 
-// Export to window
 window.MerchantAuth = MerchantAuth;
-
-// Confirm load
 console.log('✅ MerchantAuth loaded successfully');
+
+// ==========================================
+// GLOBAL LOGOUT FUNCTION
+// Attached to the window so every HTML page can trigger it
+// ==========================================
+window.merchantLogout = async function() {
+    if (confirm('Are you sure you want to logout?')) {
+        try {
+            // Clean up any active realtime subscriptions if they exist on the current page
+            if (typeof realtimeSubscription !== 'undefined' && realtimeSubscription) {
+                MerchantAuth.getSupabase().removeChannel(realtimeSubscription);
+            } else if (typeof realtimeSubscriptions !== 'undefined' && Array.isArray(realtimeSubscriptions)) {
+                realtimeSubscriptions.forEach(sub => MerchantAuth.getSupabase().removeChannel(sub));
+            }
+            
+            // Call the logout function on the MerchantAuth object
+            await MerchantAuth.logout();
+            
+            if (typeof showToast === 'function') {
+                showToast('Logged out successfully', 'success');
+            }
+            
+            setTimeout(() => {
+                // Using replace so they can't hit the back button into a logged-in page
+                window.location.replace('merchant-login.html');
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Logout error:', error);
+            if (typeof showToast === 'function') {
+                showToast('Logout failed', 'error');
+            }
+        }
+    }
+};

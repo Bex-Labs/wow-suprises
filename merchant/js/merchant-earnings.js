@@ -44,14 +44,14 @@ function updateMerchantInfo() {
 async function loadEarningsStats() {
     try {
         // 1. Total Earnings
-        const { data: earnings, error: earnError } = await merchantSupabase
+        const { data: earnings, error: earnError } = await MerchantAuth.getSupabase()
             .from('merchant_earnings')
             .select('net_amount');
         if (earnError) throw earnError;
         const totalEarned = earnings.reduce((sum, item) => sum + Number(item.net_amount), 0);
 
         // 2. Total Withdrawn
-        const { data: payouts, error: payError } = await merchantSupabase
+        const { data: payouts, error: payError } = await MerchantAuth.getSupabase()
             .from('merchant_payouts')
             .select('amount, status')
             .eq('merchant_id', currentMerchant.id);
@@ -65,7 +65,7 @@ async function loadEarningsStats() {
         const availableBalance = totalEarned - totalWithdrawn;
         
         // 4. Pending Earnings (Uncompleted orders)
-        const { data: pendingOrders } = await merchantSupabase
+        const { data: pendingOrders } = await MerchantAuth.getSupabase()
             .from('bookings')
             .select('budget')
             .eq('merchant_id', currentMerchant.id)
@@ -93,7 +93,7 @@ async function loadEarningsStats() {
 // Load payout requests
 async function loadPayouts() {
     try {
-        const { data, error } = await merchantSupabase
+        const { data, error } = await MerchantAuth.getSupabase()
             .from('merchant_payouts')
             .select('*')
             .eq('merchant_id', currentMerchant.id)
@@ -167,7 +167,7 @@ async function loadEarningsChart() {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
-        const { data: earnings, error } = await merchantSupabase
+        const { data: earnings, error } = await MerchantAuth.getSupabase()
             .from('merchant_earnings')
             .select('net_amount, created_at')
             .eq('merchant_id', currentMerchant.id)
@@ -288,7 +288,7 @@ async function handleWithdrawSubmit(e) {
     const notes = document.getElementById('withdrawNotes').value;
 
     try {
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchant_payouts')
             .insert([{
                 merchant_id: currentMerchant.id,

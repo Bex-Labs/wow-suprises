@@ -9,84 +9,94 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/footer.css">
+    <style>
+        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+
+        @media (max-width: 768px) {
+            #mobileMenuBtn { display: block; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                gap: 15px;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
+            .nav-links li span { font-weight: 700; display: block; padding: 10px 0; width: 100%; text-align: center; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo" 
+                <img src="images/logo.png" alt="WOW Surprises Logo"
                      onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
             </a>
-            <ul class="nav-links">
+
+            <button id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="custom-package.html">Custom Package</a></li>
                 <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Page Content -->
     <main class="container" style="padding: 60px 20px; max-width: 900px;">
-        <!-- Breadcrumb -->
         <div style="margin-bottom: 30px; color: #666; font-size: 14px;">
             <a href="index.html" style="color: #666; text-decoration: none;">Home</a>
             <i class="bi bi-chevron-right" style="margin: 0 8px; font-size: 12px;"></i>
             <span style="color: #000; font-weight: 600;">Refund Policy</span>
         </div>
-
-        <!-- Page Header -->
         <div style="text-align: center; margin-bottom: 60px;">
             <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">Refund Policy</h1>
             <p style="font-size: 16px; color: #666;">Last updated: December 15, 2024</p>
         </div>
-
-        <!-- Content -->
         <div style="line-height: 1.8; color: #333;">
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">1. Overview</h2>
                 <p style="margin-bottom: 16px;">At WOW Surprises, we want you to be completely satisfied with our services. This Refund Policy outlines the terms and conditions for cancellations and refunds.</p>
                 <p style="margin-bottom: 16px;">We understand that plans can change, and we've designed our policy to be fair to both our customers and our business operations.</p>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">2. Cancellation Timeframes</h2>
-                
                 <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 24px; margin-bottom: 20px; border-radius: 8px;">
-                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #166534;">✅ 48+ Hours Before Event</h3>
+                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #166534;">&#x2705; 48+ Hours Before Event</h3>
                     <p style="margin-bottom: 8px; color: #166534;"><strong>Full Refund (100%)</strong></p>
                     <p style="margin: 0; font-size: 15px; color: #166534;">Cancel 48 hours or more before your scheduled event and receive a complete refund to your original payment method.</p>
                 </div>
-
                 <div style="background: #fef3c7; border-left: 4px solid #fbbf24; padding: 24px; margin-bottom: 20px; border-radius: 8px;">
-                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #92400e;">⚠️ 24-48 Hours Before Event</h3>
+                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #92400e;">&#x26A0;&#xFE0F; 24-48 Hours Before Event</h3>
                     <p style="margin-bottom: 8px; color: #92400e;"><strong>Partial Refund (50%)</strong></p>
                     <p style="margin: 0; font-size: 15px; color: #92400e;">Cancel between 24-48 hours before your event and receive 50% refund. The remaining 50% covers preparation costs already incurred.</p>
                 </div>
-
                 <div style="background: #fee2e2; border-left: 4px solid #dc2626; padding: 24px; margin-bottom: 20px; border-radius: 8px;">
-                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #991b1b;">❌ Less Than 24 Hours</h3>
+                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #991b1b;">&#x274C; Less Than 24 Hours</h3>
                     <p style="margin-bottom: 8px; color: #991b1b;"><strong>No Refund (0%)</strong></p>
                     <p style="margin: 0; font-size: 15px; color: #991b1b;">Cancellations made less than 24 hours before the event are non-refundable as vendors and staff have already been committed.</p>
                 </div>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">3. How to Request a Refund</h2>
                 <p style="margin-bottom: 16px;">To request a refund, follow these steps:</p>
                 <ol style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 16px;">
-                        <strong>Log into your account</strong> at <a href="login.html" style="color: #000; font-weight: 600;">WOW Surprises</a>
-                    </li>
-                    <li style="margin-bottom: 16px;">
-                        <strong>Go to "My Bookings"</strong> and find your booking
-                    </li>
-                    <li style="margin-bottom: 16px;">
-                        <strong>Click "Cancel Booking"</strong> and follow the prompts
-                    </li>
-                    <li style="margin-bottom: 16px;">
-                        <strong>Or contact us directly:</strong>
+                    <li style="margin-bottom: 16px;"><strong>Log into your account</strong> at <a href="login.html" style="color: #000; font-weight: 600;">WOW Surprises</a></li>
+                    <li style="margin-bottom: 16px;"><strong>Go to "My Bookings"</strong> and find your booking</li>
+                    <li style="margin-bottom: 16px;"><strong>Click "Cancel Booking"</strong> and follow the prompts</li>
+                    <li style="margin-bottom: 16px;"><strong>Or contact us directly:</strong>
                         <ul style="padding-left: 24px; margin-top: 12px;">
                             <li style="margin-bottom: 8px;">Email: <a href="mailto:refunds@wowsurprises.com" style="color: #000; font-weight: 600;">refunds@wowsurprises.com</a></li>
                             <li style="margin-bottom: 8px;">Phone: <a href="tel:+2348012345678" style="color: #000; font-weight: 600;">+234 801 234 5678</a></li>
@@ -95,32 +105,24 @@
                     </li>
                 </ol>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">4. Refund Processing Time</h2>
-                <p style="margin-bottom: 16px;">Once your refund is approved:</p>
                 <ul style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;"><strong>Bank Transfer:</strong> 3-5 business days</li>
-                    <li style="margin-bottom: 12px;"><strong>Credit/Debit Card:</strong> 5-10 business days (depends on your bank)</li>
+                    <li style="margin-bottom: 12px;"><strong>Credit/Debit Card:</strong> 5-10 business days</li>
                     <li style="margin-bottom: 12px;"><strong>Mobile Money:</strong> 1-2 business days</li>
                 </ul>
-                <p style="margin-bottom: 16px;">You will receive a confirmation email once the refund has been processed.</p>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">5. Rescheduling vs. Cancelling</h2>
-                <p style="margin-bottom: 16px;"><strong>Prefer to reschedule instead?</strong> We offer flexible rescheduling options:</p>
                 <ul style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;"><strong>48+ hours before:</strong> Reschedule for free</li>
-                    <li style="margin-bottom: 12px;"><strong>24-48 hours before:</strong> Small rescheduling fee (₦5,000)</li>
+                    <li style="margin-bottom: 12px;"><strong>24-48 hours before:</strong> Small rescheduling fee (&#x20A6;5,000)</li>
                     <li style="margin-bottom: 12px;"><strong>Less than 24 hours:</strong> Subject to availability and fees</li>
                 </ul>
-                <p style="margin-bottom: 16px;">Rescheduling allows you to keep your full payment toward a future date!</p>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">6. Non-Refundable Items</h2>
-                <p style="margin-bottom: 16px;">The following are non-refundable regardless of cancellation timing:</p>
                 <ul style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;">Custom-made items (personalized cakes, custom decorations, etc.)</li>
                     <li style="margin-bottom: 12px;">Perishable goods already prepared or purchased</li>
@@ -128,35 +130,26 @@
                     <li style="margin-bottom: 12px;">Special orders or imports</li>
                     <li style="margin-bottom: 12px;">Services already rendered</li>
                 </ul>
-                <p style="margin-bottom: 16px;">These items will be clearly marked during the booking process.</p>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">7. Service Failure or Issues</h2>
-                <p style="margin-bottom: 16px;"><strong>What if something goes wrong?</strong></p>
-                <p style="margin-bottom: 16px;">If we fail to deliver services as promised, you may be eligible for a full or partial refund:</p>
                 <ul style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;"><strong>Complete service failure:</strong> Full refund</li>
                     <li style="margin-bottom: 12px;"><strong>Late delivery (our fault):</strong> Partial refund or credit</li>
                     <li style="margin-bottom: 12px;"><strong>Missing items:</strong> Refund for missing items</li>
                     <li style="margin-bottom: 12px;"><strong>Quality issues:</strong> Case-by-case evaluation</li>
                 </ul>
-                <p style="margin-bottom: 16px;">Please report issues within 24 hours of your event for fastest resolution.</p>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">8. Force Majeure</h2>
-                <p style="margin-bottom: 16px;">In cases of circumstances beyond our control (severe weather, natural disasters, government restrictions, etc.):</p>
                 <ul style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;">We will work with you to reschedule at no additional cost</li>
                     <li style="margin-bottom: 12px;">If rescheduling is not possible, a full refund will be provided</li>
                     <li style="margin-bottom: 12px;">Costs already incurred may be deducted (materials, deposits)</li>
                 </ul>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">9. Disputed Refunds</h2>
-                <p style="margin-bottom: 16px;">If you disagree with our refund decision:</p>
                 <ol style="padding-left: 24px; margin-bottom: 16px;">
                     <li style="margin-bottom: 12px;">Contact our customer service team</li>
                     <li style="margin-bottom: 12px;">Provide supporting documentation</li>
@@ -164,10 +157,8 @@
                     <li style="margin-bottom: 12px;">If unresolved, escalate to management</li>
                 </ol>
             </section>
-
             <section style="margin-bottom: 40px;">
                 <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">10. Contact for Refunds</h2>
-                <p style="margin-bottom: 16px;">For all refund-related inquiries:</p>
                 <div style="background: #f9f9f9; padding: 24px; border-radius: 12px; margin-top: 20px;">
                     <p style="margin-bottom: 12px;"><strong>Email:</strong> <a href="mailto:refunds@wowsurprises.com" style="color: #000;">refunds@wowsurprises.com</a></p>
                     <p style="margin-bottom: 12px;"><strong>Phone:</strong> <a href="tel:+2348012345678" style="color: #000;">+234 801 234 5678</a></p>
@@ -176,111 +167,84 @@
                     <p style="margin: 0;"><strong>Hours:</strong> Monday - Sunday, 8:00 AM - 10:00 PM</p>
                 </div>
             </section>
-
             <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 20px; margin-top: 40px; border-radius: 8px;">
-                <p style="margin: 0; font-size: 14px; color: #1e40af;"><strong>💡 Pro Tip:</strong> To avoid cancellation fees, we recommend booking with confidence or considering our flexible rescheduling options!</p>
+                <p style="margin: 0; font-size: 14px; color: #1e40af;"><strong>&#x1F4A1; Pro Tip:</strong> To avoid cancellation fees, we recommend booking with confidence or considering our flexible rescheduling options!</p>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section footer-about">
-                    <div class="footer-logo">
-                        <img src="images/logo-white.png" alt="WOW Surprises" 
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
-                             style="height: 40px; width: auto; margin-bottom: 16px;">
-                    </div>
+                    <div class="footer-logo"><img src="images/logo-white.png" alt="WOW Surprises" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';" style="height: 40px; width: auto; margin-bottom: 16px;"></div>
                     <p>Creating unforgettable moments and bringing joy to every celebration.</p>
                     <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
-                            <i class="bi bi-twitter"></i>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-                            <i class="bi bi-linkedin"></i>
-                        </a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
                     </div>
                 </div>
-
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <div class="footer-links">
-                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
-                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
-                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
-                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
-                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <div class="footer-links">
-                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
-                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
-                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
-                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <div class="footer-contact">
-                        <div class="contact-item">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-telephone-fill"></i>
-                            <a href="tel:+2348012345678">+234 801 234 5678</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-envelope-fill"></i>
-                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
-                        </div>
-                    </div>
-                </div>
+                <div class="footer-section"><h3>Quick Links</h3><div class="footer-links"><a href="index.html"><i class="bi bi-chevron-right"></i> Home</a><a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a><a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a><a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a></div></div>
+                <div class="footer-section"><h3>Legal</h3><div class="footer-links"><a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a><a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a><a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a><a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a></div></div>
+                <div class="footer-section"><h3>Contact Us</h3><div class="footer-contact"><div class="contact-item"><i class="bi bi-geo-alt-fill"></i><span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span></div><div class="contact-item"><i class="bi bi-telephone-fill"></i><a href="tel:+2348012345678">+234 801 234 5678</a></div><div class="contact-item"><i class="bi bi-envelope-fill"></i><a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></div></div></div>
             </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy-policy.html">Privacy Policy</a>
-                    <a href="terms-of-service.html">Terms of Service</a>
-                    <a href="refund-policy.html">Refund Policy</a>
-                    <a href="faq.html">FAQ</a>
-                </div>
-            </div>
+            <div class="footer-bottom"><p>&copy; 2024 WOW Surprises. All rights reserved.</p><div class="footer-bottom-links"><a href="privacy-policy.html">Privacy Policy</a><a href="terms-of-service.html">Terms of Service</a><a href="refund-policy.html">Refund Policy</a><a href="faq.html">FAQ</a></div></div>
         </div>
     </footer>
+    <button id="backToTop" title="Back to top" aria-label="Scroll to top"><i class="bi bi-arrow-up"></i></button>
+    <script>(function(){const b=document.getElementById('backToTop');window.addEventListener('scroll',function(){b.classList.toggle('show',window.pageYOffset>300)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
 
-    <!-- Back to Top Button -->
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top">
-        <i class="bi bi-arrow-up"></i>
-    </button>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabaseApi.js"></script>
     <script>
-    (function() {
-        const backToTopButton = document.getElementById('backToTop');
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.add('show');
-            } else {
-                backToTopButton.classList.remove('show');
+    document.addEventListener('DOMContentLoaded', async function() {
+        const toggleBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const icon = toggleBtn?.querySelector('i');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.replace('bi-list', 'bi-x-lg');
+                } else {
+                    icon.classList.replace('bi-x-lg', 'bi-list');
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                icon.classList.replace('bi-x-lg', 'bi-list');
             }
         });
-        backToTopButton.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    })();
+
+        // Auth: match index.html pattern (no name display, no red button)
+        try {
+            const authLink = document.getElementById('authLink');
+            const client = window.sbClient || window.supabase;
+            if (client) {
+                const { data } = await client.auth.getSession();
+                if (data?.session?.user) {
+                    authLink.textContent = 'Logout';
+                    authLink.href = '#';
+                    authLink.onclick = async (e) => {
+                        e.preventDefault();
+                        if (confirm('Logout?')) {
+                            await client.auth.signOut();
+                            localStorage.removeItem('currentUser');
+                            window.location.reload();
+                        }
+                    };
+                }
+            }
+        } catch (error) { console.error('Auth error:', error); }
+    });
     </script>
 </body>
 </html>

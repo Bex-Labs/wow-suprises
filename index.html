@@ -6,16 +6,51 @@
     <title>WOW Surprises - Create Unforgettable Moments</title>
     
     <link rel="icon" type="image/png" href="images/favicon.png">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/footer.css">
     
-    <meta name="description" content="Create unforgettable surprise experiences for your loved ones. Browse our surprise packages for birthdays, proposals, anniversaries, and more.">
-    <meta name="keywords" content="surprise packages, birthday surprises, proposals, anniversary, event planning, Nigeria">
-    <meta name="author" content="WOW Surprises">
+    <style>
+        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+
+        @media (max-width: 768px) {
+            #mobileMenuBtn { display: block; }
+            
+            .nav-links {
+                display: none; /* Hide by default on mobile */
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                gap: 15px; /* Tight spacing between links */
+            }
+
+            .nav-links.active { display: flex; }
+
+            .nav-links li { 
+                width: 100%; 
+                text-align: center; 
+                display: flex; 
+                justify-content: center; 
+            }
+
+            .nav-links li span {
+                font-weight: 700;
+                display: block;
+                padding: 10px 0;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -25,7 +60,11 @@
                      onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
             </a>
             
-            <ul class="nav-links">
+            <button id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="custom-package.html">Custom Package</a></li>
                 <li><a href="reviews.html">Reviews</a></li>
@@ -111,7 +150,7 @@
             <div class="search-bar">
                 <i class="bi bi-search"></i>
                 <input type="text" id="searchInput" placeholder="Search surprise packages..." aria-label="Search packages">
-                <button id="searchBtn" class="btn-primary">
+                <button id="searchBtn" class="btn-primary" onclick="if(typeof applyFilters === 'function') applyFilters()">
                     <i class="bi bi-search"></i> Search
                 </button>
             </div>
@@ -119,15 +158,21 @@
             <div class="filters">
                 <div class="filter-group">
                     <label for="categoryFilter">Category</label>
-                    <select id="categoryFilter" aria-label="Filter by category">
+                    <select id="categoryFilter" aria-label="Filter by category" onchange="if(typeof applyFilters === 'function') applyFilters()">
                         <option value="">All Categories</option>
-                        <option value="birthday">Birthday</option>
+                        <option value="gift_packages">Gift Packages</option>
+                        <option value="flowers_bouquet">Flowers & Bouquet</option>
+                        <option value="cakes_desserts">Cakes & Desserts</option>
+                        <option value="event_decorations">Event Decorations</option>
+                        <option value="balloons_party">Balloons & Party Supplies</option>
+                        <option value="gift_hampers">Gift Hampers</option>
+                        <option value="experience_packages">Experience Packages</option>
+                        <option value="birthday">Birthday Surprise</option>
+                        <option value="proposal">Marriage Proposal</option>
                         <option value="anniversary">Anniversary</option>
-                        <option value="proposal">Proposal</option>
-                        <option value="graduation">Graduation</option>
-                        <option value="corporate">Corporate</option>
-                        <option value="romantic">Romantic</option>
-                        <option value="kids">Kids</option>
+                        <option value="romantic">Romantic Dinner/Date</option>
+                        <option value="corporate">Corporate Events</option>
+                        <option value="others">Others</option>
                     </select>
                 </div>
 
@@ -139,7 +184,7 @@
 
                 <div class="filter-group">
                     <label for="sortFilter">Sort By</label>
-                    <select id="sortFilter" aria-label="Sort packages">
+                    <select id="sortFilter" aria-label="Sort packages" onchange="if(typeof applyFilters === 'function') applyFilters()">
                         <option value="popular">Most Popular</option>
                         <option value="price-low">Price: Low to High</option>
                         <option value="price-high">Price: High to Low</option>
@@ -148,7 +193,7 @@
                     </select>
                 </div>
 
-                <button id="clearFilters" class="btn-secondary">
+                <button id="clearFilters" class="btn-secondary" onclick="clearAllFilters()">
                     <i class="bi bi-x-circle"></i> Clear
                 </button>
             </div>
@@ -167,7 +212,7 @@
                 <i class="bi bi-inbox"></i>
                 <h3>No packages found</h3>
                 <p>Try adjusting your search or filters</p>
-                <button onclick="clearFilters()" class="btn-secondary">
+                <button onclick="clearAllFilters()" class="btn-secondary">
                     <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
                 </button>
             </div>
@@ -227,23 +272,23 @@
                 <div class="footer-section">
                     <h3>Quick Links</h3>
                     <div class="footer-links">
-                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
-                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
-                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
-                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
-                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
-                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
+                        <a href="index.html">Home</a>
+                        <a href="index.html#packages">Browse Packages</a>
+                        <a href="custom-package.html">Custom Package</a>
+                        <a href="reviews.html">Reviews</a>
+                        <a href="booking-history.html">My Bookings</a>
+                        <a href="login.html">Login / Register</a>
                     </div>
                 </div>
 
                 <div class="footer-section">
                     <h3>Our Services</h3>
                     <div class="footer-links">
-                        <a href="#" onclick="filterByCategory('birthday')"><i class="bi bi-chevron-right"></i> Birthday Surprises</a>
-                        <a href="#" onclick="filterByCategory('proposal')"><i class="bi bi-chevron-right"></i> Romantic Proposals</a>
-                        <a href="#" onclick="filterByCategory('anniversary')"><i class="bi bi-chevron-right"></i> Anniversaries</a>
-                        <a href="#" onclick="filterByCategory('corporate')"><i class="bi bi-chevron-right"></i> Corporate Events</a>
-                        <a href="#" onclick="filterByCategory('graduation')"><i class="bi bi-chevron-right"></i> Graduations</a>
+                        <a href="#" onclick="filterByCategory('gift_packages')">Gift Packages</a>
+                        <a href="#" onclick="filterByCategory('flowers_bouquet')">Flowers & Bouquet</a>
+                        <a href="#" onclick="filterByCategory('cakes_desserts')">Cakes & Desserts</a>
+                        <a href="#" onclick="filterByCategory('birthday')">Birthday Surprise</a>
+                        <a href="#" onclick="filterByCategory('proposal')">Marriage Proposal</a>
                     </div>
                 </div>
 
@@ -294,115 +339,96 @@
     <script src="js/hero-carousel.js"></script>
     
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 WOW Surprises - Enhanced Index Page Loaded');
-        initializeAuth();
+    document.addEventListener('DOMContentLoaded', async function() {
+        const toggleBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const icon = toggleBtn?.querySelector('i');
+
+        if(toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.replace('bi-list', 'bi-x-lg');
+                } else {
+                    icon.classList.replace('bi-x-lg', 'bi-list');
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                icon.classList.replace('bi-x-lg', 'bi-list');
+            }
+        });
+
+        await initializeAuth();
         initializeBackToTop();
         initializePriceRangeDisplay();
-        initializeModalAccessibility();
     });
 
-    function initializeAuth() {
+    async function initializeAuth() {
         try {
-            const userStr = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
-            const user = userStr ? JSON.parse(userStr) : null;
             const authLink = document.getElementById('authLink');
-            if (user) {
-                authLink.textContent = 'Logout';
-                authLink.href = '#';
-                authLink.onclick = function(e) {
-                    e.preventDefault();
-                    logout();
-                };
-            } else {
-                authLink.textContent = 'Login';
-                authLink.href = 'login.html';
+            const client = window.sbClient || window.supabase;
+            if (client) {
+                const { data } = await client.auth.getSession();
+                if (data?.session?.user) {
+                    // Hi, Name logic removed. Auth state update only.
+                    authLink.textContent = 'Logout';
+                    authLink.href = '#';
+                    authLink.onclick = async (e) => {
+                        e.preventDefault();
+                        if(confirm('Logout?')) {
+                            await client.auth.signOut();
+                            localStorage.removeItem('currentUser');
+                            window.location.reload();
+                        }
+                    };
+                }
             }
-        } catch (error) {
-            console.error('Auth check error:', error);
-        }
-    }
-
-    function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-            sessionStorage.clear();
-            localStorage.removeItem('currentUser');
-            window.location.reload();
-        }
+        } catch (error) { console.error('Auth error:', error); }
     }
 
     function initializeBackToTop() {
-        const backToTopButton = document.getElementById('backToTop');
-        if (!backToTopButton) return;
-        
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.add('show');
-            } else {
-                backToTopButton.classList.remove('show');
-            }
+        const btn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) btn.classList.add('show');
+            else btn.classList.remove('show');
         });
-        
-        backToTopButton.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        btn?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    function initializePriceRangeDisplay() {
+        const range = document.getElementById('priceRange');
+        const display = document.getElementById('priceValue');
+        range?.addEventListener('input', () => {
+            display.textContent = `₦0 - ₦${parseInt(range.value).toLocaleString()}`;
+            if(typeof applyFilters === 'function') applyFilters();
         });
     }
 
     function scrollToPackages() {
-        const packagesSection = document.getElementById('packages');
-        if (packagesSection) {
-            packagesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function initializePriceRangeDisplay() {
-        const priceRange = document.getElementById('priceRange');
-        const priceValue = document.getElementById('priceValue');
-        if (priceRange && priceValue) {
-            priceRange.addEventListener('input', function() {
-                const value = parseInt(this.value);
-                priceValue.textContent = `₦0 - ₦${value.toLocaleString()}`;
-            });
-        }
-    }
-
-    function initializeModalAccessibility() {
-        const modal = document.getElementById('packageModal');
-        if (modal) {
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.style.display === 'block') {
-                    closeModal();
-                }
-            });
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-        }
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('packageModal');
-        if (modal) {
-            modal.style.display = 'none';
-            modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-        }
+    function clearAllFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('categoryFilter').value = '';
+        document.getElementById('priceRange').value = 1000000;
+        document.getElementById('priceValue').textContent = `₦0 - ₦1,000,000`;
+        if (typeof applyFilters === 'function') applyFilters();
     }
 
     function filterByCategory(category) {
-        scrollToPackages();
-        const categoryFilter = document.getElementById('categoryFilter');
-        if (categoryFilter) {
-            categoryFilter.value = category;
-            if (typeof applyFilters === 'function') {
-                applyFilters();
-            }
+        const filter = document.getElementById('categoryFilter');
+        if (filter) {
+            filter.value = category;
+            if (typeof applyFilters === 'function') applyFilters();
+            document.getElementById('packages').scrollIntoView({ behavior: 'smooth' });
         }
     }
-
-    console.log('✅ ✅ ✅ Enhanced Index Page - All Systems Ready ✅ ✅ ✅');
     </script>
 </body>
 </html>

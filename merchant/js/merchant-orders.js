@@ -71,7 +71,7 @@ async function loadOrders() {
         showLoadingState();
         
         // Now works perfectly because we added 'merchant_id' to bookings table
-        const { data: orders, error } = await merchantSupabase
+        const { data: orders, error } = await MerchantAuth.getSupabase()
             .from('bookings')
             .select('*')
             .eq('merchant_id', currentMerchant.id)
@@ -282,11 +282,11 @@ function exportOrders() {
 function setupRealtimeUpdates() {
     // Clean up existing subscription
     if (realtimeSubscription) {
-        merchantSupabase.removeChannel(realtimeSubscription);
+        MerchantAuth.getSupabase().removeChannel(realtimeSubscription);
     }
     
     // Subscribe to order changes
-    realtimeSubscription = merchantSupabase
+    realtimeSubscription = MerchantAuth.getSupabase()
         .channel('orders-changes')
         .on('postgres_changes',
             {
@@ -396,7 +396,7 @@ function formatDate(date, format = 'default') {
 // Play notification sound
 function playNotificationSound() {
     try {
-        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGa57OahUBELTqXh8LdjGwU2jdXxzn0vBSh+zPDfkj4IEl601+ysYBsEMord8Mp3LgUlecjw45hECBdstuvssGwcBDSJ0/HOfC8FJHbE8OKYSwoWbL3u8b');
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGa57OahUBELTqXh8LdjGwU2jdXxzn0vBSh+zPDfkj4IEl601+ysYBsEMord8Mpbc1q5mlw63yd2u2cn0hs6jnzf2gljhr486u3dkgm2y/HOfC8FJHbE8OKYSwoWbL3u8b');
         audio.volume = 0.5;
         audio.play().catch(e => console.log('Audio play failed:', e));
     } catch (e) {
@@ -409,7 +409,7 @@ async function merchantLogout() {
     if (confirm('Are you sure you want to logout?')) {
         try {
             if (realtimeSubscription) {
-                merchantSupabase.removeChannel(realtimeSubscription);
+                MerchantAuth.getSupabase().removeChannel(realtimeSubscription);
             }
             await MerchantAuth.logout();
             showToast('Logged out successfully', 'success');
@@ -431,6 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Clean up on page unload
 window.addEventListener('beforeunload', () => {
     if (realtimeSubscription) {
-        merchantSupabase.removeChannel(realtimeSubscription);
+        MerchantAuth.getSupabase().removeChannel(realtimeSubscription);
     }
 });

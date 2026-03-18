@@ -226,11 +226,32 @@
     padding: 80px 20px;
 }
 
-.empty-state i {
+/* FIX: Targets ONLY the top level icon, leaves button icons alone */
+.empty-state > i {
     font-size: 80px;
     color: #e0e0e0;
     margin-bottom: 24px;
     display: block;
+}
+
+/* FIX: Reset button icons */
+.empty-state a i, 
+.empty-state button i {
+    font-size: inherit;
+    color: inherit;
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+/* FIX: Ensure empty state buttons use flexbox */
+.empty-state .btn-primary,
+.empty-state .btn-secondary {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin-top: 15px;
+    width: auto;
 }
 
 .empty-state h2 {

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +9,12 @@
     <link rel="stylesheet" href="css/merchant.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="js/merchant-config.js"></script>
-
     <script src="js/merchant-auth-guard.js"></script>
 </head>
 <body class="merchant-page" data-page="dashboard">
     
-    <!-- Sidebar -->
-    <aside class="merchant-sidebar">
+    <aside class="merchant-sidebar" id="merchantSidebar">
         <div class="merchant-logo">
             <i class="bi bi-shop"></i>
             <span>WOW Merchant</span>
@@ -72,13 +71,16 @@
         </nav>
     </aside>
     
-    <!-- Main Content -->
     <div class="merchant-content">
-        <!-- Header -->
         <header class="merchant-header">
             <div class="header-left">
-                <h1><i class="bi bi-grid"></i> Dashboard</h1>
-                <p>Welcome back, <strong id="merchantBusinessName">Merchant</strong></p>
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1><i class="bi bi-grid"></i> Dashboard</h1>
+                        <p>Welcome back, <strong id="merchantBusinessName">Merchant</strong></p>
+                    </div>
+                </div>
             </div>
             
             <div class="header-right">
@@ -94,145 +96,161 @@
             </div>
         </header>
         
-        <!-- Content -->
         <main class="merchant-main">
             
-            <!-- Statistics Cards -->
             <div class="stats-grid">
-                <!-- Total Orders -->
                 <div class="stat-card">
-                    <div class="stat-card-icon primary">
-                        <i class="bi bi-box-seam"></i>
+                    <div class="stat-card-icon primary"><i class="bi bi-box-seam"></i></div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
                     </div>
-                    <div class="stat-card-value" id="totalOrders">0</div>
-                    <div class="stat-card-label">Total Orders</div>
-                    <div class="stat-card-trend up">
-                        <i class="bi bi-arrow-up"></i>
-                        <span id="ordersTrend">0%</span> from last month
-                    </div>
+                    <div class="stat-card-trend up"><i class="bi bi-arrow-up"></i><span id="ordersTrend">0%</span> from last month</div>
                 </div>
                 
-                <!-- Total Earnings -->
                 <div class="stat-card">
-                    <div class="stat-card-icon success">
-                        <i class="bi bi-currency-exchange"></i>
+                    <div class="stat-card-icon success"><i class="bi bi-currency-exchange"></i></div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="totalEarnings">₦0</div>
+                        <div class="stat-label">Total Earnings</div>
                     </div>
-                    <div class="stat-card-value" id="totalEarnings">₦0</div>
-                    <div class="stat-card-label">Total Earnings</div>
-                    <div class="stat-card-trend up">
-                        <i class="bi bi-arrow-up"></i>
-                        <span id="earningsTrend">0%</span> from last month
-                    </div>
+                    <div class="stat-card-trend up"><i class="bi bi-arrow-up"></i><span id="earningsTrend">0%</span> from last month</div>
                 </div>
                 
-                <!-- Rating -->
                 <div class="stat-card">
-                    <div class="stat-card-icon warning">
-                        <i class="bi bi-star-fill"></i>
+                    <div class="stat-card-icon warning"><i class="bi bi-star-fill"></i></div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="merchantRating">0.0</div>
+                        <div class="stat-label">Average Rating</div>
                     </div>
-                    <div class="stat-card-value" id="merchantRating">0.0</div>
-                    <div class="stat-card-label">Average Rating</div>
-                    <div class="stat-card-trend">
-                        <i class="bi bi-star"></i>
-                        <span id="totalReviews">0 reviews</span>
-                    </div>
+                    <div class="stat-card-trend"><i class="bi bi-star"></i><span id="totalReviews">0 reviews</span></div>
                 </div>
                 
-                <!-- Pending Orders -->
                 <div class="stat-card">
-                    <div class="stat-card-icon danger">
-                        <i class="bi bi-clock-history"></i>
+                    <div class="stat-card-icon danger"><i class="bi bi-clock-history"></i></div>
+                    <div class="stat-details">
+                        <div class="stat-value" id="pendingOrders">0</div>
+                        <div class="stat-label">Pending Orders</div>
                     </div>
-                    <div class="stat-card-value" id="pendingOrders">0</div>
-                    <div class="stat-card-label">Pending Orders</div>
-                    <div class="stat-card-trend">
-                        <i class="bi bi-exclamation-circle"></i>
-                        <span>Requires action</span>
+                    <div class="stat-card-trend"><i class="bi bi-exclamation-circle"></i><span>Requires action</span></div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="section-label">Catalog Health</h3>
+                <div class="catalog-grid">
+                    <div class="catalog-card">
+                        <div class="catalog-card-info">
+                            <div class="catalog-label">Total Services</div>
+                            <div class="catalog-value" id="catalogTotal">0</div>
+                        </div>
+                        <div class="catalog-icon" style="background: #f1f5f9; color: #475569;"><i class="bi bi-collection"></i></div>
+                    </div>
+                    <div class="catalog-card">
+                        <div class="catalog-card-info">
+                            <div class="catalog-label">Active Packages</div>
+                            <div class="catalog-value success" id="catalogActive">0</div>
+                        </div>
+                        <div class="catalog-icon" style="background: #dcfce7; color: #16a34a;"><i class="bi bi-check-circle"></i></div>
+                    </div>
+                    <div class="catalog-card">
+                        <div class="catalog-card-info">
+                            <div class="catalog-label">Inactive Packages</div>
+                            <div class="catalog-value danger" id="catalogInactive">0</div>
+                        </div>
+                        <div class="catalog-icon" style="background: #fee2e2; color: #dc2626;"><i class="bi bi-dash-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="merchant-card">
+                <div class="merchant-card-header">
+                    <h3 class="merchant-card-title">Quick Actions</h3>
+                </div>
+                <div class="merchant-card-body">
+                    <div class="merchant-btn-group">
+                        <a href="merchant-orders.html" class="merchant-btn merchant-btn-primary">
+                            <i class="bi bi-box-seam"></i> View Orders
+                        </a>
+                        <a href="merchant-services.html" class="merchant-btn merchant-btn-secondary">
+                            <i class="bi bi-plus-circle"></i> Add Service
+                        </a>
+                        <a href="merchant-earnings.html" class="merchant-btn merchant-btn-secondary">
+                            <i class="bi bi-wallet"></i> View Earnings
+                        </a>
+                        <a href="merchant-profile.html" class="merchant-btn merchant-btn-secondary">
+                            <i class="bi bi-person"></i> Edit Profile
+                        </a>
                     </div>
                 </div>
             </div>
             
-            <!-- Quick Actions -->
-            <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 24px;">
-                <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Quick Actions</h3>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <a href="merchant-orders.html" style="padding: 12px 24px; background: #000; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-box-seam"></i> View Orders
-                    </a>
-                    <a href="merchant-services.html" style="padding: 12px 24px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-plus-circle"></i> Add Service
-                    </a>
-                    <a href="merchant-earnings.html" style="padding: 12px 24px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-wallet"></i> View Earnings
-                    </a>
-                    <a href="merchant-profile.html" style="padding: 12px 24px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-person"></i> Edit Profile
-                    </a>
+            <div class="merchant-card">
+                <div class="merchant-card-header">
+                    <h3 class="merchant-card-title">Recent Orders</h3>
+                    <a href="merchant-orders.html" class="merchant-btn merchant-btn-secondary" style="padding: 6px 12px; font-size: 12px;">View All</a>
                 </div>
-            </div>
-            
-            <!-- Recent Orders -->
-            <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; margin-bottom: 24px;">
-                <div style="padding: 20px 24px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: space-between;">
-                    <h3 style="margin: 0; font-size: 18px; font-weight: 600;">Recent Orders</h3>
-                    <a href="merchant-orders.html" style="padding: 8px 16px; background: #f0f0f0; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px;">
-                        View All
-                    </a>
-                </div>
-                <div id="recentOrdersList" style="padding: 0;">
-                    <!-- Orders will be loaded here -->
-                    <div style="padding: 40px; text-align: center; color: #666;">
-                        <i class="bi bi-box-seam" style="font-size: 48px; color: #e0e0e0; margin-bottom: 16px; display: block;"></i>
-                        <p>No orders yet. Orders will appear here once customers book your services.</p>
+                <div class="merchant-card-body no-padding">
+                    <div id="recentOrdersList">
+                        <div style="padding: 40px; text-align: center; color: #64748b;">
+                            <i class="bi bi-box-seam" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px; display: block;"></i>
+                            <p style="margin: 0;">No orders yet. Orders will appear here once customers book your services.</p>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Performance Overview -->
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
-                
-                <!-- This Week -->
-                <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
-                    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">This Week</h3>
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 8px;">
-                            <span style="color: #666; font-size: 14px;">New Orders</span>
-                            <strong style="font-size: 20px;" id="weekOrders">0</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 8px;">
-                            <span style="color: #666; font-size: 14px;">Completed</span>
-                            <strong style="font-size: 20px; color: #22c55e;" id="weekCompleted">0</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 8px;">
-                            <span style="color: #666; font-size: 14px;">Earnings</span>
-                            <strong style="font-size: 20px; color: #22c55e;" id="weekEarnings">₦0</strong>
+            <div class="dashboard-bottom-grid">
+                <div class="merchant-card" style="margin-bottom: 0;">
+                    <div class="merchant-card-header">
+                        <h3 class="merchant-card-title">This Week</h3>
+                    </div>
+                    <div class="merchant-card-body">
+                        <div class="summary-list">
+                            <div class="summary-item">
+                                <span class="summary-label">New Orders</span>
+                                <strong class="summary-value" id="weekOrders">0</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Completed</span>
+                                <strong class="summary-value success" id="weekCompleted">0</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Earnings</span>
+                                <strong class="summary-value success" id="weekEarnings">₦0</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Top Services -->
-                <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
-                    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Top Services</h3>
-                    <div id="topServicesList" style="display: flex; flex-direction: column; gap: 12px;">
-                        <div style="padding: 40px 20px; text-align: center; color: #666;">
-                            <i class="bi bi-gift" style="font-size: 48px; color: #e0e0e0; margin-bottom: 16px; display: block;"></i>
-                            <p style="margin: 0; font-size: 14px;">Add services to see performance</p>
+                <div class="merchant-card" style="margin-bottom: 0;">
+                    <div class="merchant-card-header">
+                        <h3 class="merchant-card-title">Top Services</h3>
+                    </div>
+                    <div class="merchant-card-body no-padding">
+                        <div id="topServicesList">
+                            <div style="padding: 40px 20px; text-align: center; color: #64748b;">
+                                <i class="bi bi-gift" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px; display: block;"></i>
+                                <p style="margin: 0; font-size: 14px;">Add services to see performance</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
             
         </main>
     </div>
     
-    <!-- Toast Notification Container -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- JavaScript Files -->
     <script src="js/utils.js"></script>
     <script src="js/merchant-auth.js"></script>
     <script src="js/merchant-dashboard.js"></script>
-    
+
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('merchantSidebar').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>

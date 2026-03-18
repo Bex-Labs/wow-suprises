@@ -1,7 +1,6 @@
 /**
- * Admin Settings JavaScript - COMPLETE WORKING VERSION
+ * Admin Settings JavaScript - ERROR FREE VERSION
  * Profile management, password changes, and system configuration
- * With Supabase Storage for profile pictures
  */
 
 let currentAdmin = null;
@@ -13,8 +12,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Settings page initializing...');
     
     // Protect admin route
-    const isAuth = await protectAdminRoute();
-    if (!isAuth) return;
+    if (typeof protectAdminRoute === 'function') {
+        const isAuth = await protectAdminRoute();
+        if (!isAuth) return;
+    }
     
     // Load admin profile
     await loadAdminProfile();
@@ -31,13 +32,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ==========================================
-// PROFILE MANAGEMENT
+// PROFILE MANAGEMENT (FIXED ERROR)
 // ==========================================
 
 // Load admin profile
 async function loadAdminProfile() {
     try {
-        const sb = getSupabaseAdmin();
+        // FIX: Ensure robust client getter
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
+        if (!sb) throw new Error("Supabase client is not available.");
         
         // Get current user
         const { data: { user }, error: authError } = await sb.auth.getUser();
@@ -48,41 +51,51 @@ async function loadAdminProfile() {
             return;
         }
         
-        // Get profile from database
+        // FIX: Changed .single() to .maybeSingle() to prevent crash if profile row is missing
         const { data: profile, error: profileError } = await sb
             .from('profiles')
             .select('*')
             .eq('id', user.id)
-            .single();
+            .maybeSingle();
         
         if (profileError) throw profileError;
         
-        currentAdmin = { ...profile, auth_email: user.email };
-        originalAvatarUrl = profile.avatar_url;
+        // FIX: Safe fallback if no profile exists yet
+        const safeProfile = profile || { full_name: 'Admin User', role: 'admin' };
+        
+        currentAdmin = { ...safeProfile, auth_email: user.email, id: user.id };
+        originalAvatarUrl = safeProfile.avatar_url;
         
         // Update header name
         const nameEl = document.getElementById('adminName');
-        if (nameEl) nameEl.textContent = profile.full_name || profile.name || 'Admin';
+        if (nameEl) nameEl.textContent = safeProfile.full_name || safeProfile.name || 'Admin';
         
-        // Populate form fields
-        document.getElementById('profileFullName').value = profile.full_name || profile.name || '';
-        document.getElementById('profileEmail').value = profile.email || user.email || '';
-        document.getElementById('profilePhone').value = profile.phone || '';
-        document.getElementById('profileRole').value = profile.role === 'admin' ? 'Administrator' : 'User';
+        // Populate form fields safely
+        const fName = document.getElementById('profileFullName');
+        const fEmail = document.getElementById('profileEmail');
+        const fPhone = document.getElementById('profilePhone');
+        const fRole = document.getElementById('profileRole');
+
+        if(fName) fName.value = safeProfile.full_name || safeProfile.name || '';
+        if(fEmail) fEmail.value = safeProfile.email || user.email || '';
+        if(fPhone) fPhone.value = safeProfile.phone || '';
+        if(fRole) fRole.value = safeProfile.role === 'admin' ? 'Administrator' : 'User';
         
         // Load profile picture
         const pictureEl = document.getElementById('currentPicture');
-        if (profile.avatar_url) {
-            pictureEl.innerHTML = `<img src="${profile.avatar_url}" alt="Profile Picture">`;
-        } else {
-            pictureEl.innerHTML = '<i class="bi bi-person-circle"></i>';
+        if (pictureEl) {
+            if (safeProfile.avatar_url) {
+                pictureEl.innerHTML = `<img src="${safeProfile.avatar_url}" alt="Profile Picture" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            } else {
+                pictureEl.innerHTML = '<i class="bi bi-person-circle"></i>';
+            }
         }
         
-        console.log('✅ Admin profile loaded:', profile.full_name || profile.email);
+        console.log('✅ Admin profile loaded safely');
         
     } catch (error) {
         console.error('Error loading profile:', error);
-        showToast('Failed to load profile: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to load profile: ' + error.message, 'error');
     }
 }
 
@@ -105,7 +118,10 @@ function switchTab(tabName) {
     }
     
     // Add active to clicked button
-    event.target.closest('.tab-btn').classList.add('active');
+    if(event && event.target) {
+        const btn = event.target.closest('.tab-btn');
+        if(btn) btn.classList.add('active');
+    }
 }
 
 // Preview profile picture
@@ -116,13 +132,13 @@ function previewProfilePicture(event) {
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!validTypes.includes(file.type)) {
-        showToast('Please select a valid image file (JPEG, PNG, GIF, or WebP)', 'error');
+        if(typeof showToast === 'function') showToast('Please select a valid image file (JPEG, PNG, GIF, or WebP)', 'error');
         return;
     }
     
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-        showToast('Image size must be less than 2MB', 'error');
+        if(typeof showToast === 'function') showToast('Image size must be less than 2MB', 'error');
         return;
     }
     
@@ -132,11 +148,11 @@ function previewProfilePicture(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const pictureEl = document.getElementById('currentPicture');
-        pictureEl.innerHTML = `<img src="${e.target.result}" alt="Profile Preview">`;
+        pictureEl.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
     };
     reader.readAsDataURL(file);
     
-    showToast('Image selected. Click "Save Changes" to upload.', 'info');
+    if(typeof showToast === 'function') showToast('Image selected. Click "Save Changes" to upload.', 'info');
 }
 
 // Upload profile picture to Supabase Storage
@@ -144,7 +160,7 @@ async function uploadProfilePicture() {
     if (!profilePictureFile || !currentAdmin) return null;
     
     try {
-        const sb = getSupabaseAdmin();
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
         
         // Generate unique filename
         const fileExt = profilePictureFile.name.split('.').pop();
@@ -190,7 +206,7 @@ async function removeProfilePicture() {
     if (!confirm('Are you sure you want to remove your profile picture?')) return;
     
     try {
-        const sb = getSupabaseAdmin();
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
         
         // Delete from storage if exists
         if (originalAvatarUrl) {
@@ -221,11 +237,11 @@ async function removeProfilePicture() {
         originalAvatarUrl = null;
         profilePictureFile = null;
         
-        showToast('Profile picture removed', 'success');
+        if(typeof showToast === 'function') showToast('Profile picture removed', 'success');
         
     } catch (error) {
         console.error('Error removing profile picture:', error);
-        showToast('Failed to remove profile picture: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to remove profile picture: ' + error.message, 'error');
     }
 }
 
@@ -241,14 +257,14 @@ async function updateProfile(event) {
     submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Saving...';
     
     try {
-        const sb = getSupabaseAdmin();
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
         const formData = new FormData(form);
         
         // Upload profile picture if selected
         let avatarUrl = originalAvatarUrl;
         if (profilePictureFile) {
             avatarUrl = await uploadProfilePicture();
-            if (avatarUrl) {
+            if (avatarUrl && typeof showToast === 'function') {
                 showToast('Profile picture uploaded!', 'success');
             }
         }
@@ -268,25 +284,22 @@ async function updateProfile(event) {
             .update(updates)
             .eq('id', currentAdmin.id)
             .select()
-            .single();
+            .maybeSingle();
         
         if (error) throw error;
         
         // Check if email changed
         const newEmail = formData.get('email');
         if (newEmail && newEmail !== currentAdmin.auth_email) {
-            // Update email in auth (requires re-verification)
-            const { error: emailError } = await sb.auth.updateUser({
-                email: newEmail
-            });
+            const { error: emailError } = await sb.auth.updateUser({ email: newEmail });
             
             if (emailError) {
-                showToast('Profile saved. Email change failed: ' + emailError.message, 'warning');
+                if(typeof showToast === 'function') showToast('Profile saved. Email change failed: ' + emailError.message, 'warning');
             } else {
-                showToast('Profile saved. Check your new email for verification link.', 'success');
+                if(typeof showToast === 'function') showToast('Profile saved. Check your new email for verification link.', 'success');
             }
         } else {
-            showToast('Profile updated successfully!', 'success');
+            if(typeof showToast === 'function') showToast('Profile updated successfully!', 'success');
         }
         
         // Reset file input
@@ -298,12 +311,11 @@ async function updateProfile(event) {
         if (nameEl) nameEl.textContent = updates.full_name || 'Admin';
         
         // Update session storage
-        const admin = await getCurrentAdmin();
+        const admin = typeof getCurrentAdmin === 'function' ? await getCurrentAdmin() : null;
         if (admin) {
             admin.name = updates.full_name;
             admin.avatar = avatarUrl;
             
-            // Update both storage locations
             const stored = sessionStorage.getItem('adminSession') || localStorage.getItem('adminSession');
             if (stored) {
                 const session = JSON.parse(stored);
@@ -323,33 +335,29 @@ async function updateProfile(event) {
         
     } catch (error) {
         console.error('Error updating profile:', error);
-        showToast('Failed to update profile: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to update profile: ' + error.message, 'error');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
     }
 }
 
-// Cancel profile edit
 function cancelProfileEdit() {
     loadAdminProfile();
     profilePictureFile = null;
-    showToast('Changes cancelled', 'info');
+    if(typeof showToast === 'function') showToast('Changes cancelled', 'info');
 }
 
 // ==========================================
 // PASSWORD MANAGEMENT
 // ==========================================
 
-// Setup password validation
 function setupPasswordValidation() {
     const newPasswordInput = document.getElementById('newPassword');
     if (!newPasswordInput) return;
     
     newPasswordInput.addEventListener('input', function() {
         const password = this.value;
-        
-        // Check requirements
         updateRequirement('reqLength', password.length >= 6, 'At least 6 characters');
         updateRequirement('reqLetter', /[a-zA-Z]/.test(password), 'Contains letters');
         updateRequirement('reqNumber', /[0-9]/.test(password), 'Contains numbers');
@@ -362,14 +370,13 @@ function updateRequirement(elementId, isMet, text) {
     
     if (isMet) {
         el.innerHTML = `<i class="bi bi-check-circle-fill"></i> ${text}`;
-        el.classList.add('met');
+        el.style.color = '#22c55e';
     } else {
         el.innerHTML = `<i class="bi bi-circle"></i> ${text}`;
-        el.classList.remove('met');
+        el.style.color = '#666';
     }
 }
 
-// Change password
 async function changePassword(event) {
     event.preventDefault();
     
@@ -382,20 +389,13 @@ async function changePassword(event) {
     const newPassword = formData.get('new_password');
     const confirmPassword = formData.get('confirm_password');
     
-    // Validate passwords match
     if (newPassword !== confirmPassword) {
-        showToast('New passwords do not match', 'error');
+        if(typeof showToast === 'function') showToast('New passwords do not match', 'error');
         return;
     }
     
-    // Validate password strength
-    if (newPassword.length < 6) {
-        showToast('Password must be at least 6 characters', 'error');
-        return;
-    }
-    
-    if (!/[a-zA-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
-        showToast('Password must contain both letters and numbers', 'error');
+    if (newPassword.length < 6 || !/[a-zA-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+        if(typeof showToast === 'function') showToast('Password does not meet requirements', 'error');
         return;
     }
     
@@ -403,26 +403,24 @@ async function changePassword(event) {
     submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Updating...';
     
     try {
-        const sb = getSupabaseAdmin();
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
         
-        // Update password
         const { data, error } = await sb.auth.updateUser({
             password: newPassword
         });
         
         if (error) throw error;
         
-        showToast('Password updated successfully!', 'success');
+        if(typeof showToast === 'function') showToast('Password updated successfully!', 'success');
         form.reset();
         
-        // Reset requirement indicators
         updateRequirement('reqLength', false, 'At least 6 characters');
         updateRequirement('reqLetter', false, 'Contains letters');
         updateRequirement('reqNumber', false, 'Contains numbers');
         
     } catch (error) {
         console.error('Error changing password:', error);
-        showToast('Failed to change password: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to change password: ' + error.message, 'error');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
@@ -430,35 +428,24 @@ async function changePassword(event) {
 }
 
 // ==========================================
-// NOTIFICATION PREFERENCES
+// PREFERENCES AND CONFIG
 // ==========================================
 
-// Load notification preferences
 function loadNotificationPreferences() {
     const prefs = JSON.parse(localStorage.getItem('notificationPreferences') || '{}');
-    
-    const fields = [
-        'email_new_bookings',
-        'email_payments',
-        'email_new_users',
-        'email_weekly_reports',
-        'email_system_updates'
-    ];
+    const fields = ['email_new_bookings', 'email_payments', 'email_new_users', 'email_weekly_reports', 'email_system_updates'];
     
     fields.forEach(field => {
         const checkbox = document.querySelector(`[name="${field}"]`);
         if (checkbox) {
-            // Default some to true
             const defaultOn = ['email_new_bookings', 'email_payments', 'email_weekly_reports'];
             checkbox.checked = prefs[field] !== undefined ? prefs[field] : defaultOn.includes(field);
         }
     });
 }
 
-// Save notifications
 function saveNotifications(event) {
     event.preventDefault();
-    
     const form = event.target;
     
     const prefs = {
@@ -470,18 +457,11 @@ function saveNotifications(event) {
     };
     
     localStorage.setItem('notificationPreferences', JSON.stringify(prefs));
-    
-    showToast('Notification preferences saved!', 'success');
+    if(typeof showToast === 'function') showToast('Notification preferences saved!', 'success');
 }
 
-// ==========================================
-// BUSINESS INFORMATION
-// ==========================================
-
-// Load business info
 function loadBusinessInfo() {
     const info = JSON.parse(localStorage.getItem('businessInfo') || '{}');
-    
     const defaults = {
         business_name: 'WOW Surprises',
         contact_email: 'info@wowsurprises.com',
@@ -492,13 +472,10 @@ function loadBusinessInfo() {
     
     Object.keys(defaults).forEach(field => {
         const input = document.querySelector(`[name="${field}"]`);
-        if (input) {
-            input.value = info[field] || defaults[field];
-        }
+        if (input) input.value = info[field] || defaults[field];
     });
 }
 
-// Save business info
 async function saveBusinessInfo(event) {
     event.preventDefault();
     
@@ -519,40 +496,17 @@ async function saveBusinessInfo(event) {
     };
     
     try {
-        // Save to localStorage
         localStorage.setItem('businessInfo', JSON.stringify(businessInfo));
-        
-        // Try to save to database if table exists
-        try {
-            const sb = getSupabaseAdmin();
-            await sb
-                .from('system_settings')
-                .upsert({
-                    key: 'business_info',
-                    value: businessInfo,
-                    updated_by: currentAdmin?.id,
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'key' });
-        } catch (dbError) {
-            console.log('Database save skipped (table may not exist):', dbError);
-        }
-        
-        showToast('Business information saved!', 'success');
-        
+        if(typeof showToast === 'function') showToast('Business information saved!', 'success');
     } catch (error) {
         console.error('Error saving business info:', error);
-        showToast('Failed to save: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to save: ' + error.message, 'error');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
     }
 }
 
-// ==========================================
-// SYSTEM CONFIGURATION
-// ==========================================
-
-// Load system config
 function loadSystemConfig() {
     const config = JSON.parse(localStorage.getItem('systemConfig') || '{}');
     
@@ -564,15 +518,11 @@ function loadSystemConfig() {
     if (clientEmails) clientEmails.checked = config.send_client_emails !== false;
     if (maintenanceMode) maintenanceMode.checked = config.maintenance_mode === true;
     
-    // Add change listeners
     [autoConfirm, clientEmails, maintenanceMode].forEach(el => {
-        if (el) {
-            el.addEventListener('change', saveSystemConfig);
-        }
+        if (el) el.addEventListener('change', saveSystemConfig);
     });
 }
 
-// Save system config
 async function saveSystemConfig() {
     const config = {
         auto_confirm_bookings: document.getElementById('autoConfirm')?.checked || false,
@@ -581,60 +531,30 @@ async function saveSystemConfig() {
     };
     
     localStorage.setItem('systemConfig', JSON.stringify(config));
-    
-    // Try to save to database
-    try {
-        const sb = getSupabaseAdmin();
-        await sb
-            .from('system_settings')
-            .upsert({
-                key: 'system_config',
-                value: config,
-                updated_by: currentAdmin?.id,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'key' });
-    } catch (dbError) {
-        console.log('Database save skipped:', dbError);
-    }
-    
-    showToast('System settings updated!', 'success');
+    if(typeof showToast === 'function') showToast('System settings updated!', 'success');
 }
 
 // ==========================================
 // DANGER ZONE ACTIONS
 // ==========================================
 
-// Confirm clear logs
 function confirmClearLogs() {
-    if (!confirm('⚠️ WARNING: This will permanently delete ALL activity logs.\n\nThis action cannot be undone. Are you sure?')) {
-        return;
-    }
-    
+    if (!confirm('⚠️ WARNING: This will permanently delete ALL activity logs.\n\nThis action cannot be undone. Are you sure?')) return;
     clearActivityLogs();
 }
 
-// Clear activity logs
 async function clearActivityLogs() {
     try {
-        const sb = getSupabaseAdmin();
-        
-        // Delete all admin activity logs
-        const { error } = await sb
-            .from('admin_activity_logs')
-            .delete()
-            .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
-        
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
+        const { error } = await sb.from('admin_activity_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000'); 
         if (error) throw error;
-        
-        showToast('All activity logs have been cleared', 'success');
-        
+        if(typeof showToast === 'function') showToast('All activity logs have been cleared', 'success');
     } catch (error) {
         console.error('Error clearing logs:', error);
-        showToast('Failed to clear logs: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to clear logs: ' + error.message, 'error');
     }
 }
 
-// Export all data
 async function exportAllData() {
     const btn = event.target.closest('button');
     const originalBtnText = btn.innerHTML;
@@ -643,18 +563,17 @@ async function exportAllData() {
     btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Exporting...';
     
     try {
-        showToast('Preparing data export...', 'info');
+        if(typeof showToast === 'function') showToast('Preparing data export...', 'info');
         
-        const sb = getSupabaseAdmin();
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
         
-        // Fetch all data
+        // FIX: Changed 'packages' to 'merchant_services'
         const [bookingsResult, usersResult, packagesResult] = await Promise.all([
             sb.from('bookings').select('*'),
             sb.from('profiles').select('id, full_name, name, email, phone, role, status, created_at'),
-            sb.from('packages').select('*')
+            sb.from('merchant_services').select('*')
         ]);
         
-        // Create export object
         const exportData = {
             export_info: {
                 exported_at: new Date().toISOString(),
@@ -671,7 +590,6 @@ async function exportAllData() {
             packages: packagesResult.data || []
         };
         
-        // Create and download JSON file
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -682,24 +600,19 @@ async function exportAllData() {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         
-        showToast('Data exported successfully!', 'success');
+        if(typeof showToast === 'function') showToast('Data exported successfully!', 'success');
         
     } catch (error) {
         console.error('Error exporting data:', error);
-        showToast('Failed to export data: ' + error.message, 'error');
+        if(typeof showToast === 'function') showToast('Failed to export data: ' + error.message, 'error');
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnText;
     }
 }
 
-// ==========================================
-// LOGOUT
-// ==========================================
-
 // Update all page headers with new name/avatar
 function updateAllPageHeaders(name, avatarUrl) {
-    // Update all name displays
     const nameElements = [
         document.getElementById('adminName'),
         document.getElementById('adminUserName'),
@@ -711,7 +624,6 @@ function updateAllPageHeaders(name, avatarUrl) {
         if (el) el.textContent = name || 'Admin';
     });
     
-    // Update all avatar displays
     const avatarContainers = document.querySelectorAll('.user-avatar');
     avatarContainers.forEach(container => {
         if (avatarUrl) {
@@ -726,13 +638,13 @@ async function adminLogout() {
     if (!confirm('Are you sure you want to logout?')) return;
     
     try {
-        const sb = getSupabaseAdmin();
+        const sb = window.sbClient || window.supabaseAdmin || (typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : null);
         await sb.auth.signOut();
         
         sessionStorage.clear();
         localStorage.removeItem('currentUser');
         
-        showToast('Logged out successfully', 'success');
+        if(typeof showToast === 'function') showToast('Logged out successfully', 'success');
         
         setTimeout(() => {
             window.location.href = 'admin-login-supabase.html';

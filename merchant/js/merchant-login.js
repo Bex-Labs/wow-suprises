@@ -797,3 +797,19 @@ setTimeout(() => {
         console.error('❌ MerchantAuth still not created');
     }
 }, 1000);
+
+// ========================
+// PASSWORD TOGGLE
+// ========================
+window.togglePasswordVisibility = function(inputId, iconElement) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        iconElement.classList.remove('bi-eye-slash');
+        iconElement.classList.add('bi-eye');
+    } else {
+        input.type = 'password';
+        iconElement.classList.remove('bi-eye');
+        iconElement.classList.add('bi-eye-slash');
+    }
+};

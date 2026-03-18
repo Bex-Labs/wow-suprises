@@ -103,7 +103,7 @@ async function saveNotificationSettings(e) {
             marketing_emails: document.getElementById('marketingEmails').checked
         };
 
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update({ notification_prefs: preferences })
             .eq('id', currentMerchant.id);
@@ -139,7 +139,7 @@ async function changePassword(e) {
         }
 
         // Update password using Supabase Auth
-        const { error } = await merchantSupabase.auth.updateUser({
+        const { error } = await MerchantAuth.getSupabase().auth.updateUser({
             password: newPassword
         });
 
@@ -164,7 +164,7 @@ async function changePassword(e) {
 // Load last login info
 async function loadLastLogin() {
     try {
-        const { data: { session } } = await merchantSupabase.auth.getSession();
+        const { data: { session } } = await MerchantAuth.getSupabase().auth.getSession();
         
         if (session && session.user) {
             const lastSignIn = new Date(session.user.last_sign_in_at);
@@ -183,7 +183,7 @@ async function logoutAllDevices() {
     }
 
     try {
-        await merchantSupabase.auth.signOut();
+        await MerchantAuth.getSupabase().auth.signOut();
         window.location.href = 'merchant-login.html';
     } catch (err) {
         console.error('Logout error:', err);
@@ -205,7 +205,7 @@ async function saveOperatingHours() {
             return;
         }
 
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update({ operating_hours: hoursData })
             .eq('id', currentMerchant.id);
@@ -229,7 +229,7 @@ async function deactivateAccount() {
     }
 
     try {
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchants')
             .update({ 
                 is_active: false

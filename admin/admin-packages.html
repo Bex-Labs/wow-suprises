@@ -176,18 +176,19 @@
                 <div class="filters-bar">
                     <div class="search-box">
                         <i class="bi bi-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search packages..." onkeyup="searchPackages()">
+                        <input type="text" id="searchInput" placeholder="Search packages..." onkeyup="searchPackages()" onchange="searchPackages()">
                     </div>
                     
                     <select id="categoryFilter" onchange="filterPackages()">
                         <option value="">All Categories</option>
-                        <option value="birthday">Birthday</option>
-                        <option value="anniversary">Anniversary</option>
-                        <option value="proposal">Proposal</option>
-                        <option value="graduation">Graduation</option>
-                        <option value="corporate">Corporate</option>
-                        <option value="kids">Kids</option>
-                        <option value="getaway">Getaway</option>
+                        <option value="gifts">Gift Packages</option>
+                        <option value="flowers">Flowers & Bouquets</option>
+                        <option value="cakes">Cakes & Desserts</option>
+                        <option value="decorations">Event Decorations</option>
+                        <option value="balloons">Balloons & Party Supplies</option>
+                        <option value="hampers">Gift Hampers</option>
+                        <option value="experiences">Experience Packages</option>
+                        <option value="other">Other</option>
                     </select>
                     
                     <select id="statusFilter" onchange="filterPackages()">
@@ -247,13 +248,14 @@
                             <label>Category *</label>
                             <select name="category" required class="form-control">
                                 <option value="">Select Category</option>
-                                <option value="birthday">Birthday</option>
-                                <option value="anniversary">Anniversary</option>
-                                <option value="proposal">Proposal</option>
-                                <option value="graduation">Graduation</option>
-                                <option value="corporate">Corporate</option>
-                                <option value="kids">Kids</option>
-                                <option value="getaway">Getaway</option>
+                                <option value="gifts">Gift Packages</option>
+                                <option value="flowers">Flowers & Bouquets</option>
+                                <option value="cakes">Cakes & Desserts</option>
+                                <option value="decorations">Event Decorations</option>
+                                <option value="balloons">Balloons & Party Supplies</option>
+                                <option value="hampers">Gift Hampers</option>
+                                <option value="experiences">Experience Packages</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                         <div class="form-group">

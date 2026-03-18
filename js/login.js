@@ -16,6 +16,24 @@ function switchTab(tab) {
     }
 }
 
+// Password Visibility Toggle Function
+function togglePasswordVisibility(inputId, iconElement) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        iconElement.classList.remove('bi-eye-slash');
+        iconElement.classList.add('bi-eye');
+    } else {
+        input.type = 'password';
+        iconElement.classList.remove('bi-eye');
+        iconElement.classList.add('bi-eye-slash');
+    }
+}
+
+// NOTE: The "Forgot Password" prompt popup has been completely removed.
+// The "Forgot Password" link in your HTML should now act as a normal link: 
+// <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+
 // Handle login form submission
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -189,8 +207,11 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             options: {
                 data: {
                     full_name: name,
-                    phone: phone
-                }
+                    phone: phone,
+                    role: 'client' // Ensure the trigger knows this is a client
+                },
+                // 💥 FIXED: Ensure email verification links send the user to the correct page
+                emailRedirectTo: `${window.location.origin}/login.html`
             }
         });
         
@@ -220,7 +241,6 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         
         if (profileError) {
             console.error('⚠️ Profile error:', profileError);
-            // Don't throw - profile might have been created by trigger
             console.log('Profile might have been created by database trigger');
         } else {
             console.log('✅ Client profile created with role=client');
@@ -264,10 +284,27 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     }
 });
 
-// Social login placeholder function
-function socialLogin(provider) {
-    showToast(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login coming soon!`, 'info');
-    console.log(`Initiating ${provider} login...`);
+// Social login function with Google Auth only
+async function socialLogin(provider) {
+    if (provider === 'google') {
+        try {
+            console.log(`Initiating Google login...`);
+            const supabase = window.getSupabaseClient();
+            
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/index.html`
+                }
+            });
+            
+            if (error) throw error;
+            
+        } catch (error) {
+            console.error('❌ Google login error:', error);
+            showToast('Failed to initialize Google login. Please try again.', 'error');
+        }
+    }
 }
 
 // Pre-fill email if remembered

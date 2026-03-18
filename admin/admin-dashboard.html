@@ -80,11 +80,34 @@
             max-width: 100% !important;
             height: auto !important;
         }
+
+        /* --- ADDED: Centering the Stat Cards --- */
+        .stat-card {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+
+        .stat-card-header, .stat-card-trend {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100% !important;
+        }
+
+        /* --- ADDED: Mobile Hamburger Menu Styling --- */
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #333; margin-right: 15px; }
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
+            .admin-sidebar.active { transform: translateX(0); }
+        }
     </style>
 </head>
 <body class="admin-page" data-page="dashboard">
     
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" id="adminSidebar">
         <div class="admin-logo">
             <i class="bi bi-shield-check"></i>
             <span>WOW Admin</span>
@@ -154,8 +177,13 @@
     <div class="admin-content">
         <header class="admin-header">
             <div class="header-left">
-                <h1><i class="bi bi-grid"></i> Dashboard</h1>
-                <p>Welcome back, <strong id="adminUserName">Admin</strong></p>
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1 style="margin:0;"><i class="bi bi-grid"></i> Dashboard</h1>
+                        <p style="margin:0;">Welcome back, <strong id="adminUserName">Admin</strong></p>
+                    </div>
+                </div>
             </div>
             
             <div class="header-right">
@@ -321,6 +349,11 @@
     <script src="js/admin-config.js"></script>
     <script src="js/admin-auth.js"></script>
     <script src="js/admin-dashboard.js"></script>
-    
+
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('adminSidebar').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>

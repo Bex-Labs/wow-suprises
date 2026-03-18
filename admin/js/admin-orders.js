@@ -1,6 +1,6 @@
 /**
  * Admin Orders Management - HYBRID MATCHING VERSION
- * Fixes: Matches orders by Package ID OR Package Name (Fallback)
+ * Fixes: Unified Search and Status Filter Logic
  */
 
 let allOrders = [];
@@ -35,8 +35,7 @@ async function loadAllOrders() {
 
         if (bookingError) throw bookingError;
 
-        // STEP B: Fetch ALL Services & Merchants (To ensure we find matches)
-        // We fetch all because we need to match by NAME if ID fails
+        // STEP B: Fetch ALL Services & Merchants
         const { data: services } = await sb
             .from('merchant_services')
             .select('id, service_name, merchant_id, merchants ( id, business_name, email )');
@@ -47,9 +46,7 @@ async function loadAllOrders() {
 
         if (services) {
             services.forEach(svc => {
-                // Map by ID
                 serviceIdMap[svc.id] = svc;
-                // Map by Name (Lowercase for safe matching)
                 if (svc.service_name) {
                     serviceNameMap[svc.service_name.toLowerCase()] = svc;
                 }
@@ -60,17 +57,14 @@ async function loadAllOrders() {
         allOrders = bookings.map(booking => {
             let matchedService = null;
 
-            // 1. Try Match by ID
             if (booking.package_id) {
                 matchedService = serviceIdMap[booking.package_id];
             }
 
-            // 2. If no match, Try Match by Name (Fallback)
             if (!matchedService && booking.package_name) {
                 matchedService = serviceNameMap[booking.package_name.toLowerCase()];
             }
 
-            // 3. Resolve Merchant Details
             const merchant = matchedService?.merchants;
 
             return {
@@ -84,7 +78,8 @@ async function loadAllOrders() {
             };
         });
 
-        renderOrders(allOrders);
+        // Run through the filter engine instead of rendering all directly
+        applyFilters();
         console.log(`✅ Loaded ${allOrders.length} orders. Found matches using Hybrid Strategy.`);
 
     } catch (err) {
@@ -101,7 +96,7 @@ function renderOrders(orders) {
     if (!tbody) return;
 
     if (orders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#666;">No orders found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#666;">No orders found matching criteria.</td></tr>';
         return;
     }
 
@@ -118,7 +113,6 @@ function renderOrders(orders) {
         
         const statusClass = `status-${(order.status || 'pending').toLowerCase()}`;
 
-        // Visual indicator if Unassigned
         const merchantStyle = merchantName === 'Unassigned' ? 'color:#999; font-style:italic;' : 'color:#4f46e5; font-weight:600;';
 
         return `
@@ -207,7 +201,7 @@ function createModalHtml() {
 }
 
 // ------------------------------------------------------------------
-// 4. UTILS
+// 4. UTILS & UNIFIED FILTERS (FIXED)
 // ------------------------------------------------------------------
 function setupRealtimeTracking() {
     const sb = window.sbClient;
@@ -218,16 +212,38 @@ function setupRealtimeTracking() {
 }
 
 function setupFilters() {
-    const input = document.getElementById('searchOrder');
-    if(input) input.addEventListener('input', () => {
-        const term = input.value.toLowerCase();
-        const filtered = allOrders.filter(o => 
-            (o.resolved_merchant?.name || '').toLowerCase().includes(term) ||
-            (o.booking_reference || '').toLowerCase().includes(term)
-        );
-        renderOrders(filtered);
-    });
+    const searchInput = document.getElementById('searchOrder');
+    const statusFilter = document.getElementById('statusFilter');
+
+    if(searchInput) searchInput.addEventListener('input', applyFilters);
+    if(statusFilter) statusFilter.addEventListener('change', applyFilters);
 }
+
+// Unified filter function exposed globally so HTML handlers can call it
+window.applyFilters = function() {
+    const searchInput = document.getElementById('searchOrder');
+    const statusFilter = document.getElementById('statusFilter');
+
+    const term = searchInput ? searchInput.value.toLowerCase() : '';
+    const status = statusFilter ? statusFilter.value.toLowerCase() : 'all';
+
+    const filtered = allOrders.filter(o => {
+        // 1. Check Search Match (Merchant, Order ID, or Client Name)
+        const matchesSearch = 
+            (o.resolved_merchant?.name || '').toLowerCase().includes(term) ||
+            (o.booking_reference || o.id || '').toLowerCase().includes(term) ||
+            (o.profiles?.full_name || o.recipient_name || '').toLowerCase().includes(term);
+
+        // 2. Check Status Match
+        const orderStatus = (o.status || 'pending').toLowerCase();
+        const matchesStatus = (status === 'all') || (orderStatus === status);
+
+        // Record must pass BOTH filters
+        return matchesSearch && matchesStatus;
+    });
+
+    renderOrders(filtered);
+};
 
 function cleanAmount(val) { return parseFloat(val) || 0; }
 function formatCurrency(val) { return '₦' + val.toLocaleString('en-NG'); }

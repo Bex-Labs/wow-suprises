@@ -5,22 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - WOW Merchant</title>
     
-    <!-- Auth Guard -->
     <script src="js/merchant-auth-guard.js"></script>
 
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <!-- Supabase Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- CSS Files -->
     <link rel="stylesheet" href="css/merchant.css">
+
+    <style>
+        /* Mobile Layout Fixes */
+        html, body { overflow-x: hidden; max-width: 100%; background: #f8fafc; margin: 0; }
+        
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #0f172a; margin-right: 15px; padding: 5px; position: relative; z-index: 9999; }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .merchant-main > div > div {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .merchant-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
+            .merchant-sidebar.active { transform: translateX(0); }
+            
+            .merchant-main { padding: 15px !important; }
+            .merchant-header { padding: 15px !important; }
+            
+            /* Stack Order Info Grid on Mobile */
+            #orderInfo { grid-template-columns: 1fr !important; }
+            
+            /* Make status buttons full width */
+            #statusButtonsContainer { flex-direction: column; }
+            #statusButtonsContainer button { width: 100%; }
+        }
+    </style>
 </head>
 <body class="merchant-page" data-page="order-details">
     
-    <!-- Sidebar -->
-    <aside class="merchant-sidebar">
+    <aside class="merchant-sidebar" id="merchantSidebar">
         <div class="merchant-logo">
             <i class="bi bi-shop"></i>
             <span>WOW Merchant</span>
@@ -76,16 +105,17 @@
         </nav>
     </aside>
     
-    <!-- Main Content -->
     <div class="merchant-content">
-        <!-- Header -->
         <header class="merchant-header">
             <div class="header-left">
-                <a href="merchant-orders.html" style="text-decoration: none; color: #666; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">
-                    <i class="bi bi-arrow-left"></i> Back to Orders
-                </a>
-                <h1 style="margin: 0;"><i class="bi bi-box-seam"></i> Order Details</h1>
-                <p id="orderIdDisplay">Loading...</p>
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <a href="merchant-orders.html" style="text-decoration: none; color: #64748b; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;">
+                        <i class="bi bi-arrow-left"></i> Back to Orders
+                    </a>
+                </div>
+                <h1 style="margin: 0; color: #0f172a;"><i class="bi bi-box-seam"></i> Order Details</h1>
+                <p id="orderIdDisplay" style="color: #64748b;">Loading...</p>
             </div>
             
             <div class="header-right">
@@ -101,87 +131,69 @@
             </div>
         </header>
         
-        <!-- Content -->
         <main class="merchant-main">
             
-            <!-- Loading State -->
             <div id="orderLoading" style="text-align: center; padding: 80px 20px; display: none;">
-                <div style="width: 60px; height: 60px; border: 4px solid #f0f0f0; border-top-color: #000; border-radius: 50%; margin: 0 auto 24px; animation: spin 1s linear infinite;"></div>
-                <p style="color: #666; font-size: 16px;">Loading order details...</p>
+                <div style="width: 60px; height: 60px; border: 4px solid #f0f0f0; border-top-color: #0f172a; border-radius: 50%; margin: 0 auto 24px; animation: spin 1s linear infinite;"></div>
+                <p style="color: #64748b; font-size: 14px;">Loading order details...</p>
             </div>
             
-            <!-- Order Content -->
             <div id="orderContent" style="display: none;">
                 
-                <!-- Status Update Actions -->
-                <div id="statusActions" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 24px;">
+                <div id="statusActions" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; margin-bottom: 24px;">
                     <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Update Order Status</h3>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap;" id="statusButtonsContainer">
-                        <!-- Status buttons will be dynamically added here -->
-                    </div>
+                        </div>
                 </div>
                 
-                <!-- Main Grid -->
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
                     
-                    <!-- Left Column -->
                     <div style="display: flex; flex-direction: column; gap: 24px;">
                         
-                        <!-- Order Information -->
-                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px;">
                             <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Order Information</h3>
                             <div id="orderInfo" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-                                <!-- Order info will be loaded here -->
-                            </div>
+                                </div>
                         </div>
                         
-                        <!-- Delivery Tracking -->
-                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px;">
                             <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Delivery Tracking</h3>
                             <div id="deliveryTimeline">
-                                <!-- Timeline will be loaded here -->
-                            </div>
+                                </div>
                         </div>
                         
-                        <!-- Special Instructions -->
-                        <div id="specialInstructionsCard" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; display: none;">
+                        <div id="specialInstructionsCard" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; display: none;">
                             <h3 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Special Instructions</h3>
-                            <p id="specialInstructions" style="margin: 0; color: #666; line-height: 1.6;"></p>
+                            <p id="specialInstructions" style="margin: 0; color: #64748b; line-height: 1.6;"></p>
                         </div>
                         
                     </div>
                     
-                    <!-- Right Column -->
                     <div style="display: flex; flex-direction: column; gap: 24px;">
                         
-                        <!-- Customer Details -->
-                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px;">
                             <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Customer Details</h3>
                             <div id="customerInfo">
-                                <!-- Customer info will be loaded here -->
-                            </div>
+                                </div>
                         </div>
                         
-                        <!-- Order Summary -->
-                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
+                        <div style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px;">
                             <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Order Summary</h3>
                             <div id="orderSummary">
-                                <!-- Summary will be loaded here -->
-                            </div>
+                                </div>
                         </div>
                         
-                        <!-- Upload Delivery Photo -->
-                        <div id="uploadPhotoCard" style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; display: none;">
+                        <div id="uploadPhotoCard" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; display: none;">
                             <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Delivery Photo</h3>
                             <div id="deliveryPhotoPreview" style="display: none; margin-bottom: 16px;">
                                 <img id="photoPreview" style="width: 100%; border-radius: 8px; margin-bottom: 12px;" />
-                                <p style="font-size: 12px; color: #666; text-align: center; margin: 0;">Delivery photo uploaded</p>
+                                <p style="font-size: 12px; color: #64748b; text-align: center; margin: 0;">Delivery photo uploaded</p>
                             </div>
                             <input type="file" id="deliveryPhotoInput" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
-                            <button onclick="document.getElementById('deliveryPhotoInput').click()" style="width: 100%; padding: 12px; background: #f0f0f0; color: #000; border: 1px dashed #ccc; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <button onclick="document.getElementById('deliveryPhotoInput').click()" style="width: 100%; padding: 12px; background: #f8fafc; color: #0f172a; border: 1px dashed #cbd5e1; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                                 <i class="bi bi-camera"></i> Upload Photo
                             </button>
-                            <p style="font-size: 12px; color: #666; margin: 8px 0 0 0; text-align: center;">Recommended for completed deliveries</p>
+                            <p style="font-size: 11px; color: #94a3b8; margin: 8px 0 0 0; text-align: center;">Recommended for completed deliveries</p>
                         </div>
                         
                     </div>
@@ -191,27 +203,34 @@
         </main>
     </div>
     
-    <!-- Toast Notification Container -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- JavaScript Files -->
     <script src="js/utils.js"></script>
     <script src="js/merchant-config.js"></script>
     <script src="js/merchant-auth.js"></script>
     <script src="js/merchant-order-details.js"></script>
     
-    <style>
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 1024px) {
-            .merchant-main > div > div {
-                grid-template-columns: 1fr !important;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('merchantSidebar');
+            
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sidebar.classList.toggle('active');
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target) && sidebar.classList.contains('active')) {
+                            sidebar.classList.remove('active');
+                        }
+                    }
+                });
             }
-        }
-    </style>
-    
+        });
+    </script>
 </body>
 </html>

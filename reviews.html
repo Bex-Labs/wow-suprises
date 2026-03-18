@@ -14,6 +14,34 @@
     <link rel="stylesheet" href="css/footer.css">
     
     <style>
+        /* MOBILE RESPONSIVENESS FIXES */
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+
+        @media (max-width: 768px) {
+            #mobileMenuBtn { display: block; }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                gap: 15px;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
+
+            .page-header h1 { font-size: 2.2rem !important; }
+            .reviews-grid { grid-template-columns: 1fr !important; gap: 20px; }
+            .review-form-section { padding: 25px 20px; margin: 0 15px 40px; }
+        }
+
         /* FIXED HEADER STYLE: Clean light gray instead of solid black */
         .page-header {
             background-color: #f8f9fa;
@@ -126,7 +154,12 @@
             <a href="index.html" class="logo" style="text-decoration:none; color:black; font-weight:800; font-size:24px;">
                 WOW SURPRISES
             </a>
-            <ul class="nav-links">
+
+            <button id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="custom-package.html">Custom Package</a></li>
                 <li><a href="reviews.html" class="active">Reviews</a></li>
@@ -275,5 +308,48 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/reviews.js"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            
+            if(toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navLinks.classList.toggle('active');
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                }
+            });
+
+            initializeAuth();
+        });
+
+        async function initializeAuth() {
+            try {
+                const authLink = document.getElementById('authLink');
+                const client = window.sbClient || window.supabase;
+                if (client) {
+                    const { data } = await client.auth.getSession();
+                    if (data?.session?.user) {
+                        authLink.textContent = 'Logout';
+                        authLink.href = '#';
+                        authLink.onclick = async (e) => {
+                            e.preventDefault();
+                            if(confirm('Logout?')) {
+                                await client.auth.signOut();
+                                localStorage.removeItem('currentUser');
+                                window.location.reload();
+                            }
+                        };
+                    }
+                }
+            } catch (error) { console.error('Auth error:', error); }
+        }
+    </script>
 </body>
 </html>

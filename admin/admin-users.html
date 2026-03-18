@@ -210,22 +210,23 @@
                     <div class="users-controls">
                         <div class="admin-search">
                             <i class="bi bi-search"></i>
-                            <input type="text" id="searchInput" placeholder="Search by name, email, phone..." onkeyup="searchUsers()">
+                            <input type="text" id="searchInput" placeholder="Search by name, email, phone..." oninput="applyFilters()">
                         </div>
                         
-                        <select class="admin-filter-select" id="roleFilter" onchange="filterUsers()">
+                        <select class="admin-filter-select" id="roleFilter" onchange="applyFilters()">
                             <option value="">All Roles</option>
                             <option value="client">Clients</option>
-                            <option value="merchant">Merchants</option> <option value="admin">Administrators</option>
+                            <option value="merchant">Merchants</option> 
+                            <option value="admin">Administrators</option>
                         </select>
                         
-                        <select class="admin-filter-select" id="statusFilter" onchange="filterUsers()">
+                        <select class="admin-filter-select" id="statusFilter" onchange="applyFilters()">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
                             <option value="suspended">Suspended</option>
                         </select>
                         
-                        <select class="admin-filter-select" id="sortOrder" onchange="sortUsers()">
+                        <select class="admin-filter-select" id="sortOrder" onchange="applyFilters()">
                             <option value="newest">Newest First</option>
                             <option value="oldest">Oldest First</option>
                             <option value="name">Name A-Z</option>
@@ -315,12 +316,12 @@
                         </div>
                         <div class="form-group" id="passwordGroup">
                             <label>Password *</label>
-                            <input type="password" name="password" class="form-control" placeholder="Min 6 characters">
-                            <small>Leave blank to keep existing password</small>
+                            <input type="password" name="password" id="userPassword" class="form-control" placeholder="Min 6 characters">
+                            <small id="passwordHelperText">Leave blank to keep existing password</small>
                         </div>
                     </div>
                     <div class="modal-actions">
-                        <button type="submit" class="btn-primary"><i class="bi bi-check-circle"></i> Save User</button>
+                        <button type="submit" class="btn-primary" id="saveUserBtn"><i class="bi bi-check-circle"></i> Save User</button>
                         <button type="button" class="btn-secondary" onclick="closeUserModal()">Cancel</button>
                     </div>
                 </form>

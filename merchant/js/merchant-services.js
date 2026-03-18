@@ -1,6 +1,7 @@
 /**
  * Merchant Services JavaScript
  * Handles CRUD operations + Image Uploads (Max 10MB)
+ * FIXES: Protects image on edit, Displays Category, Uses Centralized DB Client
  */
 
 let currentMerchant = null;
@@ -34,7 +35,10 @@ async function loadServices() {
     try {
         showLoadingState();
         
-        const { data, error } = await merchantSupabase
+        // 💥 FIX: Use centralized fast client
+        const supabase = MerchantAuth.getSupabase();
+        
+        const { data, error } = await supabase
             .from('merchant_services')
             .select('*')
             .eq('merchant_id', currentMerchant.id)
@@ -73,6 +77,11 @@ function renderServices() {
             ? service.image_url 
             : 'https://placehold.co/600x400/f3f4f6/6b7280?text=No+Image';
 
+        // Format the category text so "gift-hampers" becomes "Gift Hampers"
+        const displayCategory = service.service_category 
+            ? service.service_category.replace(/-/g, ' ') 
+            : 'General';
+
         return `
         <div class="service-card ${!service.is_active ? 'inactive' : ''}" style="background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; position: relative;">
             
@@ -105,10 +114,14 @@ function renderServices() {
                 ${escapeHtml(service.description || '')}
             </p>
             
-            <div class="service-details" style="display: flex; gap: 16px; font-size: 13px; color: #444; margin-bottom: 16px;">
+            <div class="service-details" style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: #444; margin-bottom: 16px;">
                 <div class="detail-item" style="display: flex; align-items: center; gap: 6px;">
                     <i class="bi bi-tag" style="color: #999;"></i>
                     <span style="font-weight: 600;">₦${formatCurrency(service.base_price)}</span>
+                </div>
+                <div class="detail-item" style="display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-folder" style="color: #999;"></i>
+                    <span style="text-transform: capitalize;">${escapeHtml(displayCategory)}</span>
                 </div>
                 <div class="detail-item" style="display: flex; align-items: center; gap: 6px;">
                     <i class="bi bi-clock" style="color: #999;"></i>
@@ -163,7 +176,6 @@ function setupEventListeners() {
         btn.addEventListener('click', closeServiceModal);
     });
 
-    // Handle File Preview
     document.getElementById('serviceImageFile')?.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -212,7 +224,6 @@ window.editService = async function(serviceId) {
         document.getElementById('serviceCategory').value = service.service_category || '';
         document.getElementById('serviceActive').checked = service.is_active;
         
-        // Handle Image
         document.getElementById('serviceImage').value = service.image_url || '';
         if (service.image_url) {
             const preview = document.getElementById('imagePreview');
@@ -260,16 +271,17 @@ window.addFeatureTag = function(predefinedValue = null) {
 // IMAGE UPLOAD FUNCTION
 // ----------------------------------------------------
 async function uploadImage(file) {
+    const supabase = MerchantAuth.getSupabase();
     const fileName = `${currentMerchant.id}/${Date.now()}-${file.name}`;
     
-    const { data, error } = await merchantSupabase
+    const { data, error } = await supabase
         .storage
         .from('service-images')
         .upload(fileName, file, { cacheControl: '3600', upsert: false });
 
     if (error) throw error;
 
-    const { data: { publicUrl } } = merchantSupabase
+    const { data: { publicUrl } } = supabase
         .storage
         .from('service-images')
         .getPublicUrl(fileName);
@@ -278,11 +290,12 @@ async function uploadImage(file) {
 }
 
 // ----------------------------------------------------
-// SUBMIT HANDLER (Updated for 10MB Limit)
+// SUBMIT HANDLER
 // ----------------------------------------------------
 async function handleSubmit(e) {
     e.preventDefault();
     const saveBtn = document.getElementById('saveServiceBtn');
+    const supabase = MerchantAuth.getSupabase();
     
     try {
         saveBtn.disabled = true;
@@ -294,8 +307,6 @@ async function handleSubmit(e) {
 
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
-            
-            // 10MB Check (10 * 1024 * 1024 bytes)
             const maxSize = 10 * 1024 * 1024;
             if (file.size > maxSize) {
                 alert("File is too large! Please choose an image under 10MB.");
@@ -303,7 +314,6 @@ async function handleSubmit(e) {
                 saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Save Service';
                 return;
             }
-
             try {
                 finalImageUrl = await uploadImage(file);
             } catch (uploadErr) {
@@ -311,6 +321,11 @@ async function handleSubmit(e) {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Service';
                 return;
+            }
+        } else if (editingServiceId) {
+            const existingService = allServices.find(s => s.id === editingServiceId);
+            if (!finalImageUrl && existingService) {
+                finalImageUrl = existingService.image_url || '';
             }
         }
 
@@ -331,13 +346,13 @@ async function handleSubmit(e) {
 
         let result;
         if (editingServiceId) {
-            result = await merchantSupabase
+            result = await supabase
                 .from('merchant_services')
                 .update(formData)
                 .eq('id', editingServiceId)
                 .select();
         } else {
-            result = await merchantSupabase
+            result = await supabase
                 .from('merchant_services')
                 .insert([formData])
                 .select();
@@ -360,9 +375,10 @@ async function handleSubmit(e) {
 
 window.toggleServiceStatus = async function(serviceId) {
     try {
+        const supabase = MerchantAuth.getSupabase();
         const service = allServices.find(s => s.id === serviceId);
         if (!service) return;
-        const { error } = await merchantSupabase
+        const { error } = await supabase
             .from('merchant_services')
             .update({ is_active: !service.is_active })
             .eq('id', serviceId);
@@ -377,7 +393,8 @@ window.toggleServiceStatus = async function(serviceId) {
 window.deleteService = async function(serviceId) {
     if (!confirm('Are you sure you want to delete this service?')) return;
     try {
-        const { error } = await merchantSupabase.from('merchant_services').delete().eq('id', serviceId);
+        const supabase = MerchantAuth.getSupabase();
+        const { error } = await supabase.from('merchant_services').delete().eq('id', serviceId);
         if (error) throw error;
         showToast('Service deleted!', 'success');
         await loadServices();

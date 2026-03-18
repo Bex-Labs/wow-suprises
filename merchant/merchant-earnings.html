@@ -11,10 +11,54 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link rel="stylesheet" href="css/merchant.css">
+
+    <style>
+        /* CRITICAL MOBILE & TABLE FIXES */
+        html, body { overflow-x: hidden; max-width: 100%; background: #f8fafc; margin: 0; }
+        .merchant-content, .merchant-main { min-width: 0 !important; width: 100%; box-sizing: border-box; }
+
+        /* Force Canvas to fit */
+        canvas { max-width: 100% !important; height: auto !important; }
+
+        /* Enterprise Table Physics for Payouts */
+        .data-table {
+            width: 100%;
+            min-width: 700px; /* Prevents columns from crushing */
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #0f172a; margin-right: 15px; padding: 0; }
+
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .merchant-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
+            .merchant-sidebar.active { transform: translateX(0); }
+            
+            .merchant-main { padding: 16px !important; }
+            .merchant-header { padding: 16px !important; }
+
+            /* Forces stats grid to stack */
+            .stats-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+            
+            /* Quick Actions stacking */
+            .card-body > div[style*="display: flex"] { flex-direction: column; width: 100%; }
+            .btn-login { width: 100% !important; justify-content: center; }
+            
+            /* Chart & Table header stacking */
+            .card-header { flex-direction: column; align-items: flex-start !important; gap: 12px; }
+            .card-actions { width: 100%; }
+            .card-actions select { width: 100%; }
+            
+            /* Modal responsiveness */
+            #withdrawModal > div { max-width: 95% !important; margin: 0 auto; }
+            #withdrawForm > div[style*="display: flex"] { flex-direction: column; }
+        }
+    </style>
 </head>
 <body class="merchant-page" data-page="earnings">
     
-    <aside class="merchant-sidebar">
+    <aside class="merchant-sidebar" id="merchantSidebar">
         <div class="merchant-logo">
             <i class="bi bi-shop"></i>
             <span>WOW Merchant</span>
@@ -58,8 +102,13 @@
     <div class="merchant-content">
         <header class="merchant-header">
             <div class="header-left">
-                <h1>Earnings & Payouts</h1>
-                <p>Manage your earnings and withdrawal requests</p>
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1 style="margin: 0; font-size: 18px; font-weight: 600; color: #0f172a;">Earnings & Payouts</h1>
+                        <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Manage your earnings and withdrawal requests</p>
+                    </div>
+                </div>
             </div>
             <div class="header-right">
                 <div class="merchant-user-info">
@@ -76,54 +125,54 @@
 
         <main class="merchant-main">
             
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-card-icon success" style="background: rgba(76, 175, 80, 0.1); color: #4caf50;">
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 24px;">
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 16px;">
+                    <div class="stat-card-icon success" style="background: rgba(76, 175, 80, 0.1); color: #4caf50; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
                         <i class="bi bi-wallet2"></i>
                     </div>
                     <div class="stat-details">
-                        <span class="stat-card-label">Available Balance</span>
-                        <h2 class="stat-card-value" id="availableBalance">₦0.00</h2>
-                        <span class="stat-card-trend up">
+                        <span class="stat-card-label" style="font-size: 13px; color: #666; font-weight: 500;">Available Balance</span>
+                        <h2 class="stat-card-value" id="availableBalance" style="font-size: 24px; font-weight: 700; color: #000; margin: 4px 0;">₦0.00</h2>
+                        <span class="stat-card-trend up" style="font-size: 12px; color: #22c55e;">
                             <i class="bi bi-check-circle"></i> Ready to withdraw
                         </span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-card-icon warning" style="background: rgba(33, 150, 243, 0.1); color: #2196f3;">
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 16px;">
+                    <div class="stat-card-icon warning" style="background: rgba(33, 150, 243, 0.1); color: #2196f3; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div class="stat-details">
-                        <span class="stat-card-label">Pending Clearance</span>
-                        <h2 class="stat-card-value" id="pendingEarnings">₦0.00</h2>
-                        <span class="stat-card-trend">
+                        <span class="stat-card-label" style="font-size: 13px; color: #666; font-weight: 500;">Pending Clearance</span>
+                        <h2 class="stat-card-value" id="pendingEarnings" style="font-size: 24px; font-weight: 700; color: #000; margin: 4px 0;">₦0.00</h2>
+                        <span class="stat-card-trend" style="font-size: 12px; color: #666;">
                             <i class="bi bi-clock"></i> Processing orders
                         </span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-card-icon primary" style="background: rgba(255, 152, 0, 0.1); color: #ff9800;">
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 16px;">
+                    <div class="stat-card-icon primary" style="background: rgba(255, 152, 0, 0.1); color: #ff9800; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
                         <i class="bi bi-graph-up-arrow"></i>
                     </div>
                     <div class="stat-details">
-                        <span class="stat-card-label">Total Earnings</span>
-                        <h2 class="stat-card-value" id="totalLifetimeEarnings">₦0.00</h2>
-                        <span class="stat-card-trend">
+                        <span class="stat-card-label" style="font-size: 13px; color: #666; font-weight: 500;">Total Earnings</span>
+                        <h2 class="stat-card-value" id="totalLifetimeEarnings" style="font-size: 24px; font-weight: 700; color: #000; margin: 4px 0;">₦0.00</h2>
+                        <span class="stat-card-trend" style="font-size: 12px; color: #666;">
                             <i class="bi bi-calendar3"></i> All time
                         </span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-card-icon danger" style="background: rgba(156, 39, 176, 0.1); color: #9c27b0;">
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 16px;">
+                    <div class="stat-card-icon danger" style="background: rgba(156, 39, 176, 0.1); color: #9c27b0; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
                         <i class="bi bi-cash-stack"></i>
                     </div>
                     <div class="stat-details">
-                        <span class="stat-card-label">Total Withdrawn</span>
-                        <h2 class="stat-card-value" id="totalWithdrawn">₦0.00</h2>
-                        <span class="stat-card-trend">
+                        <span class="stat-card-label" style="font-size: 13px; color: #666; font-weight: 500;">Total Withdrawn</span>
+                        <h2 class="stat-card-value" id="totalWithdrawn" style="font-size: 24px; font-weight: 700; color: #000; margin: 4px 0;">₦0.00</h2>
+                        <span class="stat-card-trend" style="font-size: 12px; color: #22c55e;">
                             <i class="bi bi-check-circle"></i> Paid out
                         </span>
                     </div>
@@ -187,7 +236,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive" style="overflow-x: auto;">
+                    <div class="table-responsive" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
                         <table class="data-table" style="width: 100%; border-collapse: collapse; min-width: 600px;">
                             <thead>
                                 <tr style="border-bottom: 2px solid #f0f0f0; text-align: left;">
@@ -199,7 +248,7 @@
                                 </tr>
                             </thead>
                             <tbody id="payoutsTableBody">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
 
@@ -250,7 +299,7 @@
                     <button type="submit" style="flex: 1; padding: 14px; background: #000; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
                         Submit Request
                     </button>
-                    <button type="button" class="close-modal" style="padding: 14px 24px; background: #f0f0f0; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <button type="button" class="close-modal" style="flex: 1; padding: 14px; background: #f0f0f0; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
                         Cancel
                     </button>
                 </div>
@@ -258,6 +307,12 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('merchantSidebar').classList.toggle('active');
+        });
+    </script>
+    
     <script src="js/utils.js"></script>
     <script src="js/merchant-config.js"></script>
     <script src="js/merchant-auth.js"></script>

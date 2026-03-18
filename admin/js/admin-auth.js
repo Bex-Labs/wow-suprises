@@ -3,6 +3,13 @@
  * Handles admin login, registration, session management, and route protection with Supabase
  */
 
+// Helper to get the correct folder path (works on localhost AND Vercel subfolders)
+function getBasePath() {
+    const currentPath = window.location.pathname;
+    const folderPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+    return `${window.location.origin}${folderPath}`;
+}
+
 /**
  * Admin registration with Supabase
  * @param {Object} userData - User data {name, email, phone, password}
@@ -18,6 +25,9 @@ async function adminRegister(userData) {
         
         console.log('🔐 Starting admin registration for:', userData.email);
         
+        // Dynamically calculate the login URL so it doesn't 404 on Vercel
+        const loginRedirectUrl = `${getBasePath()}/admin-login.html`;
+
         // Sign up with Supabase
         // FIX: Added 'role: admin' to metadata so the SQL Trigger knows to create the profile
         const { data: authData, error: authError } = await sb.auth.signUp({
@@ -29,7 +39,7 @@ async function adminRegister(userData) {
                     phone: userData.phone,
                     role: 'admin' 
                 },
-                emailRedirectTo: window.location.origin + '/admin-dashboard-supabase.html'
+                emailRedirectTo: loginRedirectUrl
             }
         });
         
@@ -699,6 +709,34 @@ function setupGlobalRealtime() {
         .subscribe();
 }
 
+/**
+ * Admin Reset Password
+ * Sends the reset link using the dynamic base path
+ */
+async function resetAdminPassword(email) {
+    try {
+        const sb = typeof getSupabaseAdmin === 'function' ? getSupabaseAdmin() : (window.sbClient || window.supabase);
+        
+        if (!sb) {
+            throw new Error('Supabase client not initialized');
+        }
+
+        // Dynamically calculate the reset URL so it doesn't 404 on Vercel
+        const resetRedirectUrl = `${getBasePath()}/admin-reset-password.html?type=recovery`;
+
+        const { error } = await sb.auth.resetPasswordForEmail(email, {
+            redirectTo: resetRedirectUrl
+        });
+
+        if (error) throw error;
+
+        return { success: true, message: 'Password reset email sent.' };
+    } catch (error) {
+        console.error('❌ Reset password error:', error);
+        return { success: false, message: error.message };
+    }
+}
+
 // Auto-protect admin routes on page load
 if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', async () => {
@@ -727,6 +765,8 @@ if (typeof window !== 'undefined') {
         getAdminActivityLogs,
         checkAdminAccess,
         updateGlobalBadge, 
-        setupGlobalRealtime
+        setupGlobalRealtime,
+        resetAdminPassword,
+        getBasePath
     };
 }

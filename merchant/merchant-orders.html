@@ -14,37 +14,64 @@
     <link rel="stylesheet" href="css/merchant.css">
     
     <style>
+        /* Base Resets */
+        html, body { overflow-x: hidden; max-width: 100%; background: #f8fafc; margin: 0; }
+        .merchant-content, .merchant-main { min-width: 0 !important; width: 100%; box-sizing: border-box; }
+
+        /* Filter Bar Styles */
+        .filters-bar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 24px; background: #fff; padding: 16px 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .search-group { flex: 1; position: relative; min-width: 0; }
+        .search-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .search-input { width: 100%; max-width: 400px; padding: 10px 10px 10px 38px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc; box-sizing: border-box; transition: border-color 0.2s; }
+        .search-input:focus { border-color: #3b82f6; background: #fff; }
+        
+        .filter-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-select { padding: 10px 32px 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: #f8fafc; color: #334155; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+        .filter-select:focus { border-color: #3b82f6; }
+        
+        .btn-export { padding: 10px 16px; background: #0f172a; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .btn-export:hover { background: #334155; }
+
+        /* Order List Container */
+        .orders-container { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .orders-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .count-badge { background: #e0e7ff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #3730a3; }
+
+        /* Magic CSS to fix your original JS injected rows */
+        .order-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+
         /* Mobile Sidebar Toggle styling */
-        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #333; margin-right: 15px; }
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #0f172a; margin-right: 15px; padding: 0; }
+        
         @media (max-width: 768px) {
             #sidebarToggle { display: block; }
             .merchant-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001;}
             .merchant-sidebar.active { transform: translateX(0); }
             
-            /* Responsive Filters */
-            .filters-bar { flex-direction: column; align-items: stretch; }
-            .search-group { width: 100%; }
-            .filter-group { overflow-x: auto; padding-bottom: 5px; }
+            .merchant-main { padding: 16px; }
+            
+            /* Snap Filters to a Clean Grid */
+            .filters-bar { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
+            .search-group, .search-input { width: 100%; max-width: 100%; }
+            .filter-group { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 10px; }
+            .filter-select { width: 100%; }
+            .btn-export { grid-column: 1 / -1; justify-content: center; }
+            
+            /* Snap Your Original JS Rows for Mobile */
+            .order-row { flex-direction: column; align-items: flex-start !important; gap: 12px !important; }
+            .order-row > div:first-child { width: 100%; }
+            .order-row > div:last-child { 
+                width: 100%; 
+                justify-content: space-between !important; 
+                padding-left: 68px; /* Aligns amount/status perfectly under the text, skipping the icon */
+                box-sizing: border-box;
+                margin-top: 8px;
+            }
         }
 
-        /* Filter Bar Styles */
-        .filters-bar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 24px; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid #e0e0e0; }
-        .search-group { flex: 1; position: relative; }
-        .search-group i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; }
-        
-        /* Search Width: 90% */
-        .search-input { width: 90%; padding: 10px 10px 10px 36px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; }
-        .search-input:focus { border-color: #000; }
-        
-        .filter-group { display: flex; gap: 10px; }
-        .filter-select { padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: #fff; cursor: pointer; outline: none; }
-        .btn-export { padding: 10px 16px; background: #000; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-        .btn-export:hover { background: #333; }
-
-        /* Order List Container */
-        .orders-container { background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; overflow: hidden; }
-        .orders-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .count-badge { background: #f0f0f0; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #666; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="merchant-page" data-page="orders">
@@ -70,6 +97,7 @@
             <a href="merchant-bookings.html" class="nav-item">
                 <i class="bi bi-clipboard-check"></i> <span>Booking Mgmt</span>
                 <span class="badge" id="actionNeededBadge" style="display:none;">0</span>
+            </a>
 
             <a href="merchant-services.html" class="nav-item">
                 <i class="bi bi-gift"></i>
@@ -111,8 +139,8 @@
                 <div style="display: flex; align-items: center;">
                     <button id="sidebarToggle"><i class="bi bi-list"></i></button>
                     <div>
-                        <h1><i class="bi bi-box-seam"></i> Orders</h1>
-                        <p>Manage and track your customer orders</p>
+                        <h1 style="margin:0; font-size:18px; font-weight:600; color:#0f172a;"><i class="bi bi-box-seam"></i> Orders</h1>
+                        <p style="margin:4px 0 0 0; font-size:13px; color:#64748b;">Manage and track your customer orders</p>
                     </div>
                 </div>
             </div>
@@ -156,44 +184,44 @@
                     </select>
                     
                     <button id="exportOrdersBtn" class="btn-export">
-                        <i class="bi bi-download"></i> <span style="display: none;">Export</span>
+                        <i class="bi bi-download"></i> <span>Export</span>
                     </button>
                 </div>
             </div>
 
             <div class="orders-container">
                 <div class="orders-header">
-                    <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Order List</h3>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #0f172a;">Order List</h3>
                     <span id="ordersCount" class="count-badge">0</span>
                 </div>
                 
                 <div id="ordersLoading" style="text-align: center; padding: 40px;">
-                    <div style="width: 40px; height: 40px; border: 3px solid #f0f0f0; border-top-color: #000; border-radius: 50%; margin: 0 auto 15px; animation: spin 1s linear infinite;"></div>
-                    <p style="color: #666; font-size: 14px;">Loading orders...</p>
+                    <div style="width: 40px; height: 40px; border: 3px solid #f8fafc; border-top-color: #0f172a; border-radius: 50%; margin: 0 auto 15px; animation: spin 1s linear infinite;"></div>
+                    <p style="color: #64748b; font-size: 14px;">Loading orders...</p>
                 </div>
 
-                <div id="ordersList">
-                    </div>
+                <div id="ordersList"></div>
 
                 <div id="ordersEmpty" style="display: none; text-align: center; padding: 60px 20px;">
-                    <i class="bi bi-inbox" style="font-size: 48px; color: #ddd; margin-bottom: 15px; display: block;"></i>
-                    <h4 style="margin: 0 0 8px 0;">No orders found</h4>
-                    <p style="margin: 0; color: #666; font-size: 14px;">Try adjusting your filters or wait for new bookings.</p>
+                    <i class="bi bi-inbox" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px; display: block;"></i>
+                    <h4 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #0f172a;">No orders found</h4>
+                    <p style="margin: 0; color: #64748b; font-size: 14px;">Try adjusting your filters or wait for new bookings.</p>
                 </div>
             </div>
 
         </main>
     </div>
 
+    <div id="toastContainer" class="toast-container"></div>
+
     <script src="js/utils.js"></script>
     <script src="js/merchant-config.js"></script>
     <script src="js/merchant-auth.js"></script>
     <script src="js/merchant-orders.js"></script>
-    
-    <style>
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('merchantSidebar').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>

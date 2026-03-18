@@ -43,7 +43,7 @@ function updateHeader() {
 // 1. Fetch Data
 async function loadReviews() {
     try {
-        const { data, error } = await merchantSupabase
+        const { data, error } = await MerchantAuth.getSupabase()
             .from('merchant_reviews')
             .select('*')
             .eq('merchant_id', currentMerchant.id)
@@ -200,7 +200,7 @@ window.submitReply = async function(id) {
 
     try {
         // Update DB
-        const { error } = await merchantSupabase
+        const { error } = await MerchantAuth.getSupabase()
             .from('merchant_reviews')
             .update({ 
                 merchant_reply: text,

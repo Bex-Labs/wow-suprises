@@ -10,10 +10,38 @@
     <link rel="stylesheet" href="css/merchant.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        html, body { overflow-x: hidden; max-width: 100%; }
+        .merchant-content { overflow-x: hidden; max-width: 100%; }
+
+        #sidebarToggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: #333; margin-right: 15px; }
+
+        @media (max-width: 768px) {
+            #sidebarToggle { display: block; }
+            .merchant-sidebar { transform: translateX(-100%); transition: transform 0.3s; z-index: 1001; }
+            .merchant-sidebar.active { transform: translateX(0); }
+            
+            .merchant-main { padding: 15px !important; }
+            .merchant-header { padding: 15px !important; }
+            
+            /* Forces your inline 3-column stats to stack cleanly on mobile */
+            .stats-container { grid-template-columns: 1fr !important; gap: 15px !important; }
+            
+            /* Prevents the services grid from overflowing on tiny phones */
+            #servicesGrid { grid-template-columns: 1fr !important; }
+            
+            /* Forces your modal's 2-column price/time grid to stack */
+            .price-time-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
+            
+            /* Stops the modal from being cut off on the sides */
+            #serviceModal > div { max-width: 95% !important; padding: 15px !important; }
+        }
+    </style>
 </head>
 <body class="merchant-page" data-page="services">
     
-    <aside class="merchant-sidebar">
+    <aside class="merchant-sidebar" id="merchantSidebar">
         <div class="merchant-logo">
             <i class="bi bi-shop"></i>
             <span>WOW Merchant</span>
@@ -63,8 +91,13 @@
     <div class="merchant-content">
         <header class="merchant-header">
             <div class="header-left">
-                <h1><i class="bi bi-gift"></i> My Services</h1>
-                <p>Manage your service offerings</p>
+                <div style="display: flex; align-items: center;">
+                    <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <div>
+                        <h1><i class="bi bi-gift"></i> My Services</h1>
+                        <p>Manage your service offerings</p>
+                    </div>
+                </div>
             </div>
             <div class="header-right">
                 <div class="merchant-user-info">
@@ -78,7 +111,7 @@
         </header>
         
         <main class="merchant-main">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
+            <div class="stats-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
                 <div style="background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px;">
                     <div style="font-size: 32px; font-weight: 700; color: #000; margin-bottom: 4px;" id="totalServices">0</div>
                     <div style="font-size: 14px; color: #666; font-weight: 500;">Total Services</div>
@@ -165,7 +198,7 @@
                     <textarea id="serviceDescription" required rows="4" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; resize: vertical; font-family: inherit;" placeholder="Describe your service..."></textarea>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="price-time-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #000;">Base Price (₦) *</label>
                         <input type="number" id="servicePrice" required min="0" step="100" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;" placeholder="10000">
@@ -206,5 +239,11 @@
     <script src="js/merchant-config.js"></script>
     <script src="js/merchant-auth.js"></script>
     <script src="js/merchant-services.js"></script>
+
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('merchantSidebar').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
