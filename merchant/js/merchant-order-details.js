@@ -1,6 +1,7 @@
 /**
  * Merchant Order Details JavaScript
  * Handles order details display and status updates with visual Pizza Tracker
+ * FIXED: displayOrderSummary now reads package_price/total_amount instead of budget (which defaults to 0)
  */
 
 let currentMerchant = null;
@@ -169,19 +170,55 @@ function displayCustomerInfo() {
 }
 
 // Display order summary
+// FIXED: use package_price / total_amount from the actual schema instead of budget (which defaults to 0)
 function displayOrderSummary() {
     const orderSummary = document.getElementById('orderSummary');
     if (!orderSummary || !currentOrder) return;
     
-    const budget = parseFloat(currentOrder.budget || 0);
-    const platformFee = budget * 0.10; // 10% platform fee
-    const netAmount = budget - platformFee;
-    
+    // package_price is what the client paid for the package/service
+    // total_amount includes any add-ons on top of package_price
+    // Fall back through all available amount fields so nothing shows as ₦0
+    const orderAmount = parseFloat(
+        currentOrder.total_amount ||
+        currentOrder.package_price ||
+        currentOrder.budget ||
+        0
+    );
+
+    const platformFee = orderAmount * 0.10; // 10% platform fee
+    const netAmount = orderAmount - platformFee;
+
+    // Build add-ons breakdown if present
+    let addonsHtml = '';
+    if (Array.isArray(currentOrder.addons) && currentOrder.addons.length > 0) {
+        const addonsTotal = currentOrder.addons.reduce((sum, a) => sum + parseFloat(a.price || 0), 0);
+        addonsHtml = `
+            <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 8px;">Add-ons</div>
+                ${currentOrder.addons.map(a => `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+                        <span style="color: #64748b;">${a.name || a.id}</span>
+                        <span style="font-weight: 600; color: #0f172a;">${formatCurrency(a.price, 'NGN')}</span>
+                    </div>
+                `).join('')}
+                <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 13px;">
+                    <span style="color: #64748b;">Add-ons subtotal</span>
+                    <span style="font-weight: 600; color: #0f172a;">${formatCurrency(addonsTotal, 'NGN')}</span>
+                </div>
+            </div>
+        `;
+    }
+
     orderSummary.innerHTML = `
         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                <span style="color: #64748b;">Package</span>
+                <span style="font-weight: 600; color: #0f172a;">${currentOrder.package_name || 'N/A'}</span>
+            </div>
+            ${addonsHtml}
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                 <span style="color: #64748b;">Order Amount</span>
-                <span style="font-weight: 600; color: #0f172a;">${formatCurrency(budget, 'NGN')}</span>
+                <span style="font-weight: 600; color: #0f172a;">${formatCurrency(orderAmount, 'NGN')}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
                 <span style="color: #64748b;">Platform Fee (10%)</span>
