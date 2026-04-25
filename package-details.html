@@ -1,33 +1,374 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Package Details - Wow Surprises</title>
-
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Package Details – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-high":"#ECE6F0","outline-variant":"#CAC4D0",outline:"#79747E",
+          error:"#B3261E","error-container":"#F9DEDC",success:"#166534","success-container":"#dcfce7",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{animation:spin .8s linear infinite;display:inline-block}
+    .thumbnail-btn{transition:all .2s}
+    .thumbnail-btn.active{border-color:#6200EE!important;opacity:1!important}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">Wow Surprises</div>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Browse</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="#" id="loginBtn">Login</a></li>
-            </ul>
-        </div>
+<body class="bg-surface-low min-h-screen">
+
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="custom-package.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Custom Package</a>
+      <a href="reviews.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Reviews</a>
+      <a href="booking-history.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">My Bookings</a>
     </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <main class="container">
-        <div id="packageDetails" style="margin-top: 40px;">
-            <!-- Package details will be loaded here -->
+<!-- LOADING STATE -->
+<div id="loadingState" class="pt-32 pb-24 text-center">
+  <span class="material-symbols-outlined text-primary text-5xl spin block mb-4">autorenew</span>
+  <p class="text-on-surface-variant font-semibold">Loading package details...</p>
+</div>
+
+<!-- ERROR STATE -->
+<div id="errorState" class="hidden pt-32 pb-24 text-center">
+  <div class="w-20 h-20 rounded-full bg-error-container flex items-center justify-center mx-auto mb-6">
+    <span class="material-symbols-outlined text-error text-4xl" style="font-variation-settings:'FILL' 1;">error</span>
+  </div>
+  <h2 class="text-2xl font-headline font-bold mb-2">Package Not Found</h2>
+  <p class="text-on-surface-variant mb-6">The package you're looking for doesn't exist or has been removed.</p>
+  <a href="index.html" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+    <span class="material-symbols-outlined text-[20px]">arrow_back</span> Browse All Packages
+  </a>
+</div>
+
+<!-- PACKAGE CONTENT -->
+<div id="packageContent" class="hidden">
+
+  <!-- Breadcrumb -->
+  <div class="pt-20 bg-surface border-b border-outline-variant">
+    <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center gap-2 text-sm">
+      <a href="index.html" class="text-primary font-semibold hover:underline">Home</a>
+      <span class="material-symbols-outlined text-outline text-[16px]">chevron_right</span>
+      <a href="index.html#packages" class="text-primary font-semibold hover:underline">Packages</a>
+      <span class="material-symbols-outlined text-outline text-[16px]">chevron_right</span>
+      <span class="text-on-surface-variant font-semibold" id="breadcrumbName">Package Details</span>
+    </div>
+  </div>
+
+  <main class="max-w-screen-xl mx-auto px-4 md:px-6 py-10 pb-28">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+      <!-- LEFT: Images -->
+      <div>
+        <!-- Main image -->
+        <div class="aspect-[4/3] rounded-3xl overflow-hidden bg-surface-high mb-4 shadow-md">
+          <img id="mainImage" src="" alt="" class="w-full h-full object-cover transition-all duration-500" />
         </div>
-    </main>
+        <!-- Thumbnails -->
+        <div id="thumbnailRow" class="flex gap-3 overflow-x-auto pb-1"></div>
+      </div>
 
-    <script src="js/utils.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script src="js/packages.js"></script>
+      <!-- RIGHT: Details -->
+      <div>
+        <!-- Category badge -->
+        <div class="flex items-center gap-3 mb-4">
+          <span id="categoryBadge" class="px-4 py-1.5 bg-primary text-white rounded-full text-xs font-bold uppercase tracking-widest"></span>
+          <div id="ratingBadge" class="flex items-center gap-1 text-sm text-on-surface-variant font-semibold">
+            <span class="text-amber-400">★</span><span id="ratingValue">0</span>
+            <span class="text-outline">(<span id="reviewCount">0</span> reviews)</span>
+          </div>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-headline font-extrabold text-on-surface mb-3" id="packageTitle">Loading...</h1>
+
+        <div class="flex items-center gap-3 mb-6">
+          <p class="text-3xl font-headline font-extrabold text-secondary" id="packagePrice">₦0</p>
+          <span id="originalPrice" class="hidden text-lg text-outline line-through font-semibold"></span>
+        </div>
+
+        <p class="text-on-surface-variant leading-relaxed mb-6" id="packageDescription">Loading description...</p>
+
+        <!-- What's included -->
+        <div id="includesSection" class="bg-surface-low rounded-2xl p-5 mb-6">
+          <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">checklist</span>
+            What's Included
+          </h3>
+          <ul id="includesList" class="space-y-2"></ul>
+        </div>
+
+        <!-- Details grid -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+          <div class="bg-surface-low rounded-2xl p-4">
+            <p class="text-xs text-on-surface-variant font-semibold mb-1">Duration</p>
+            <p class="font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+              <span id="packageDuration">—</span>
+            </p>
+          </div>
+          <div class="bg-surface-low rounded-2xl p-4">
+            <p class="text-xs text-on-surface-variant font-semibold mb-1">Min. Notice</p>
+            <p class="font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
+              <span id="packageNotice">48 hours</span>
+            </p>
+          </div>
+          <div class="bg-surface-low rounded-2xl p-4">
+            <p class="text-xs text-on-surface-variant font-semibold mb-1">Location</p>
+            <p class="font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+              <span id="packageLocation">Lagos</span>
+            </p>
+          </div>
+          <div class="bg-surface-low rounded-2xl p-4">
+            <p class="text-xs text-on-surface-variant font-semibold mb-1">Delivery</p>
+            <p class="font-bold text-on-surface flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">local_shipping</span>
+              <span id="packageDelivery">Free</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button id="bookNowBtn" onclick="bookPackage()"
+            class="flex-1 py-4 bg-primary text-white rounded-full font-bold text-base hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">card_giftcard</span> Book This Package
+          </button>
+          <button onclick="sharePackage()"
+            class="px-6 py-4 border-2 border-outline-variant rounded-full font-bold hover:bg-surface-high transition-all flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">share</span> Share
+          </button>
+        </div>
+
+        <!-- Trust signals -->
+        <div class="flex flex-wrap gap-3 mt-5">
+          <span class="flex items-center gap-1.5 text-xs font-semibold text-success bg-success-container px-3 py-2 rounded-full">
+            <span class="material-symbols-outlined text-[16px]">verified_user</span> Secure Booking
+          </span>
+          <span class="flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant bg-surface-high px-3 py-2 rounded-full">
+            <span class="material-symbols-outlined text-[16px]">replay</span> Free Cancellation 48hrs+
+          </span>
+          <span class="flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant bg-surface-high px-3 py-2 rounded-full">
+            <span class="material-symbols-outlined text-[16px]">support_agent</span> 24/7 Support
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="mt-16">
+      <h2 class="text-2xl font-headline font-bold text-on-surface mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">star</span>
+        Customer Reviews
+      </h2>
+      <div id="reviewsList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="text-center py-12 text-on-surface-variant col-span-2">
+          <span class="material-symbols-outlined text-4xl text-outline-variant block mb-3">rate_review</span>
+          <p class="font-semibold">No reviews yet. Be the first!</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-4 pt-3 bg-surface/95 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0px_-4px_24px_rgba(0,0,0,0.08)] border-t border-outline-variant">
+  <a href="index.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">explore</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Discover</span>
+  </a>
+  <a href="custom-package.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">palette</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Custom</span>
+  </a>
+  <a href="booking-history.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">card_giftcard</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Orders</span>
+  </a>
+  <a href="login.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">person</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Account</span>
+  </a>
+</nav>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/supabaseApi.js"></script>
+<script>
+let currentPackage = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Auth
+  try {
+    const client = window.sbClient;
+    if (client) {
+      const { data } = await client.auth.getSession();
+      if (data?.session?.user) {
+        const authLink = document.getElementById('authLink');
+        authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>`;
+        authLink.href = '#';
+        authLink.onclick = async (e) => {
+          e.preventDefault();
+          if (confirm('Logout?')) { await client.auth.signOut(); localStorage.removeItem('currentUser'); window.location.reload(); }
+        };
+      }
+    }
+  } catch(e) {}
+
+  // Load package
+  await loadPackageDetails();
+});
+
+async function loadPackageDetails() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const packageId   = params.get('id');
+    const packageData = params.get('package');
+
+    let pkg = null;
+
+    if (packageData) {
+      pkg = JSON.parse(decodeURIComponent(packageData));
+    } else if (packageId) {
+      const client = window.sbClient;
+      if (client) {
+        const { data, error } = await client.from('packages').select('*').eq('id', packageId).single();
+        if (error) throw error;
+        pkg = data;
+      }
+    }
+
+    if (!pkg) throw new Error('Package not found');
+    currentPackage = pkg;
+    renderPackage(pkg);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('loadingState').classList.add('hidden');
+    document.getElementById('errorState').classList.remove('hidden');
+  }
+}
+
+function renderPackage(pkg) {
+  document.getElementById('loadingState').classList.add('hidden');
+  document.getElementById('packageContent').classList.remove('hidden');
+
+  document.title = `${pkg.name || pkg.package_name} – WOW Surprises`;
+
+  // Populate fields
+  const name = pkg.name || pkg.package_name || 'Package';
+  document.getElementById('packageTitle').textContent    = name;
+  document.getElementById('breadcrumbName').textContent  = name;
+  document.getElementById('packageDescription').textContent = pkg.description || pkg.package_description || 'No description available.';
+  document.getElementById('packagePrice').textContent    = `₦${Number(pkg.price || pkg.package_price || 0).toLocaleString()}`;
+  document.getElementById('categoryBadge').textContent   = (pkg.category || 'Package').replace(/_/g,' ');
+  document.getElementById('packageDuration').textContent = pkg.duration     || '—';
+  document.getElementById('packageNotice').textContent   = pkg.min_notice   || '48 hours';
+  document.getElementById('packageLocation').textContent = pkg.location     || 'Lagos';
+  document.getElementById('packageDelivery').textContent = pkg.delivery_fee === 0 ? 'Free' : (pkg.delivery_fee ? `₦${Number(pkg.delivery_fee).toLocaleString()}` : 'Free');
+
+  if (pkg.rating) {
+    document.getElementById('ratingValue').textContent  = Number(pkg.rating).toFixed(1);
+    document.getElementById('reviewCount').textContent  = pkg.review_count || 0;
+  }
+
+  // Images
+  const images = pkg.images || (pkg.image_url ? [pkg.image_url] : []);
+  const mainImg = document.getElementById('mainImage');
+  if (images.length > 0) {
+    mainImg.src = images[0];
+    mainImg.alt = name;
+    const thumbRow = document.getElementById('thumbnailRow');
+    images.forEach((img, i) => {
+      const btn = document.createElement('button');
+      btn.className = `thumbnail-btn w-20 h-16 rounded-xl overflow-hidden border-2 border-outline-variant opacity-70 flex-shrink-0 ${i===0?'active border-primary opacity-100':''}`;
+      btn.innerHTML = `<img src="${img}" alt="" class="w-full h-full object-cover" />`;
+      btn.onclick = () => {
+        mainImg.src = img;
+        document.querySelectorAll('.thumbnail-btn').forEach(b => b.classList.remove('active','border-primary','opacity-100'));
+        btn.classList.add('active','border-primary','opacity-100');
+      };
+      thumbRow.appendChild(btn);
+    });
+  } else {
+    mainImg.src = 'images/placeholder-package.jpg';
+    mainImg.alt = name;
+  }
+
+  // Includes
+  const includesList = document.getElementById('includesList');
+  const items = pkg.includes || pkg.package_includes || [];
+  if (items.length > 0) {
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-2 text-sm text-on-surface';
+      li.innerHTML = `<span class="material-symbols-outlined text-success text-[18px]" style="font-variation-settings:'FILL' 1;">check_circle</span>${item}`;
+      includesList.appendChild(li);
+    });
+  } else {
+    document.getElementById('includesSection').classList.add('hidden');
+  }
+}
+
+function bookPackage() {
+  if (!currentPackage) return;
+  const params = new URLSearchParams({
+    packageId:    currentPackage.id || '',
+    packageName:  currentPackage.name || currentPackage.package_name || '',
+    packagePrice: currentPackage.price || currentPackage.package_price || 0,
+  });
+  window.location.href = `booking.html?${params.toString()}`;
+}
+
+async function sharePackage() {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: currentPackage?.name || 'WOW Surprises Package',
+        text:  'Check out this amazing surprise package!',
+        url:   window.location.href
+      });
+    } catch(e) {}
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    alert('Link copied to clipboard!');
+  }
+}
+</script>
 </body>
 </html>

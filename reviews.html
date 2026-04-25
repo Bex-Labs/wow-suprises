@@ -1,353 +1,385 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Reviews - WOW Surprises</title>
-    
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
-    <style>
-        /* MOBILE RESPONSIVENESS FIXES */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
-
-            .page-header h1 { font-size: 2.2rem !important; }
-            .reviews-grid { grid-template-columns: 1fr !important; gap: 20px; }
-            .review-form-section { padding: 25px 20px; margin: 0 15px 40px; }
-        }
-
-        /* FIXED HEADER STYLE: Clean light gray instead of solid black */
-        .page-header {
-            background-color: #f8f9fa;
-            color: #333;
-            padding: 80px 0 40px;
-            text-align: center;
-            margin-bottom: 50px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .page-header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: #000;
-            font-weight: 800;
-        }
-        
-        .page-header p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        /* Review Form Styling */
-        .review-form-section {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            max-width: 700px;
-            margin: 0 auto 60px;
-            border: 1px solid #f0f0f0;
-            display: none; /* Hidden by default until login check */
-        }
-
-        .rating-input {
-            display: flex;
-            gap: 15px;
-            font-size: 28px;
-            color: #ddd;
-            cursor: pointer;
-            margin: 10px 0 20px;
-        }
-        
-        .rating-input i.active {
-            color: #ffc107;
-            transform: scale(1.1);
-            transition: all 0.2s ease;
-        }
-
-        /* Grid Styling */
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            margin-bottom: 80px;
-        }
-
-        .review-card {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border: 1px solid #f5f5f5;
-            transition: transform 0.3s ease;
-        }
-        
-        .review-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
-
-        .reviewer-avatar {
-            width: 45px;
-            height: 45px;
-            background: #eee;
-            color: #555;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            margin-right: 15px;
-        }
-
-        .star-filled { color: #ffc107; }
-        .star-empty { color: #e4e5e9; }
-        
-        /* Input Styling Fixes */
-        .form-control {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            font-family: inherit;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #000;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Reviews – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-high":"#ECE6F0","outline-variant":"#CAC4D0",outline:"#79747E",
+          error:"#B3261E","error-container":"#F9DEDC",success:"#166534","success-container":"#dcfce7",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .wow-input:focus{border-color:#6200EE;box-shadow:0 0 0 3px rgba(98,0,238,.1);outline:none}
+    .star-btn{cursor:pointer;transition:all .15s;font-size:2rem;color:#e2e8f0}
+    .star-btn.active,.star-btn.hover{color:#f59e0b;transform:scale(1.15)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{animation:spin .8s linear infinite;display:inline-block}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeInUp .4s ease-out}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" style="text-decoration:none; color:black; font-weight:800; font-size:24px;">
-                WOW SURPRISES
-            </a>
+<body class="bg-surface-low min-h-screen">
 
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="reviews.html" class="active">Reviews</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="custom-package.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Custom Package</a>
+      <a href="reviews.html" class="text-primary font-bold font-headline px-4 py-2 rounded-full bg-primary/10 text-sm">Reviews</a>
+      <a href="booking-history.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">My Bookings</a>
     </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <header class="page-header">
-        <div class="container">
-            <h1>Customer Reviews</h1>
-            <p>Real experiences from our amazing customers</p>
+<!-- HERO -->
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-12 text-center">
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white mb-3">Customer Reviews</h1>
+    <p class="text-white/80 text-lg mb-8">Real experiences from our amazing customers</p>
+    <!-- Stats -->
+    <div class="flex justify-center gap-8 flex-wrap">
+      <div class="text-center">
+        <p class="text-4xl font-headline font-extrabold text-white" id="avgRating">—</p>
+        <div class="flex justify-center gap-0.5 my-1" id="avgStars"></div>
+        <p class="text-white/70 text-sm">Average Rating</p>
+      </div>
+      <div class="w-px bg-white/20 hidden sm:block"></div>
+      <div class="text-center">
+        <p class="text-4xl font-headline font-extrabold text-white" id="totalReviews">—</p>
+        <p class="text-white/70 text-sm mt-1">Total Reviews</p>
+      </div>
+      <div class="w-px bg-white/20 hidden sm:block"></div>
+      <div class="text-center">
+        <p class="text-4xl font-headline font-extrabold text-tertiary">98%</p>
+        <p class="text-white/70 text-sm mt-1">Would Recommend</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-screen-xl mx-auto px-4 md:px-6 py-10 pb-28">
+
+  <!-- Write a Review (logged in only) -->
+  <div id="loginPrompt" class="bg-amber-50 border border-amber-200 rounded-3xl p-6 mb-8 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+    <div class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+      <span class="material-symbols-outlined text-amber-600" style="font-variation-settings:'FILL' 1;">rate_review</span>
+    </div>
+    <div class="flex-1">
+      <p class="font-bold text-on-surface">Share Your Experience</p>
+      <p class="text-sm text-on-surface-variant">Login to write a review and help others find the perfect surprise</p>
+    </div>
+    <a href="login.html" class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all whitespace-nowrap shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">login</span> Login to Review
+    </a>
+  </div>
+
+  <!-- Review Form (shown when logged in) -->
+  <div id="reviewFormSection" class="hidden bg-surface rounded-3xl border border-outline-variant shadow-sm p-6 md:p-8 mb-10 fade-up">
+    <h2 class="text-xl font-headline font-bold mb-1 flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">edit</span>
+      Write a Review
+    </h2>
+    <p class="text-on-surface-variant text-sm mb-6">How was your surprise experience?</p>
+
+    <div id="reviewMessage" class="hidden mb-4 px-4 py-3 rounded-2xl text-sm font-semibold"></div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-bold mb-3">Your Rating <span class="text-secondary">*</span></label>
+        <div class="flex gap-2 mb-1" id="starContainer">
+          <span class="star-btn" data-val="1">★</span>
+          <span class="star-btn" data-val="2">★</span>
+          <span class="star-btn" data-val="3">★</span>
+          <span class="star-btn" data-val="4">★</span>
+          <span class="star-btn" data-val="5">★</span>
         </div>
-    </header>
+        <input type="hidden" id="ratingValue" />
+        <p class="text-xs text-on-surface-variant" id="ratingLabel">Click a star to rate</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2">Review Title <span class="text-secondary">*</span></label>
+        <input type="text" id="reviewTitle" placeholder="Summarize your experience..."
+          class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" />
+      </div>
+    </div>
+    <div class="mt-4">
+      <label class="block text-sm font-bold mb-2">Your Review <span class="text-secondary">*</span></label>
+      <textarea id="reviewComment" rows="4" placeholder="Tell us more about what you loved..."
+        class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm resize-none"></textarea>
+    </div>
+    <div class="flex justify-end mt-5">
+      <button onclick="submitReview()" id="submitReviewBtn"
+        class="flex items-center gap-2 px-8 py-3.5 bg-primary text-white rounded-full font-bold hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-[20px]">send</span> Submit Review
+      </button>
+    </div>
+  </div>
 
-    <main class="container">
-        
-        <div id="loginPrompt" style="text-align:center; margin-bottom:50px; background:#fff8e1; padding:30px; border-radius:12px; border: 1px solid #ffe082;">
-            <i class="bi bi-lock" style="font-size: 24px; color: #f59e0b; margin-bottom: 10px; display: block;"></i>
-            <h3 style="margin-bottom: 10px;">Share Your Experience</h3>
-            <p style="margin-bottom: 20px; color: #666;">You need to be logged in to write a review.</p>
-            <a href="login.html" class="btn-primary" style="text-decoration:none; display:inline-block;">Login to Review</a>
+  <!-- Loading -->
+  <div id="loadingReviews" class="py-20 text-center">
+    <span class="material-symbols-outlined text-primary text-5xl spin block mb-4">autorenew</span>
+    <p class="text-on-surface-variant font-semibold">Loading reviews...</p>
+  </div>
+
+  <!-- Empty -->
+  <div id="emptyReviews" class="hidden py-20 text-center">
+    <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center mx-auto mb-4">
+      <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings:'FILL' 1;">rate_review</span>
+    </div>
+    <h3 class="text-xl font-headline font-bold mb-2">No reviews yet</h3>
+    <p class="text-on-surface-variant">Be the first to share your experience!</p>
+  </div>
+
+  <!-- Reviews Grid -->
+  <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+  <!-- CTA Banner -->
+  <div class="mt-16 royal-gradient rounded-3xl p-10 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    <div class="relative z-10">
+      <h2 class="text-3xl font-headline font-extrabold text-white mb-3">Ready to Create Your WOW Moment?</h2>
+      <p class="text-white/80 mb-6">Join thousands of happy customers who made their loved ones feel special</p>
+      <a href="index.html" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-full font-bold hover:shadow-xl transition-all active:scale-95">
+        <span class="material-symbols-outlined text-[20px]">card_giftcard</span> Browse Packages
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-on-surface text-white px-6 py-12 mt-8">
+  <div class="max-w-screen-xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+      <div>
+        <img src="images/wowlogo.png" alt="WOW" class="h-10 mb-4 brightness-0 invert" onerror="this.style.display='none';" />
+        <p class="text-white/60 text-sm leading-relaxed">Creating unforgettable moments across Nigeria.</p>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Quick Links</h4>
+        <div class="space-y-2 text-sm">
+          <a href="index.html" class="block text-white/60 hover:text-white transition-colors">Home</a>
+          <a href="custom-package.html" class="block text-white/60 hover:text-white transition-colors">Custom Package</a>
+          <a href="reviews.html" class="block text-white/60 hover:text-white transition-colors">Reviews</a>
+          <a href="booking-history.html" class="block text-white/60 hover:text-white transition-colors">My Bookings</a>
         </div>
-
-        <section class="review-form-section" id="reviewFormSection">
-            <h2 style="margin-bottom:10px; text-align: center;">Write a Review</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 30px;">How was your surprise experience?</p>
-            
-            <form id="reviewForm">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <label style="font-weight:600; display: block; margin-bottom: 5px;">Your Rating</label>
-                    <div class="rating-input" id="starContainer" style="justify-content: center;">
-                        <i class="bi bi-star-fill" data-val="1"></i>
-                        <i class="bi bi-star-fill" data-val="2"></i>
-                        <i class="bi bi-star-fill" data-val="3"></i>
-                        <i class="bi bi-star-fill" data-val="4"></i>
-                        <i class="bi bi-star-fill" data-val="5"></i>
-                    </div>
-                    <input type="hidden" id="ratingValue" required>
-                </div>
-                
-                <div>
-                    <label style="display:block; margin-bottom:8px; font-weight:600;">Title</label>
-                    <input type="text" id="reviewTitle" class="form-control" placeholder="Summarize your experience (e.g., Unforgettable!)" required>
-                </div>
-                
-                <div>
-                    <label style="display:block; margin-bottom:8px; font-weight:600;">Your Review</label>
-                    <textarea id="reviewComment" class="form-control" rows="5" placeholder="Tell us more about what you liked..." required></textarea>
-                </div>
-                
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px;">Submit Review</button>
-            </form>
-        </section>
-
-        <div id="loadingReviews" style="text-align:center; padding:60px;">
-            <i class="bi bi-arrow-repeat spin" style="font-size:40px; color: #ccc;"></i>
-            <p style="margin-top: 15px; color: #666;">Loading latest reviews...</p>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Legal</h4>
+        <div class="space-y-2 text-sm">
+          <a href="privacy-policy.html" class="block text-white/60 hover:text-white transition-colors">Privacy Policy</a>
+          <a href="terms-of-service.html" class="block text-white/60 hover:text-white transition-colors">Terms of Service</a>
+          <a href="refund-policy.html" class="block text-white/60 hover:text-white transition-colors">Refund Policy</a>
+          <a href="faq.html" class="block text-white/60 hover:text-white transition-colors">FAQ</a>
         </div>
-        
-        <div class="reviews-grid" id="reviewsContainer">
-            </div>
-
-    </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about">
-                    <div class="footer-logo">
-                        <img src="images/logo-white.png" alt="WOW Surprises" 
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
-                             style="height: 40px; width: auto; margin-bottom: 16px;">
-                    </div>
-                    <p>Creating unforgettable moments and bringing joy to every celebration. We specialize in turning your surprise dreams into reality.</p>
-                    <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
-                            <i class="bi bi-twitter"></i>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-                            <i class="bi bi-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <div class="footer-links">
-                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
-                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
-                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
-                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
-                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
-                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <div class="footer-links">
-                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
-                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
-                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
-                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <div class="footer-contact">
-                        <div class="contact-item">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-telephone-fill"></i>
-                            <a href="tel:+2348012345678">+234 801 234 5678</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-envelope-fill"></i>
-                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy-policy.html">Privacy Policy</a>
-                    <a href="terms-of-service.html">Terms of Service</a>
-                    <a href="refund-policy.html">Refund Policy</a>
-                    <a href="faq.html">FAQ</a>
-                </div>
-            </div>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Contact</h4>
+        <div class="space-y-3 text-sm text-white/60">
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">location_on</span><span>Victoria Island, Lagos</span></div>
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><a href="tel:+2348012345678" class="hover:text-white">+234 801 234 5678</a></div>
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><a href="mailto:hello@wowsurprises.com" class="hover:text-white">hello@wowsurprises.com</a></div>
         </div>
-    </footer>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
+      <p>© 2024 WOW Surprises. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
+        <a href="terms-of-service.html" class="hover:text-white">Terms</a>
+        <a href="refund-policy.html" class="hover:text-white">Refund</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/reviews.js"></script> 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleBtn = document.getElementById('mobileMenuBtn');
-            const navLinks = document.getElementById('navLinks');
-            
-            if(toggleBtn) {
-                toggleBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    navLinks.classList.toggle('active');
-                });
-            }
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-4 pt-3 bg-surface/95 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0px_-4px_24px_rgba(0,0,0,0.08)] border-t border-outline-variant">
+  <a href="index.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">explore</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Discover</span>
+  </a>
+  <a href="custom-package.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">palette</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Custom</span>
+  </a>
+  <a href="booking-history.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">card_giftcard</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Orders</span>
+  </a>
+  <a href="login.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">person</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Account</span>
+  </a>
+</nav>
 
-            document.addEventListener('click', function(e) {
-                if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                    navLinks.classList.remove('active');
-                }
-            });
+<script src="js/config.js"></script>
+<script src="js/supabaseApi.js"></script>
+<script src="js/reviews.js"></script>
+<script>
+let selectedRating = 0;
+const ratingLabels = ['','Terrible 😞','Poor 😕','Okay 😐','Good 😊','Excellent 🤩'];
 
-            initializeAuth();
-        });
+// Stars
+document.querySelectorAll('.star-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', () => highlightStars(+btn.dataset.val));
+  btn.addEventListener('mouseleave', () => highlightStars(selectedRating));
+  btn.addEventListener('click', () => {
+    selectedRating = +btn.dataset.val;
+    document.getElementById('ratingValue').value = selectedRating;
+    document.getElementById('ratingLabel').textContent = ratingLabels[selectedRating];
+    highlightStars(selectedRating);
+  });
+});
+function highlightStars(n) {
+  document.querySelectorAll('.star-btn').forEach(b => {
+    b.classList.toggle('active', +b.dataset.val <= n);
+  });
+}
 
-        async function initializeAuth() {
-            try {
-                const authLink = document.getElementById('authLink');
-                const client = window.sbClient || window.supabase;
-                if (client) {
-                    const { data } = await client.auth.getSession();
-                    if (data?.session?.user) {
-                        authLink.textContent = 'Logout';
-                        authLink.href = '#';
-                        authLink.onclick = async (e) => {
-                            e.preventDefault();
-                            if(confirm('Logout?')) {
-                                await client.auth.signOut();
-                                localStorage.removeItem('currentUser');
-                                window.location.reload();
-                            }
-                        };
-                    }
-                }
-            } catch (error) { console.error('Auth error:', error); }
-        }
-    </script>
+// Auth
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const client = window.sbClient;
+    if (!client) return;
+    const { data } = await client.auth.getSession();
+    if (data?.session?.user) {
+      document.getElementById('loginPrompt').classList.add('hidden');
+      document.getElementById('reviewFormSection').classList.remove('hidden');
+      const authLink = document.getElementById('authLink');
+      authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>`;
+      authLink.href = '#';
+      authLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('Logout?')) { await client.auth.signOut(); localStorage.removeItem('currentUser'); window.location.reload(); }
+      };
+    }
+  } catch(e) {}
+});
+
+function showReviewMessage(msg, type='error') {
+  const el = document.getElementById('reviewMessage');
+  el.classList.remove('hidden','bg-error-container','text-error','bg-success-container','text-success');
+  el.classList.add(type==='error'?'bg-error-container':'bg-success-container', type==='error'?'text-error':'text-success');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+async function submitReview() {
+  const rating  = parseInt(document.getElementById('ratingValue').value);
+  const title   = document.getElementById('reviewTitle').value.trim();
+  const comment = document.getElementById('reviewComment').value.trim();
+  if (!rating)   { showReviewMessage('Please select a rating.'); return; }
+  if (!title)    { showReviewMessage('Please add a review title.'); return; }
+  if (!comment)  { showReviewMessage('Please write your review.'); return; }
+
+  const btn = document.getElementById('submitReviewBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="material-symbols-outlined spin text-[20px]">autorenew</span> Submitting...`;
+
+  try {
+    const client = window.sbClient;
+    if (!client) throw new Error('Supabase not initialized');
+    const { data: { user } } = await client.auth.getUser();
+    if (!user) throw new Error('Please login to submit a review');
+
+    const { error } = await client.from('reviews').insert([{
+      user_id:    user.id,
+      user_name:  user.user_metadata?.full_name || user.email.split('@')[0],
+      rating,
+      title,
+      comment,
+      status:     'pending',
+      created_at: new Date().toISOString()
+    }]);
+    if (error) throw error;
+
+    showReviewMessage('Review submitted! It will appear after approval. Thank you! 🎉', 'success');
+    document.getElementById('reviewTitle').value   = '';
+    document.getElementById('reviewComment').value = '';
+    document.getElementById('ratingValue').value   = '';
+    selectedRating = 0;
+    highlightStars(0);
+    document.getElementById('ratingLabel').textContent = 'Click a star to rate';
+  } catch (err) {
+    showReviewMessage(err.message || 'Submission failed. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">send</span> Submit Review`;
+  }
+}
+
+// Render reviews — called by reviews.js or here directly
+function renderReviews(reviews) {
+  document.getElementById('loadingReviews').classList.add('hidden');
+  const container = document.getElementById('reviewsContainer');
+  if (!reviews || reviews.length === 0) {
+    document.getElementById('emptyReviews').classList.remove('hidden');
+    return;
+  }
+  // Stats
+  const avg = (reviews.reduce((s,r) => s + r.rating, 0) / reviews.length).toFixed(1);
+  document.getElementById('avgRating').textContent   = avg;
+  document.getElementById('totalReviews').textContent = reviews.length;
+  const starsEl = document.getElementById('avgStars');
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('span');
+    s.className = i <= Math.round(avg) ? 'text-amber-400 text-xl' : 'text-white/30 text-xl';
+    s.textContent = '★';
+    starsEl.appendChild(s);
+  }
+
+  container.innerHTML = reviews.map(r => {
+    const initials = (r.user_name||'A').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+    const date  = new Date(r.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    return `
+      <div class="bg-surface rounded-3xl border border-outline-variant p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all fade-up">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center font-bold font-headline flex-shrink-0">${initials}</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-on-surface truncate">${r.user_name || 'Anonymous'}</p>
+            <p class="text-xs text-on-surface-variant">${date}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <span class="text-amber-400 tracking-tight">${stars}</span>
+          </div>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface mb-2">${r.title}</h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed">${r.comment}</p>
+        ${r.package_name ? `<div class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary-container px-3 py-1 rounded-full"><span class="material-symbols-outlined text-[14px]">card_giftcard</span>${r.package_name}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+window.renderReviews = renderReviews;
+</script>
 </body>
 </html>

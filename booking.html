@@ -1,465 +1,473 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Surprise - Wow Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/wow-theme.css">
-
-    <style>
-        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; z-index: 1100; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            #mobileMenuBtn.hidden { display: none !important; }
-
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 40px 0 !important;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px !important;
-            }
-
-            .nav-links.active { display: flex; }
-
-            .nav-links li {
-                width: 100%;
-                text-align: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .nav-links li a {
-                font-weight: 500;
-                display: block;
-                padding: 10px 0;
-                width: 100%;
-                text-align: center;
-                color: #000;
-            }
-        }
-
-        /* FIX: Progress steps 1-5 overlap on small screens */
-        @media (max-width: 600px) {
-            .progress-steps {
-                display: grid;
-                grid-template-columns: repeat(5, 1fr);
-                gap: 0;
-                overflow: visible;
-            }
-
-            .progress-steps::before {
-                top: 16px;
-            }
-
-            .step {
-                min-width: 0;
-                flex: none;
-                gap: 6px;
-            }
-
-            .step-number {
-                width: 32px;
-                height: 32px;
-                font-size: 13px;
-            }
-
-            .step-label {
-                font-size: 10px;
-                word-break: break-word;
-                line-height: 1.2;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .step-label { display: none; }
-            .step-number { width: 28px; height: 28px; font-size: 12px; }
-            .progress-steps::before { top: 14px; }
-        }
-
-        /* FORCE PLAIN TEXT LOGOUT */
-        #loginStatus, .user-profile-btn { display: none !important; }
-    </style>
-
-    <script src="https://checkout.flutterwave.com/v3.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Surprise – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF","on-primary":"#ffffff",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-container":"#F3EDF7","surface-high":"#ECE6F0","outline-variant":"#CAC4D0",
+          outline:"#79747E",error:"#B3261E","error-container":"#F9DEDC",
+          success:"#166534","success-container":"#dcfce7",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .wow-input:focus{border-color:#6200EE;box-shadow:0 0 0 3px rgba(98,0,238,.1);outline:none}
+    .wow-input{transition:all .2s}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeInUp .35s ease-out}
+    .addon-card input:checked~.addon-inner{border-color:#6200EE!important;background:#EADDFF!important}
+    .addon-card input:checked~.addon-inner .addon-check{opacity:1}
+    .addon-inner{transition:all .2s}
+    .addon-check{opacity:0;transition:opacity .2s}
+  </style>
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
+<body class="bg-surface-low min-h-screen">
 
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="custom-package.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Custom Package</a>
+      <a href="booking-history.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">My Bookings</a>
     </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <main class="container booking-container">
-        <div class="booking-header">
-            <h1>Book Your Surprise</h1>
-            <p>Fill in the details to create an unforgettable moment</p>
+<!-- PAGE HERO -->
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-10">
+    <div class="flex items-center gap-2 mb-3">
+      <a href="index.html" class="text-white/60 text-sm hover:text-white font-semibold">Home</a>
+      <span class="material-symbols-outlined text-white/40 text-[16px]">chevron_right</span>
+      <span class="text-white/80 text-sm font-semibold">Book a Surprise</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white">Book Your Surprise</h1>
+    <p class="text-white/80 mt-2 text-lg">Fill in the details to create an unforgettable moment</p>
+  </div>
+</div>
+
+<main class="max-w-screen-xl mx-auto px-4 md:px-6 py-10 pb-28">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- FORM COLUMN -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Progress Steps -->
+      <div class="bg-surface rounded-3xl border border-outline-variant p-6 shadow-sm">
+        <div class="flex items-center justify-between relative">
+          <div class="absolute left-8 right-8 top-5 h-0.5 bg-outline-variant z-0">
+            <div id="stepLine" class="h-full bg-primary transition-all duration-500" style="width:0%"></div>
+          </div>
+          <div class="step-item flex flex-col items-center z-10 flex-1" data-step="1">
+            <div class="step-circle w-10 h-10 rounded-full bg-primary border-2 border-primary text-white flex items-center justify-center font-bold text-sm transition-all">1</div>
+            <span class="text-[11px] font-bold mt-2 text-primary hidden sm:block">Recipient</span>
+          </div>
+          <div class="step-item flex flex-col items-center z-10 flex-1" data-step="2">
+            <div class="step-circle w-10 h-10 rounded-full bg-outline-variant border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-sm transition-all">2</div>
+            <span class="text-[11px] font-bold mt-2 text-on-surface-variant hidden sm:block">Date & Time</span>
+          </div>
+          <div class="step-item flex flex-col items-center z-10 flex-1" data-step="3">
+            <div class="step-circle w-10 h-10 rounded-full bg-outline-variant border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-sm transition-all">3</div>
+            <span class="text-[11px] font-bold mt-2 text-on-surface-variant hidden sm:block">Personalize</span>
+          </div>
+          <div class="step-item flex flex-col items-center z-10 flex-1" data-step="4">
+            <div class="step-circle w-10 h-10 rounded-full bg-outline-variant border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-sm transition-all">4</div>
+            <span class="text-[11px] font-bold mt-2 text-on-surface-variant hidden sm:block">Payment</span>
+          </div>
+          <div class="step-item flex flex-col items-center z-10 flex-1" data-step="5">
+            <div class="step-circle w-10 h-10 rounded-full bg-outline-variant border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-sm transition-all">5</div>
+            <span class="text-[11px] font-bold mt-2 text-on-surface-variant hidden sm:block">Confirm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Package Summary (populated by booking.js) -->
+      <div id="packageSummary"></div>
+
+      <!-- Booking Form -->
+      <div id="bookingForm" class="bg-surface rounded-3xl border border-outline-variant shadow-sm overflow-hidden">
+
+        <!-- Step 1 -->
+        <div class="form-step fade-up p-6 md:p-8" data-step="1">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">person</span>
+            </div>
+            <h2 class="text-xl font-headline font-bold">Recipient Details</h2>
+          </div>
+          <div class="space-y-5">
+            <div>
+              <label class="block text-sm font-bold mb-2">Recipient Name <span class="text-secondary">*</span></label>
+              <input type="text" id="recipientName" placeholder="Recipient's full name"
+                class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-bold mb-2">Email <span class="text-on-surface-variant font-normal">(optional)</span></label>
+                <input type="email" id="recipientEmail" placeholder="recipient@example.com"
+                  class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-2">Phone <span class="text-secondary">*</span></label>
+                <input type="tel" id="recipientPhone" placeholder="08012345678"
+                  class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-2">Delivery / Venue Address <span class="text-secondary">*</span></label>
+              <textarea id="deliveryAddress" rows="3" placeholder="Enter full delivery address"
+                class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm resize-none" required></textarea>
+            </div>
+          </div>
+          <div class="flex justify-end mt-8">
+            <button type="button" onclick="nextStep()" class="flex items-center gap-2 px-8 py-3.5 bg-primary text-white rounded-full font-bold hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/20">
+              Next <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </button>
+          </div>
         </div>
 
-        <div class="progress-steps">
-            <div class="step active" data-step="1">
-                <div class="step-number">1</div>
-                <div class="step-label">Recipient</div>
+        <!-- Step 2 -->
+        <div class="form-step hidden p-6 md:p-8" data-step="2">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">calendar_month</span>
             </div>
-            <div class="step" data-step="2">
-                <div class="step-number">2</div>
-                <div class="step-label">Date & Time</div>
+            <h2 class="text-xl font-headline font-bold">Date & Time</h2>
+          </div>
+          <div class="space-y-5">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-bold mb-2">Surprise Date <span class="text-secondary">*</span></label>
+                <input type="date" id="surpriseDate" class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-2">Surprise Time <span class="text-secondary">*</span></label>
+                <div class="grid grid-cols-3 gap-2">
+                  <select id="surpriseHour" class="wow-input px-2 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm">
+                    <option value="">HH</option>
+                    <option value="01">01</option><option value="02">02</option><option value="03">03</option>
+                    <option value="04">04</option><option value="05">05</option><option value="06">06</option>
+                    <option value="07">07</option><option value="08">08</option><option value="09">09</option>
+                    <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                  </select>
+                  <select id="surpriseMinute" class="wow-input px-2 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm">
+                    <option value="">MM</option>
+                    <option value="00">00</option><option value="15">15</option>
+                    <option value="30">30</option><option value="45">45</option>
+                  </select>
+                  <select id="surpriseAmPm" class="wow-input px-2 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm">
+                    <option value="AM">AM</option><option value="PM">PM</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div class="step" data-step="3">
-                <div class="step-number">3</div>
-                <div class="step-label">Personalize</div>
+            <div>
+              <label class="block text-sm font-bold mb-2">Timezone <span class="text-secondary">*</span></label>
+              <select id="timezone" class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm">
+                <option value="">Select Timezone</option>
+                <option value="WAT" selected>West Africa Time (WAT)</option>
+                <option value="EST">Eastern Time (EST)</option>
+                <option value="CST">Central Time (CST)</option>
+                <option value="PST">Pacific Time (PST)</option>
+                <option value="GMT">GMT</option>
+              </select>
             </div>
-            <div class="step" data-step="4">
-                <div class="step-number">4</div>
-                <div class="step-label">Payment</div>
-            </div>
-            <div class="step" data-step="5">
-                <div class="step-number">5</div>
-                <div class="step-label">Confirmation</div>
-            </div>
+            <label class="flex items-center gap-3 p-4 bg-primary-container rounded-2xl cursor-pointer">
+              <input type="checkbox" id="flexibleTiming" class="w-5 h-5 rounded text-primary" />
+              <div>
+                <p class="font-bold text-sm text-primary">Allow flexible timing</p>
+                <p class="text-xs text-on-surface-variant">±30 minutes variation is acceptable</p>
+              </div>
+            </label>
+          </div>
+          <div class="flex justify-between mt-8">
+            <button type="button" onclick="prevStep()" class="flex items-center gap-2 px-6 py-3 border-2 border-outline-variant rounded-full font-bold hover:bg-surface-high transition-all">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span> Previous
+            </button>
+            <button type="button" onclick="nextStep()" class="flex items-center gap-2 px-8 py-3.5 bg-primary text-white rounded-full font-bold hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/20">
+              Next <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </button>
+          </div>
         </div>
 
-        <div id="packageSummary" class="package-summary">
+        <!-- Step 3 -->
+        <div class="form-step hidden p-6 md:p-8" data-step="3">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">favorite</span>
+            </div>
+            <h2 class="text-xl font-headline font-bold">Personalize Your Surprise</h2>
+          </div>
+          <div class="space-y-5">
+            <div>
+              <label class="block text-sm font-bold mb-2">Personal Message</label>
+              <textarea id="personalMessage" rows="4" placeholder="Add a heartfelt message..."
+                class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm resize-none"></textarea>
+              <p class="text-xs text-on-surface-variant mt-1.5">This message will be included in the surprise presentation</p>
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-2">Special Requests</label>
+              <textarea id="specialRequests" rows="3" placeholder="Allergies, dietary restrictions, special requests?"
+                class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm resize-none"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-3">Add-ons <span class="text-on-surface-variant font-normal">(Optional)</span></label>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <label class="addon-card block cursor-pointer">
+                  <input type="checkbox" name="addons" value="extraFlowers" data-price="7500" class="hidden" />
+                  <div class="addon-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                    <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">local_florist</span>
+                    <div class="flex-1"><p class="font-bold text-sm">Extra Bouquet</p><p class="text-xs text-secondary font-bold">+₦7,500</p></div>
+                    <span class="addon-check material-symbols-outlined text-primary">check_circle</span>
+                  </div>
+                </label>
+                <label class="addon-card block cursor-pointer">
+                  <input type="checkbox" name="addons" value="champagne" data-price="11250" class="hidden" />
+                  <div class="addon-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                    <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">wine_bar</span>
+                    <div class="flex-1"><p class="font-bold text-sm">Premium Champagne</p><p class="text-xs text-secondary font-bold">+₦11,250</p></div>
+                    <span class="addon-check material-symbols-outlined text-primary">check_circle</span>
+                  </div>
+                </label>
+                <label class="addon-card block cursor-pointer">
+                  <input type="checkbox" name="addons" value="photographer" data-price="30000" class="hidden" />
+                  <div class="addon-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                    <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">photo_camera</span>
+                    <div class="flex-1"><p class="font-bold text-sm">Photographer</p><p class="text-xs text-secondary font-bold">2hrs · +₦30,000</p></div>
+                    <span class="addon-check material-symbols-outlined text-primary">check_circle</span>
+                  </div>
+                </label>
+                <label class="addon-card block cursor-pointer">
+                  <input type="checkbox" name="addons" value="videographer" data-price="45000" class="hidden" />
+                  <div class="addon-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                    <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">videocam</span>
+                    <div class="flex-1"><p class="font-bold text-sm">Videographer</p><p class="text-xs text-secondary font-bold">+₦45,000</p></div>
+                    <span class="addon-check material-symbols-outlined text-primary">check_circle</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-between mt-8">
+            <button type="button" onclick="prevStep()" class="flex items-center gap-2 px-6 py-3 border-2 border-outline-variant rounded-full font-bold hover:bg-surface-high transition-all">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span> Previous
+            </button>
+            <button type="button" onclick="nextStep()" class="flex items-center gap-2 px-8 py-3.5 bg-primary text-white rounded-full font-bold hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/20">
+              Next <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </button>
+          </div>
         </div>
 
-        <div id="bookingForm" class="booking-form">
-            <div class="form-step active" data-step="1">
-                <h2><i class="bi bi-person-circle"></i> Recipient Details</h2>
-                <div class="form-group">
-                    <label for="recipientName" class="required">Recipient Name</label>
-                    <input type="text" id="recipientName" placeholder="Enter recipient's full name" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="recipientEmail">Recipient Email (Optional)</label>
-                        <input type="email" id="recipientEmail" placeholder="recipient@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipientPhone" class="required">Recipient Phone</label>
-                        <input type="tel" id="recipientPhone" placeholder="08012345678" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="deliveryAddress" class="required">Delivery/Venue Address</label>
-                    <textarea id="deliveryAddress" rows="3" placeholder="Enter full delivery address" required></textarea>
-                </div>
-                <div class="form-navigation">
-                    <button type="button" class="btn-primary" onclick="nextStep()">
-                        Next <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
+        <!-- Step 4: Payment -->
+        <div class="form-step hidden p-6 md:p-8" data-step="4">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">payments</span>
             </div>
-
-            <div class="form-step" data-step="2">
-                <h2><i class="bi bi-calendar-event"></i> Select Date & Time</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="surpriseDate" class="required">Surprise Date</label>
-                        <input type="date" id="surpriseDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="required">Surprise Time</label>
-                        <div style="display: flex; gap: 10px;">
-                            <select id="surpriseHour" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: white;">
-                                <option value="">Hour</option>
-                                <option value="01">01</option><option value="02">02</option><option value="03">03</option>
-                                <option value="04">04</option><option value="05">05</option><option value="06">06</option>
-                                <option value="07">07</option><option value="08">08</option><option value="09">09</option>
-                                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                            </select>
-                            <select id="surpriseMinute" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: white;">
-                                <option value="">Min</option>
-                                <option value="00">00</option><option value="15">15</option>
-                                <option value="30">30</option><option value="45">45</option>
-                            </select>
-                            <select id="surpriseAmPm" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: white;">
-                                <option value="AM">AM</option>
-                                <option value="PM">PM</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="timezone" class="required">Timezone</label>
-                    <select id="timezone" required>
-                        <option value="">Select Timezone</option>
-                        <option value="WAT" selected>West Africa Time (WAT)</option>
-                        <option value="EST">Eastern Time (EST)</option>
-                        <option value="CST">Central Time (CST)</option>
-                        <option value="PST">Pacific Time (PST)</option>
-                        <option value="GMT">GMT</option>
-                    </select>
-                </div>
-                <div class="form-group checkbox-group">
-                    <label>
-                        <input type="checkbox" id="flexibleTiming">
-                        <span>Allow flexible timing (±30 minutes)</span>
-                    </label>
-                </div>
-                <div class="form-navigation">
-                    <button type="button" class="btn-secondary" onclick="prevStep()">
-                        <i class="bi bi-arrow-left"></i> Previous
-                    </button>
-                    <button type="button" class="btn-primary" onclick="nextStep()">
-                        Next <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
+            <div>
+              <h2 class="text-xl font-headline font-bold">Choose Payment Method</h2>
+              <p class="text-xs text-on-surface-variant">Select your preferred method to complete booking</p>
             </div>
-
-            <div class="form-step" data-step="3">
-                <h2><i class="bi bi-chat-heart"></i> Personalize Your Surprise</h2>
-                <div class="form-group">
-                    <label for="personalMessage">Personal Message</label>
-                    <textarea id="personalMessage" rows="4" placeholder="Add a heartfelt message for your loved one..."></textarea>
-                    <small>This message will be included in the surprise presentation</small>
+          </div>
+          <div class="space-y-4">
+            <div class="bg-surface-low border-2 border-outline-variant rounded-3xl p-5 hover:border-primary hover:shadow-lg transition-all">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">credit_card</span>
                 </div>
-                <div class="form-group">
-                    <label for="specialRequests">Special Requests or Instructions</label>
-                    <textarea id="specialRequests" rows="3" placeholder="Any allergies, dietary restrictions, or special requests?"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Add-ons (Optional)</label>
-                    <div class="addons-grid">
-                        <label class="addon-item">
-                            <input type="checkbox" name="addons" value="extraFlowers" data-price="7500">
-                            <span class="addon-content">
-                                <i class="bi bi-flower1"></i>
-                                <strong>Extra Bouquet of Flowers</strong>
-                                <small>+₦7,500</small>
-                            </span>
-                        </label>
-                        <label class="addon-item">
-                            <input type="checkbox" name="addons" value="champagne" data-price="11250">
-                            <span class="addon-content">
-                                <i class="bi bi-cup-straw"></i>
-                                <strong>Premium Champagne</strong>
-                                <small>+₦11,250</small>
-                            </span>
-                        </label>
-                        <label class="addon-item">
-                            <input type="checkbox" name="addons" value="photographer" data-price="30000">
-                            <span class="addon-content">
-                                <i class="bi bi-camera"></i>
-                                <strong>Professional Photographer</strong>
-                                <small>2 hours - +₦30,000</small>
-                            </span>
-                        </label>
-                        <label class="addon-item">
-                            <input type="checkbox" name="addons" value="videographer" data-price="45000">
-                            <span class="addon-content">
-                                <i class="bi bi-camera-video"></i>
-                                <strong>Videographer</strong>
-                                <small>+₦45,000</small>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-                <div class="form-navigation">
-                    <button type="button" class="btn-secondary" onclick="prevStep()">
-                        <i class="bi bi-arrow-left"></i> Previous
-                    </button>
-                    <button type="button" class="btn-primary" onclick="nextStep()">
-                        Next <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
+                <div><p class="font-bold">Pay with Card</p><p class="text-xs text-on-surface-variant">Debit/Credit via Flutterwave</p></div>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="text-xs font-semibold text-success bg-success-container px-3 py-1 rounded-full">✓ Secure</span>
+                <span class="text-xs font-semibold text-success bg-success-container px-3 py-1 rounded-full">✓ Instant</span>
+                <span class="text-xs font-semibold text-success bg-success-container px-3 py-1 rounded-full">✓ Intl Cards</span>
+              </div>
+              <button type="button" onclick="initiateFlutterwavePayment('card')" class="w-full py-3.5 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">credit_card</span> Pay ₦<span class="payment-amount">0</span> with Card
+              </button>
             </div>
-
-            <div class="form-step" data-step="4">
-                <h2><i class="bi bi-credit-card"></i> Choose Payment Method</h2>
-                <p class="payment-subtitle">Select your preferred payment method to complete your booking</p>
-                
-                <div class="payment-methods">
-                    <div class="payment-method-card">
-                        <div class="payment-method-header">
-                            <div class="payment-icon flutterwave-color">
-                                <i class="bi bi-credit-card"></i>
-                            </div>
-                            <div class="payment-method-info">
-                                <h3>Pay with Card</h3>
-                                <p>Debit/Credit Card via Flutterwave</p>
-                            </div>
-                        </div>
-                        <div class="payment-features">
-                            <span><i class="bi bi-check-circle-fill"></i> Secure Payment</span>
-                            <span><i class="bi bi-check-circle-fill"></i> Instant Confirmation</span>
-                            <span><i class="bi bi-check-circle-fill"></i> Nigerian & International Cards</span>
-                        </div>
-                        <button type="button" class="btn-payment btn-primary" onclick="initiateFlutterwavePayment('card')">
-                            <i class="bi bi-credit-card"></i> Pay ₦<span class="payment-amount">0</span> with Card
-                        </button>
-                    </div>
-
-                    <div class="payment-method-card">
-                        <div class="payment-method-header">
-                            <div class="payment-icon bank-color">
-                                <i class="bi bi-bank"></i>
-                            </div>
-                            <div class="payment-method-info">
-                                <h3>Bank Transfer</h3>
-                                <p>Direct bank transfer via Flutterwave</p>
-                            </div>
-                        </div>
-                        <div class="payment-features">
-                            <span><i class="bi bi-check-circle-fill"></i> Secure Transfer</span>
-                            <span><i class="bi bi-check-circle-fill"></i> All Nigerian Banks</span>
-                            <span><i class="bi bi-check-circle-fill"></i> Instant Verification</span>
-                        </div>
-                        <button type="button" class="btn-payment btn-secondary" onclick="initiateFlutterwavePayment('banktransfer')">
-                            <i class="bi bi-bank"></i> Pay ₦<span class="payment-amount">0</span> via Transfer
-                        </button>
-                    </div>
-
-                    <div class="payment-method-card">
-                        <div class="payment-method-header">
-                            <div class="payment-icon ussd-color">
-                                <i class="bi bi-phone"></i>
-                            </div>
-                            <div class="payment-method-info">
-                                <h3>USSD Payment</h3>
-                                <p>Pay with your bank USSD code</p>
-                            </div>
-                        </div>
-                        <div class="payment-features">
-                            <span><i class="bi bi-check-circle-fill"></i> No Internet Required</span>
-                            <span><i class="bi bi-check-circle-fill"></i> Quick & Easy</span>
-                            <span><i class="bi bi-check-circle-fill"></i> All Nigerian Banks</span>
-                        </div>
-                        <button type="button" class="btn-payment btn-secondary" onclick="initiateFlutterwavePayment('ussd')">
-                            <i class="bi bi-phone"></i> Pay ₦<span class="payment-amount">0</span> with USSD
-                        </button>
-                    </div>
+            <div class="bg-surface-low border-2 border-outline-variant rounded-3xl p-5 hover:border-primary hover:shadow-lg transition-all">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-blue-600" style="font-variation-settings:'FILL' 1;">account_balance</span>
                 </div>
-
-                <div class="form-navigation" style="margin-top: 32px;">
-                    <button type="button" class="btn-secondary" onclick="prevStep()">
-                        <i class="bi bi-arrow-left"></i> Previous
-                    </button>
-                </div>
+                <div><p class="font-bold">Bank Transfer</p><p class="text-xs text-on-surface-variant">Direct transfer via Flutterwave</p></div>
+              </div>
+              <button type="button" onclick="initiateFlutterwavePayment('banktransfer')" class="w-full py-3.5 border-2 border-primary text-primary rounded-full font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">account_balance</span> Pay ₦<span class="payment-amount">0</span> via Transfer
+              </button>
             </div>
-
-            <div class="form-step" data-step="5">
-                <div class="success-message">
-                    <i class="bi bi-check-circle-fill"></i>
-                    <h2>Booking Confirmed!</h2>
-                    <p>Your surprise booking has been successfully confirmed.</p>
-                    <div class="booking-reference">
-                        <strong>Booking Reference:</strong>
-                        <span id="confirmationReference">WOW-XXXXX</span>
-                    </div>
+            <div class="bg-surface-low border-2 border-outline-variant rounded-3xl p-5 hover:border-primary hover:shadow-lg transition-all">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-amber-700" style="font-variation-settings:'FILL' 1;">phone_iphone</span>
                 </div>
-                
-                <div id="bookingReview" class="booking-review">
-                </div>
-
-                <div class="form-navigation confirmation-actions">
-                    <a href="booking-history.html" class="btn-primary">
-                        <i class="bi bi-list-check"></i> View My Bookings
-                    </a>
-                    <a href="index.html" class="btn-secondary">
-                        <i class="bi bi-house"></i> Back to Home
-                    </a>
-                </div>
+                <div><p class="font-bold">USSD Payment</p><p class="text-xs text-on-surface-variant">Pay with your bank USSD code</p></div>
+              </div>
+              <button type="button" onclick="initiateFlutterwavePayment('ussd')" class="w-full py-3.5 border-2 border-outline-variant text-on-surface rounded-full font-bold hover:bg-surface-high transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">phone_iphone</span> Pay ₦<span class="payment-amount">0</span> with USSD
+              </button>
             </div>
+          </div>
+          <div class="mt-8">
+            <button type="button" onclick="prevStep()" class="flex items-center gap-2 px-6 py-3 border-2 border-outline-variant rounded-full font-bold hover:bg-surface-high transition-all">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span> Previous
+            </button>
+          </div>
         </div>
-    </main>
 
-    <div id="bookingReviewModal" class="modal-overlay">
-        <div class="review-modal-content">
-            <button class="close-modal-btn" onclick="closeReviewModal()">X</button>
-            <div style="font-size: 40px; margin-bottom: 10px;" id="modalEmoji">✨</div>
-            <h2 id="reviewModalTitle" style="margin-bottom: 10px;">How was your booking experience?</h2>
-            <p style="color: #666; margin-bottom: 20px;">Your feedback helps us create better surprises.</p>
-            
-            <div class="booking-stars" id="bookingStarContainer" style="margin-bottom: 20px;">
-                <i class="bi bi-star-fill" data-val="1"></i>
-                <i class="bi bi-star-fill" data-val="2"></i>
-                <i class="bi bi-star-fill" data-val="3"></i>
-                <i class="bi bi-star-fill" data-val="4"></i>
-                <i class="bi bi-star-fill" data-val="5"></i>
+        <!-- Step 5: Confirmation -->
+        <div class="form-step hidden p-6 md:p-8 text-center" data-step="5">
+          <div class="w-20 h-20 rounded-full bg-success-container flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-success text-5xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+          </div>
+          <h2 class="text-3xl font-headline font-extrabold mb-2">Booking Confirmed!</h2>
+          <p class="text-on-surface-variant mb-6">Your surprise has been successfully booked.</p>
+          <div class="inline-flex items-center gap-3 px-6 py-3 bg-primary-container rounded-2xl mb-8">
+            <span class="material-symbols-outlined text-primary">confirmation_number</span>
+            <div class="text-left">
+              <p class="text-xs text-on-surface-variant font-semibold">Booking Reference</p>
+              <p class="font-headline font-extrabold text-primary text-lg" id="confirmationReference">WOW-XXXXX</p>
             </div>
-            <input type="hidden" id="bookingRatingValue">
-            
-            <textarea id="bookingReviewComment" class="form-control" rows="3" placeholder="Tell us what you loved, or what went wrong..." style="margin-bottom: 20px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;"></textarea>
-            
-            <button type="button" class="btn-primary" id="submitBookingReviewBtn" onclick="submitBookingReview()" style="width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 8px; border: none; cursor: pointer;">Submit Feedback</button>
-            <button type="button" onclick="closeReviewModal()" style="width: 100%; padding: 10px; background: transparent; color: #888; border: none; cursor: pointer;">No thanks, maybe later</button>
+          </div>
+          <div id="bookingReview" class="text-left mb-8"></div>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="booking-history.html" class="flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+              <span class="material-symbols-outlined text-[20px]">list_alt</span> View My Bookings
+            </a>
+            <a href="index.html" class="flex items-center justify-center gap-2 px-8 py-4 border-2 border-outline-variant rounded-full font-bold hover:bg-surface-high transition-all">
+              <span class="material-symbols-outlined text-[20px]">home</span> Back to Home
+            </a>
+          </div>
         </div>
+      </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script src="js/booking.js"></script>
+    <!-- ORDER SUMMARY SIDEBAR -->
+    <div class="lg:col-span-1">
+      <div class="sticky top-24 space-y-4">
+        <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-6">
+          <h3 class="font-headline font-bold flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">receipt_long</span> Order Summary
+          </h3>
+          <div id="orderSummaryContent" class="text-center py-8 text-on-surface-variant">
+            <span class="material-symbols-outlined text-4xl text-outline-variant block mb-2">card_giftcard</span>
+            <p class="text-sm">Select a package to see your summary</p>
+          </div>
+        </div>
+        <div class="p-4 bg-success-container rounded-2xl flex gap-3 items-start">
+          <span class="material-symbols-outlined text-success flex-shrink-0 mt-0.5" style="font-variation-settings:'FILL' 1;">verified_user</span>
+          <p class="text-xs text-success font-semibold leading-relaxed">Your payment is secured by Flutterwave. We never store your card details.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
+<!-- Review Modal -->
+<div id="bookingReviewModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeReviewModal()"></div>
+  <div class="relative bg-surface rounded-3xl max-w-md w-full p-8 shadow-2xl text-center">
+    <div class="text-5xl mb-4">✨</div>
+    <h2 class="text-2xl font-headline font-bold mb-2" id="reviewModalTitle">How was your experience?</h2>
+    <p class="text-on-surface-variant text-sm mb-6">Your feedback helps us create better surprises.</p>
+    <div class="flex justify-center gap-2 mb-6" id="bookingStarContainer">
+      <i class="bi bi-star-fill text-3xl text-amber-400 cursor-pointer" data-val="1"></i>
+      <i class="bi bi-star-fill text-3xl text-amber-400 cursor-pointer" data-val="2"></i>
+      <i class="bi bi-star-fill text-3xl text-amber-400 cursor-pointer" data-val="3"></i>
+      <i class="bi bi-star-fill text-3xl text-amber-400 cursor-pointer" data-val="4"></i>
+      <i class="bi bi-star-fill text-3xl text-amber-400 cursor-pointer" data-val="5"></i>
+    </div>
+    <input type="hidden" id="bookingRatingValue" />
+    <textarea id="bookingReviewComment" rows="3" placeholder="Tell us what you loved, or what went wrong..."
+      class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm resize-none mb-4"></textarea>
+    <button onclick="submitBookingReview()" class="w-full py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all mb-3">Submit Feedback</button>
+    <button onclick="closeReviewModal()" class="w-full py-3 text-on-surface-variant text-sm hover:text-on-surface transition-colors">No thanks, maybe later</button>
+  </div>
+</div>
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-                toggleBtn.classList.toggle('hidden');
-            });
-        }
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/supabaseApi.js"></script>
+<script src="js/booking.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const client = window.sbClient;
+    if (!client) return;
+    const { data } = await client.auth.getSession();
+    if (data?.session?.user) {
+      const authLink = document.getElementById('authLink');
+      authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>`;
+      authLink.href = '#';
+      authLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('Logout?')) { await client.auth.signOut(); localStorage.removeItem('currentUser'); window.location.reload(); }
+      };
+    }
+  } catch(e) {}
+});
 
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target)) {
-                navLinks.classList.remove('active');
-                toggleBtn.classList.remove('hidden');
-            }
-        });
+function updateStepUI(currentStep) {
+  const pct = ((currentStep - 1) / 4) * 100;
+  document.getElementById('stepLine').style.width = pct + '%';
+  document.querySelectorAll('.step-item').forEach(item => {
+    const s = parseInt(item.dataset.step);
+    const circle = item.querySelector('.step-circle');
+    const label = item.querySelector('span');
+    if (s < currentStep) {
+      circle.className = 'step-circle w-10 h-10 rounded-full bg-primary border-2 border-primary text-white flex items-center justify-center font-bold text-sm transition-all';
+      circle.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span>';
+      if (label) label.className = 'text-[11px] font-bold mt-2 text-primary hidden sm:block';
+    } else if (s === currentStep) {
+      circle.className = 'step-circle w-10 h-10 rounded-full bg-primary border-2 border-primary text-white flex items-center justify-center font-bold text-sm transition-all';
+      circle.innerHTML = s;
+      if (label) label.className = 'text-[11px] font-bold mt-2 text-primary hidden sm:block';
+    } else {
+      circle.className = 'step-circle w-10 h-10 rounded-full bg-outline-variant border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-sm transition-all';
+      circle.innerHTML = s;
+      if (label) label.className = 'text-[11px] font-bold mt-2 text-on-surface-variant hidden sm:block';
+    }
+  });
+  document.querySelectorAll('.form-step').forEach(step => {
+    step.classList.toggle('hidden', parseInt(step.dataset.step) !== currentStep);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-        // FORCE PLAIN TEXT LOGOUT
-        setInterval(async () => {
-            const authLink = document.getElementById('authLink');
-            const badDiv = document.getElementById('loginStatus');
-            if (badDiv) badDiv.remove();
-            
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user && authLink.textContent !== 'Logout') {
-                    authLink.textContent = 'Logout';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if(confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        }, 500);
-    });
-    </script>
+function closeReviewModal() {
+  document.getElementById('bookingReviewModal').style.display = 'none';
+}
+</script>
 </body>
 </html>

@@ -1,321 +1,593 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Build Your Custom Package - WOW Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <link rel="stylesheet" href="css/wow-theme.css">
-
-    <style>
-        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-
-            .nav-links.active { display: flex; }
-
-            .nav-links li { 
-                width: 100%; 
-                text-align: center; 
-                display: flex; 
-                justify-content: center; 
-            }
-
-            .nav-links li span {
-                font-weight: 700;
-                display: block;
-                padding: 10px 0;
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Package – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-high":"#ECE6F0","outline-variant":"#CAC4D0",outline:"#79747E",
+          error:"#B3261E","error-container":"#F9DEDC",success:"#166534","success-container":"#dcfce7",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .wow-input:focus{border-color:#6200EE;box-shadow:0 0 0 3px rgba(98,0,238,.1);outline:none}
+    .wow-input{transition:all .2s}
+    .option-card input:checked~.option-inner{border-color:#6200EE!important;background:#EADDFF!important}
+    .option-card input:checked~.option-inner .opt-check{opacity:1}
+    .option-inner{transition:all .2s}
+    .opt-check{opacity:0;transition:opacity .2s}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{animation:spin .8s linear infinite;display:inline-block}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo" 
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
+<body class="bg-surface-low min-h-screen">
 
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html" class="active">Custom Package</a></li>
-                <li><a href="reviews.html">Reviews</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="custom-package.html" class="text-primary font-bold font-headline px-4 py-2 rounded-full bg-primary/10 text-sm">Custom Package</a>
+      <a href="reviews.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Reviews</a>
+      <a href="booking-history.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">My Bookings</a>
     </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <section class="hero" style="padding: 60px 0 40px;">
-        <div class="container" style="text-align: center;">
-            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">
-                <i class="bi bi-palette" style="margin-right: 12px;"></i>
-                Build Your Custom Package
-            </h1>
-            <p class="hero-subtitle" style="font-size: 18px; color: #666; max-width: 700px; margin: 0 auto;">
-                Create your perfect surprise by selecting exactly what you want. Mix and match from our curated collection of flowers, entertainment, decorations, and more!
-            </p>
+<!-- PAGE HERO -->
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-10">
+    <div class="flex items-center gap-2 mb-3">
+      <a href="index.html" class="text-white/60 text-sm hover:text-white font-semibold">Home</a>
+      <span class="material-symbols-outlined text-white/40 text-[16px]">chevron_right</span>
+      <span class="text-white/80 text-sm font-semibold">Custom Package</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white">Build Your Own Package</h1>
+    <p class="text-white/80 mt-2 text-lg max-w-xl">Can't find exactly what you need? Design your own custom surprise experience from scratch.</p>
+  </div>
+</div>
+
+<main class="max-w-screen-xl mx-auto px-4 md:px-6 py-10 pb-28">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- FORM -->
+    <div class="lg:col-span-2">
+      <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm overflow-hidden">
+        <div id="customPackageForm">
+
+          <!-- Section 1: Occasion -->
+          <div class="p-6 md:p-8 border-b border-outline-variant">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">celebration</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-headline font-bold">Occasion Type</h2>
+                <p class="text-xs text-on-surface-variant">What are you celebrating?</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="occasionType" value="birthday" class="hidden" />
+                <div class="option-inner flex flex-col items-center gap-2 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">cake</span>
+                  <p class="font-bold text-sm">Birthday</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="occasionType" value="proposal" class="hidden" />
+                <div class="option-inner flex flex-col items-center gap-2 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">diamond</span>
+                  <p class="font-bold text-sm">Proposal</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="occasionType" value="anniversary" class="hidden" />
+                <div class="option-inner flex flex-col items-center gap-2 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">favorite</span>
+                  <p class="font-bold text-sm">Anniversary</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="occasionType" value="graduation" class="hidden" />
+                <div class="option-inner flex flex-col items-center gap-2 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">school</span>
+                  <p class="font-bold text-sm">Graduation</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="occasionType" value="corporate" class="hidden" />
+                <div class="option-inner flex flex-col items-center gap-2 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">business_center</span>
+                  <p class="font-bold text-sm">Corporate</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="occasionType" value="other" class="hidden" />
+                <div class="option-inner flex flex-col items-center gap-2 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">more_horiz</span>
+                  <p class="font-bold text-sm">Other</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section 2: Budget -->
+          <div class="p-6 md:p-8 border-b border-outline-variant">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">payments</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-headline font-bold">Budget Range</h2>
+                <p class="text-xs text-on-surface-variant">How much would you like to spend?</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="budgetRange" value="under-50000" class="hidden" />
+                <div class="option-inner p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <p class="font-extrabold text-primary text-lg">Under ₦50k</p>
+                  <p class="text-xs text-on-surface-variant mt-1">Budget friendly</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px] block mt-2">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="budgetRange" value="50000-150000" class="hidden" />
+                <div class="option-inner p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <p class="font-extrabold text-primary text-lg">₦50k–₦150k</p>
+                  <p class="text-xs text-on-surface-variant mt-1">Standard</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px] block mt-2">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="budgetRange" value="150000-300000" class="hidden" />
+                <div class="option-inner p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <p class="font-extrabold text-primary text-lg">₦150k–₦300k</p>
+                  <p class="text-xs text-on-surface-variant mt-1">Premium</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px] block mt-2">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="budgetRange" value="300000-500000" class="hidden" />
+                <div class="option-inner p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <p class="font-extrabold text-primary text-lg">₦300k–₦500k</p>
+                  <p class="text-xs text-on-surface-variant mt-1">Luxury</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px] block mt-2">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="budgetRange" value="over-500000" class="hidden" />
+                <div class="option-inner p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <p class="font-extrabold text-primary text-lg">₦500k+</p>
+                  <p class="text-xs text-on-surface-variant mt-1">Ultra Premium</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px] block mt-2">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="radio" name="budgetRange" value="flexible" class="hidden" />
+                <div class="option-inner p-4 bg-surface-low border-2 border-outline-variant rounded-2xl text-center">
+                  <p class="font-extrabold text-primary text-lg">Flexible</p>
+                  <p class="text-xs text-on-surface-variant mt-1">Let us suggest</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[18px] block mt-2">check_circle</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section 3: What to Include -->
+          <div class="p-6 md:p-8 border-b border-outline-variant">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">add_shopping_cart</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-headline font-bold">What to Include</h2>
+                <p class="text-xs text-on-surface-variant">Select all that apply</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="includesGrid">
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="flowers" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">local_florist</span>
+                  <p class="font-bold text-sm">Flowers</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="cake" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">cake</span>
+                  <p class="font-bold text-sm">Cake</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="balloons" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">celebration</span>
+                  <p class="font-bold text-sm">Balloons</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="decoration" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">auto_awesome</span>
+                  <p class="font-bold text-sm">Decoration</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="photographer" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">photo_camera</span>
+                  <p class="font-bold text-sm">Photographer</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="dinner" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">restaurant</span>
+                  <p class="font-bold text-sm">Dinner</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="champagne" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">wine_bar</span>
+                  <p class="font-bold text-sm">Champagne</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="gifts" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">redeem</span>
+                  <p class="font-bold text-sm">Gift Items</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+              <label class="option-card block cursor-pointer">
+                <input type="checkbox" name="includes" value="music" class="hidden" />
+                <div class="option-inner flex items-center gap-3 p-4 bg-surface-low border-2 border-outline-variant rounded-2xl">
+                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">music_note</span>
+                  <p class="font-bold text-sm">Live Music</p>
+                  <span class="opt-check material-symbols-outlined text-primary text-[16px] ml-auto">check_circle</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section 4: Details -->
+          <div class="p-6 md:p-8 border-b border-outline-variant">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">edit_note</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-headline font-bold">Package Details</h2>
+                <p class="text-xs text-on-surface-variant">Tell us more about your vision</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-bold mb-2">Package Name / Title <span class="text-secondary">*</span></label>
+                <input type="text" id="packageName" placeholder="E.g. Surprise Birthday Dinner for Sarah"
+                  class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+              </div>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-bold mb-2">Preferred Date <span class="text-secondary">*</span></label>
+                  <input type="date" id="preferredDate"
+                    class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold mb-2">Number of Guests</label>
+                  <input type="number" id="guestCount" placeholder="e.g. 10" min="1"
+                    class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-2">Venue / Location <span class="text-secondary">*</span></label>
+                <input type="text" id="venueLocation" placeholder="Address or venue name"
+                  class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-2">Describe Your Vision</label>
+                <textarea id="packageDescription" rows="4" placeholder="Describe your dream surprise in as much detail as possible..."
+                  class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Contact Info -->
+          <div class="p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">contact_phone</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-headline font-bold">Your Contact Info</h2>
+                <p class="text-xs text-on-surface-variant">We'll reach out to finalize the details</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-bold mb-2">Full Name <span class="text-secondary">*</span></label>
+                  <input type="text" id="contactName" placeholder="Your full name"
+                    class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold mb-2">Phone Number <span class="text-secondary">*</span></label>
+                  <input type="tel" id="contactPhone" placeholder="+234 800 000 0000"
+                    class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-2">Email Address <span class="text-secondary">*</span></label>
+                <input type="email" id="contactEmail" placeholder="your@email.com"
+                  class="wow-input w-full px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-2xl text-sm" required />
+              </div>
+            </div>
+
+            <!-- Message -->
+            <div id="formMessage" class="hidden mt-4 px-4 py-3 rounded-2xl text-sm font-semibold"></div>
+
+            <button type="button" onclick="submitCustomPackage()" id="submitBtn"
+              class="w-full mt-6 py-4 bg-primary text-white rounded-full font-bold text-base hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">send</span> Submit Custom Request
+            </button>
+            <p class="text-xs text-on-surface-variant text-center mt-3">Our team will contact you within 24 hours to finalize your package</p>
+          </div>
+
         </div>
-    </section>
+      </div>
+    </div>
 
-    <main class="container" style="padding: 40px 20px 80px;">
-        <div class="custom-package-builder">
-            
-            <div class="category-filters" style="margin-bottom: 40px; text-align: center;">
-                <button class="category-btn active" data-category="all">
-                    <i class="bi bi-grid-3x3-gap"></i> All Items
-                </button>
-                <button class="category-btn" data-category="flowers">
-                    <i class="bi bi-flower1"></i> Flowers
-                </button>
-                <button class="category-btn" data-category="food">
-                    <i class="bi bi-cup-straw"></i> Food & Drinks
-                </button>
-                <button class="category-btn" data-category="entertainment">
-                    <i class="bi bi-music-note-beamed"></i> Entertainment
-                </button>
-                <button class="category-btn" data-category="photography">
-                    <i class="bi bi-camera"></i> Photography
-                </button>
-                <button class="category-btn" data-category="decorations">
-                    <i class="bi bi-balloon"></i> Decorations
-                </button>
-                <button class="category-btn" data-category="extras">
-                    <i class="bi bi-gift"></i> Extras
-                </button>
+    <!-- SIDEBAR -->
+    <div class="lg:col-span-1">
+      <div class="sticky top-24 space-y-4">
+        <!-- Why custom? -->
+        <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-6">
+          <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">auto_awesome</span>
+            Why Build Custom?
+          </h3>
+          <div class="space-y-4">
+            <div class="flex gap-3">
+              <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings:'FILL' 1;">tune</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm">Fully Tailored</p>
+                <p class="text-xs text-on-surface-variant">Every detail designed around your vision</p>
+              </div>
             </div>
-
-            <div class="builder-layout">
-                
-                <div class="items-section">
-                    <div class="section-header">
-                        <h2>Select Items for Your Package</h2>
-                        <p>Click on any item to add it to your custom package</p>
-                    </div>
-                    
-                    <div id="itemsGrid" class="items-grid">
-                        <div class="loading-state" style="text-align: center; padding: 60px 20px;">
-                            <i class="bi bi-hourglass-split spin" style="font-size: 48px; color: #ccc;"></i>
-                            <p style="margin-top: 16px; color: #666;">Loading items...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <aside class="summary-sidebar">
-                    <div class="sidebar-content">
-                        <div class="sidebar-header">
-                            <i class="bi bi-bag-check" style="font-size: 32px; color: #000;"></i>
-                            <h3>Your Package</h3>
-                        </div>
-
-                        <div class="summary-stats">
-                            <div class="stat">
-                                <span class="stat-label">Items Selected</span>
-                                <span class="stat-value" id="itemCount">0</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-label">Total Price</span>
-                                <span class="stat-value" id="totalPrice">&#x20A6;0</span>
-                            </div>
-                        </div>
-
-                        <div class="selected-items-container">
-                            <h4>Selected Items</h4>
-                            <div id="selectedItemsList">
-                                <p class="no-items">No items selected yet</p>
-                            </div>
-                        </div>
-
-                        <button id="proceedToBooking" class="btn-primary btn-proceed">
-                            <i class="bi bi-arrow-right-circle"></i>
-                            Proceed to Booking
-                        </button>
-
-                        <a href="index.html" class="back-link">
-                            <i class="bi bi-arrow-left"></i> Back to Packages
-                        </a>
-                    </div>
-                </aside>
-
+            <div class="flex gap-3">
+              <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings:'FILL' 1;">support_agent</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm">Dedicated Planner</p>
+                <p class="text-xs text-on-surface-variant">A WOW coordinator guides you through</p>
+              </div>
             </div>
+            <div class="flex gap-3">
+              <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings:'FILL' 1;">price_check</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm">Any Budget</p>
+                <p class="text-xs text-on-surface-variant">We work with all budgets, big or small</p>
+              </div>
+            </div>
+          </div>
         </div>
-    </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about">
-                    <div class="footer-logo">
-                        <img src="images/logo-white.png" alt="WOW Surprises" 
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
-                             style="height: 40px; width: auto; margin-bottom: 16px;">
-                    </div>
-                    <p>Creating unforgettable moments and bringing joy to every celebration.</p>
-                    <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
-                            <i class="bi bi-twitter"></i>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-                            <i class="bi bi-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <div class="footer-links">
-                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
-                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
-                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
-                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
-                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
-                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <div class="footer-links">
-                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
-                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
-                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
-                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <div class="footer-contact">
-                        <div class="contact-item">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-telephone-fill"></i>
-                            <a href="tel:+2348012345678">+234 801 234 5678</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-envelope-fill"></i>
-                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
-                        </div>
-                    </div>
-                </div>
+        <!-- Process -->
+        <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-6">
+          <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">timeline</span>
+            How It Works
+          </h3>
+          <div class="space-y-4">
+            <div class="flex gap-3 items-start">
+              <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
+              <div><p class="font-bold text-sm">Submit your request</p><p class="text-xs text-on-surface-variant">Fill in this form</p></div>
             </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy-policy.html">Privacy Policy</a>
-                    <a href="terms-of-service.html">Terms of Service</a>
-                    <a href="refund-policy.html">Refund Policy</a>
-                    <a href="faq.html">FAQ</a>
-                </div>
+            <div class="flex gap-3 items-start">
+              <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
+              <div><p class="font-bold text-sm">We contact you</p><p class="text-xs text-on-surface-variant">Within 24 hours</p></div>
             </div>
+            <div class="flex gap-3 items-start">
+              <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
+              <div><p class="font-bold text-sm">Finalize & pay</p><p class="text-xs text-on-surface-variant">Agree on details and confirm</p></div>
+            </div>
+            <div class="flex gap-3 items-start">
+              <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</div>
+              <div><p class="font-bold text-sm">We make it WOW!</p><p class="text-xs text-on-surface-variant">Sit back and enjoy</p></div>
+            </div>
+          </div>
         </div>
-    </footer>
+        <!-- Contact -->
+        <div class="bg-primary-container rounded-3xl p-6">
+          <p class="font-headline font-bold text-primary mb-2">Need help planning?</p>
+          <p class="text-xs text-on-surface-variant mb-4">Call or WhatsApp us directly</p>
+          <a href="tel:+2348012345678" class="flex items-center gap-2 px-5 py-3 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all justify-center">
+            <span class="material-symbols-outlined text-[18px]">call</span> +234 801 234 5678
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top">
-        <i class="bi bi-arrow-up"></i>
-    </button>
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  <div class="relative bg-surface rounded-3xl max-w-md w-full p-8 shadow-2xl text-center">
+    <div class="w-20 h-20 rounded-full bg-success-container flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-success text-5xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+    </div>
+    <h2 class="text-2xl font-headline font-bold mb-2">Request Submitted!</h2>
+    <p class="text-on-surface-variant mb-6">Thank you! Our team will contact you within 24 hours to finalize your custom package.</p>
+    <a href="index.html" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[20px]">home</span> Back to Home
+    </a>
+  </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script src="js/custom-package.js"></script>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const icon = toggleBtn?.querySelector('i');
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-4 pt-3 bg-surface/95 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0px_-4px_24px_rgba(0,0,0,0.08)] border-t border-outline-variant">
+  <a href="index.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">explore</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Discover</span>
+  </a>
+  <a href="custom-package.html" class="flex flex-col items-center text-primary bg-primary-container px-5 py-2 rounded-full">
+    <span class="material-symbols-outlined text-[22px]" style="font-variation-settings:'FILL' 1;">palette</span>
+    <span class="text-[10px] font-bold uppercase tracking-widest mt-0.5">Custom</span>
+  </a>
+  <a href="booking-history.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">card_giftcard</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Orders</span>
+  </a>
+  <a href="login.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2" id="mobileNavAuth">
+    <span class="material-symbols-outlined text-[22px]">person</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Account</span>
+  </a>
+</nav>
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('bi-list', 'bi-x-lg');
-                } else {
-                    icon.classList.replace('bi-x-lg', 'bi-list');
-                }
-            });
-        }
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/supabaseApi.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('preferredDate');
+  if (dateInput) dateInput.min = today;
 
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                icon.classList.replace('bi-x-lg', 'bi-list');
-            }
-        });
+  // Auth
+  try {
+    const client = window.sbClient;
+    if (!client) return;
+    const { data } = await client.auth.getSession();
+    if (data?.session?.user) {
+      const user = data.session.user;
+      // Pre-fill contact info
+      const nameInput = document.getElementById('contactName');
+      const emailInput = document.getElementById('contactEmail');
+      if (nameInput && !nameInput.value) nameInput.value = user.user_metadata?.full_name || '';
+      if (emailInput && !emailInput.value) emailInput.value = user.email || '';
 
-        await initializeAuth();
-        initializeBackToTop();
-    });
-
-    async function initializeAuth() {
-        try {
-            const authLink = document.getElementById('authLink');
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    // Hi, Name logic removed. Auth state update only.
-                    authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if (confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        } catch (error) { console.error('Auth error:', error); }
+      const authLink = document.getElementById('authLink');
+      authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>`;
+      authLink.href = '#';
+      authLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('Logout?')) { await client.auth.signOut(); localStorage.removeItem('currentUser'); window.location.reload(); }
+      };
     }
+  } catch(e) {}
+});
 
-    function initializeBackToTop() {
-        const btn = document.getElementById('backToTop');
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) btn.classList.add('show');
-            else btn.classList.remove('show');
-        });
-        btn?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    }
-    </script>
+function showMessage(msg, type='error') {
+  const el = document.getElementById('formMessage');
+  el.classList.remove('hidden','bg-error-container','text-error','bg-success-container','text-success');
+  el.classList.add(type==='error' ? 'bg-error-container' : 'bg-success-container', type==='error' ? 'text-error' : 'text-success');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+async function submitCustomPackage() {
+  const occasion   = document.querySelector('input[name="occasionType"]:checked')?.value;
+  const budget     = document.querySelector('input[name="budgetRange"]:checked')?.value;
+  const includes   = [...document.querySelectorAll('input[name="includes"]:checked')].map(i => i.value);
+  const name       = document.getElementById('packageName').value.trim();
+  const date       = document.getElementById('preferredDate').value;
+  const venue      = document.getElementById('venueLocation').value.trim();
+  const guests     = document.getElementById('guestCount').value;
+  const desc       = document.getElementById('packageDescription').value.trim();
+  const cName      = document.getElementById('contactName').value.trim();
+  const cPhone     = document.getElementById('contactPhone').value.trim();
+  const cEmail     = document.getElementById('contactEmail').value.trim();
+
+  if (!name || !date || !venue || !cName || !cPhone || !cEmail) {
+    showMessage('Please fill in all required fields.'); return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="material-symbols-outlined spin text-[20px]">autorenew</span> Submitting...`;
+
+  try {
+    const client = window.sbClient;
+    if (!client) throw new Error('Supabase not initialized');
+
+    const { error } = await client.from('custom_package_requests').insert([{
+      occasion_type:   occasion   || null,
+      budget_range:    budget     || null,
+      includes:        includes,
+      package_name:    name,
+      preferred_date:  date,
+      venue_location:  venue,
+      guest_count:     guests ? parseInt(guests) : null,
+      description:     desc       || null,
+      contact_name:    cName,
+      contact_phone:   cPhone,
+      contact_email:   cEmail,
+      status:          'pending',
+      created_at:      new Date().toISOString()
+    }]);
+
+    if (error) throw error;
+
+    document.getElementById('successModal').style.display = 'flex';
+  } catch (err) {
+    console.error(err);
+    showMessage(err.message || 'Submission failed. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">send</span> Submit Custom Request`;
+  }
+}
+</script>
 </body>
 </html>

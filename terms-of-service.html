@@ -1,305 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - WOW Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
-    <style>
-        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
-            .nav-links li span { font-weight: 700; display: block; padding: 10px 0; width: 100%; text-align: center; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "outline-variant":"#CAC4D0",outline:"#79747E",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .policy-content h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.25rem;font-weight:700;color:#1C1B1F;margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .policy-content p{color:#49454F;line-height:1.8;margin-bottom:1rem;font-size:.9375rem}
+    .policy-content ul{color:#49454F;padding-left:1.5rem;margin-bottom:1rem}
+    .policy-content li{margin-bottom:.5rem;line-height:1.7;font-size:.9375rem}
+    .policy-content a{color:#6200EE;font-weight:600}
+    .policy-content strong{color:#1C1B1F;font-weight:700}
+  </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
+<body class="bg-surface-low min-h-screen">
 
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="faq.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">FAQ</a>
     </nav>
+    <a href="login.html" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <!-- Page Content -->
-    <main class="container" style="padding: 60px 20px; max-width: 900px;">
-        <div style="margin-bottom: 30px; color: #666; font-size: 14px;">
-            <a href="index.html" style="color: #666; text-decoration: none;">Home</a>
-            <i class="bi bi-chevron-right" style="margin: 0 8px; font-size: 12px;"></i>
-            <span style="color: #000; font-weight: 600;">Terms of Service</span>
-        </div>
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-10">
+    <div class="flex items-center gap-2 mb-3 text-sm">
+      <a href="index.html" class="text-white/60 hover:text-white font-semibold">Home</a>
+      <span class="material-symbols-outlined text-white/40 text-[16px]">chevron_right</span>
+      <span class="text-white/80 font-semibold">Terms of Service</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white">Terms of Service</h1>
+    <p class="text-white/70 mt-2">Last updated: January 2024</p>
+  </div>
+</div>
 
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">Terms of Service</h1>
-            <p style="font-size: 16px; color: #666;">Last updated: December 15, 2024</p>
-        </div>
+<main class="max-w-3xl mx-auto px-4 md:px-6 py-12 pb-28">
+  <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-8 md:p-10">
 
-        <div style="line-height: 1.8; color: #333;">
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">1. Acceptance of Terms</h2>
-                <p style="margin-bottom: 16px;">By accessing and using WOW Surprises services, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to these terms, please do not use our services.</p>
-            </section>
+    <div class="flex items-center gap-3 p-4 bg-primary-container rounded-2xl mb-8">
+      <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-variation-settings:'FILL' 1;">gavel</span>
+      <p class="text-sm text-primary font-semibold">By using WOW Surprises, you agree to these terms. Please read them carefully before making a booking.</p>
+    </div>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">2. Service Description</h2>
-                <p style="margin-bottom: 16px;">WOW Surprises provides surprise event planning and execution services including but not limited to:</p>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Birthday surprises and celebrations</li>
-                    <li style="margin-bottom: 12px;">Proposal and engagement planning</li>
-                    <li style="margin-bottom: 12px;">Anniversary celebrations</li>
-                    <li style="margin-bottom: 12px;">Corporate events and surprises</li>
-                    <li style="margin-bottom: 12px;">Custom surprise packages</li>
-                </ul>
-            </section>
+    <div class="policy-content">
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">3. User Accounts</h2>
-                <p style="margin-bottom: 16px;"><strong>Account Creation:</strong> You must create an account to use certain features of our service. You are responsible for maintaining the confidentiality of your account credentials.</p>
-                <p style="margin-bottom: 16px;"><strong>Account Security:</strong> You agree to notify us immediately of any unauthorized use of your account or any other breach of security.</p>
-                <p style="margin-bottom: 16px;"><strong>Account Termination:</strong> We reserve the right to terminate or suspend your account at any time for violation of these terms.</p>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">handshake</span> 1. Acceptance of Terms</h2>
+      <p>By accessing or using WOW Surprises ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service. We reserve the right to update these terms at any time.</p>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">4. Booking and Payment Terms</h2>
-                <p style="margin-bottom: 16px;"><strong>Booking Process:</strong></p>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">All bookings must be made through our website or authorized channels</li>
-                    <li style="margin-bottom: 12px;">Bookings are subject to availability and confirmation</li>
-                    <li style="margin-bottom: 12px;">Minimum notice period of 48 hours required for most services</li>
-                </ul>
-                <p style="margin-bottom: 16px;"><strong>Payment:</strong></p>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Full payment is required at the time of booking</li>
-                    <li style="margin-bottom: 12px;">We accept payment via credit/debit cards, bank transfer, and USSD</li>
-                    <li style="margin-bottom: 12px;">All prices are in Nigerian Naira (&#x20A6;)</li>
-                    <li style="margin-bottom: 12px;">Prices are subject to change without notice</li>
-                </ul>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">manage_accounts</span> 2. Account Registration</h2>
+      <p>To use our booking services, you must create an account. You agree to:</p>
+      <ul>
+        <li>Provide accurate, complete, and current information during registration</li>
+        <li>Maintain the security of your password and account</li>
+        <li>Notify us immediately of any unauthorized account access</li>
+        <li>Be responsible for all activities that occur under your account</li>
+      </ul>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">5. Cancellation and Refund Policy</h2>
-                <p style="margin-bottom: 16px;">Please refer to our <a href="refund-policy.html" style="color: #000; font-weight: 600;">Refund Policy</a> for detailed information about cancellations and refunds.</p>
-                <p style="margin-bottom: 16px;"><strong>Summary:</strong></p>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Cancellations 48+ hours before event: Full refund</li>
-                    <li style="margin-bottom: 12px;">Cancellations 24-48 hours before event: 50% refund</li>
-                    <li style="margin-bottom: 12px;">Cancellations less than 24 hours: No refund</li>
-                </ul>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">calendar_month</span> 3. Booking & Orders</h2>
+      <p>When you place a booking through WOW Surprises:</p>
+      <ul>
+        <li>Bookings are confirmed only upon receipt of full payment</li>
+        <li>You are responsible for providing accurate delivery information</li>
+        <li>We recommend booking at least 48 hours in advance</li>
+        <li>We reserve the right to refuse or cancel orders at our discretion</li>
+        <li>Prices are subject to change without notice, but confirmed bookings retain their original price</li>
+      </ul>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">6. Service Delivery</h2>
-                <p style="margin-bottom: 16px;"><strong>Our Responsibilities:</strong></p>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Deliver services as described in the booking</li>
-                    <li style="margin-bottom: 12px;">Arrive at the specified time and location</li>
-                    <li style="margin-bottom: 12px;">Maintain confidentiality of surprise details</li>
-                    <li style="margin-bottom: 12px;">Provide high-quality products and services</li>
-                </ul>
-                <p style="margin-bottom: 16px;"><strong>Your Responsibilities:</strong></p>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Provide accurate recipient and delivery information</li>
-                    <li style="margin-bottom: 12px;">Ensure accessibility to delivery location</li>
-                    <li style="margin-bottom: 12px;">Notify us of any special requirements or restrictions</li>
-                    <li style="margin-bottom: 12px;">Respect our staff and service providers</li>
-                </ul>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">payments</span> 4. Payment Terms</h2>
+      <p>All payments are processed securely through Flutterwave. By making a payment, you:</p>
+      <ul>
+        <li>Confirm you are authorized to use the payment method provided</li>
+        <li>Agree to pay the full amount displayed at checkout</li>
+        <li>Acknowledge that payment is required before service delivery</li>
+        <li>Accept that all prices are in Nigerian Naira (₦) unless otherwise stated</li>
+      </ul>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">7. Liability and Disclaimers</h2>
-                <p style="margin-bottom: 16px;"><strong>Service Disclaimer:</strong> While we strive to provide exceptional service, we cannot guarantee specific reactions or outcomes from surprise recipients.</p>
-                <p style="margin-bottom: 16px;"><strong>Limitation of Liability:</strong> WOW Surprises shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services.</p>
-                <p style="margin-bottom: 16px;"><strong>Force Majeure:</strong> We are not responsible for delays or failures due to circumstances beyond our control (weather, accidents, etc.).</p>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">local_shipping</span> 5. Delivery & Service</h2>
+      <p>WOW Surprises will make reasonable efforts to deliver on the scheduled date and time. However:</p>
+      <ul>
+        <li>Delivery times are estimates and not guaranteed</li>
+        <li>We are not liable for delays caused by circumstances beyond our control (weather, traffic, etc.)</li>
+        <li>You are responsible for ensuring someone is available to receive the delivery</li>
+        <li>We reserve the right to substitute items of equal or greater value if needed</li>
+      </ul>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">8. Intellectual Property</h2>
-                <p style="margin-bottom: 16px;">All content on our website, including text, graphics, logos, images, and software, is the property of WOW Surprises and protected by copyright laws.</p>
-                <p style="margin-bottom: 16px;">You may not reproduce, distribute, or create derivative works without our express written permission.</p>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">event_busy</span> 6. Cancellations & Refunds</h2>
+      <p>Our cancellation and refund policy is as follows:</p>
+      <ul>
+        <li><strong>48+ hours before delivery:</strong> Full refund (100%)</li>
+        <li><strong>24–48 hours before delivery:</strong> 50% refund</li>
+        <li><strong>Less than 24 hours:</strong> No refund</li>
+      </ul>
+      <p>Please see our <a href="refund-policy.html">Refund Policy</a> for complete details.</p>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">9. Privacy and Data Protection</h2>
-                <p style="margin-bottom: 16px;">Your use of our services is also governed by our <a href="privacy-policy.html" style="color: #000; font-weight: 600;">Privacy Policy</a>. Please review it to understand how we collect, use, and protect your personal information.</p>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">block</span> 7. Prohibited Uses</h2>
+      <p>You agree not to use our service to:</p>
+      <ul>
+        <li>Violate any applicable laws or regulations</li>
+        <li>Provide false or misleading information</li>
+        <li>Engage in fraudulent transactions</li>
+        <li>Harass, abuse, or harm others</li>
+        <li>Interfere with the proper operation of our service</li>
+      </ul>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">10. Modifications to Terms</h2>
-                <p style="margin-bottom: 16px;">We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting to our website. Your continued use of our services after changes constitutes acceptance of the modified terms.</p>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">shield</span> 8. Limitation of Liability</h2>
+      <p>To the maximum extent permitted by law, WOW Surprises shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our service. Our total liability to you for any claim shall not exceed the amount paid for the specific booking in question.</p>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">11. Governing Law</h2>
-                <p style="margin-bottom: 16px;">These terms shall be governed by and construed in accordance with the laws of the Federal Republic of Nigeria. Any disputes arising under these terms shall be subject to the exclusive jurisdiction of Nigerian courts.</p>
-            </section>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">contact_support</span> 9. Contact Us</h2>
+      <p>For questions about these Terms, contact us:</p>
+      <div class="bg-surface-low rounded-2xl p-5 mt-2">
+        <p class="mb-1"><strong>Email:</strong> <a href="mailto:legal@wowsurprises.com">legal@wowsurprises.com</a></p>
+        <p class="mb-1"><strong>Phone:</strong> <a href="tel:+2348012345678">+234 801 234 5678</a></p>
+        <p><strong>Address:</strong> 123 Surprise Street, Victoria Island, Lagos, Nigeria</p>
+      </div>
+    </div>
 
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">12. Contact Information</h2>
-                <p style="margin-bottom: 16px;">If you have any questions about these Terms of Service, please contact us:</p>
-                <div style="background: #f9f9f9; padding: 24px; border-radius: 12px; margin-top: 20px;">
-                    <p style="margin-bottom: 12px;"><strong>Email:</strong> <a href="mailto:legal@wowsurprises.com" style="color: #000;">legal@wowsurprises.com</a></p>
-                    <p style="margin-bottom: 12px;"><strong>Phone:</strong> <a href="tel:+2348012345678" style="color: #000;">+234 801 234 5678</a></p>
-                    <p style="margin: 0;"><strong>Address:</strong> 123 Surprise Street, Victoria Island, Lagos, Nigeria</p>
-                </div>
-            </section>
+    <div class="mt-10 pt-8 border-t border-outline-variant">
+      <p class="text-sm font-bold text-on-surface mb-4">Related Policies</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="privacy-policy.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">verified_user</span> Privacy Policy
+        </a>
+        <a href="refund-policy.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">replay</span> Refund Policy
+        </a>
+        <a href="faq.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">help</span> FAQ
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
 
-            <div style="background: #fffbeb; border-left: 4px solid #fbbf24; padding: 20px; margin-top: 40px; border-radius: 8px;">
-                <p style="margin: 0; font-size: 14px; color: #92400e;"><strong>Important:</strong> By using WOW Surprises services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about">
-                    <div class="footer-logo">
-                        <img src="images/logo-white.png" alt="WOW Surprises" 
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
-                             style="height: 40px; width: auto; margin-bottom: 16px;">
-                    </div>
-                    <p>Creating unforgettable moments and bringing joy to every celebration.</p>
-                    <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <div class="footer-links">
-                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
-                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
-                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
-                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
-                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <div class="footer-links">
-                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
-                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
-                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
-                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <div class="footer-contact">
-                        <div class="contact-item"><i class="bi bi-geo-alt-fill"></i><span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span></div>
-                        <div class="contact-item"><i class="bi bi-telephone-fill"></i><a href="tel:+2348012345678">+234 801 234 5678</a></div>
-                        <div class="contact-item"><i class="bi bi-envelope-fill"></i><a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy-policy.html">Privacy Policy</a>
-                    <a href="terms-of-service.html">Terms of Service</a>
-                    <a href="refund-policy.html">Refund Policy</a>
-                    <a href="faq.html">FAQ</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top"><i class="bi bi-arrow-up"></i></button>
-
-    <script>
-    (function() {
-        const btn = document.getElementById('backToTop');
-        window.addEventListener('scroll', function() { btn.classList.toggle('show', window.pageYOffset > 300); });
-        btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    })();
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const icon = toggleBtn?.querySelector('i');
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('bi-list', 'bi-x-lg');
-                } else {
-                    icon.classList.replace('bi-x-lg', 'bi-list');
-                }
-            });
-        }
-
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                icon.classList.replace('bi-x-lg', 'bi-list');
-            }
-        });
-
-        // Auth: match index.html pattern (no name display, no red button)
-        try {
-            const authLink = document.getElementById('authLink');
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if (confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        } catch (error) { console.error('Auth error:', error); }
-    });
-    </script>
+<footer class="bg-on-surface text-white px-6 py-10">
+  <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50">
+    <p>© 2024 WOW Surprises. All rights reserved.</p>
+    <div class="flex gap-6">
+      <a href="privacy-policy.html" class="hover:text-white">Privacy Policy</a>
+      <a href="terms-of-service.html" class="hover:text-white font-semibold text-white">Terms of Service</a>
+      <a href="refund-policy.html" class="hover:text-white">Refund Policy</a>
+      <a href="faq.html" class="hover:text-white">FAQ</a>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

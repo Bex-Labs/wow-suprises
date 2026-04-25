@@ -1,224 +1,461 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQ - WOW Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
-    <style>
-        .faq-section { margin-bottom: 40px; }
-        .faq-category { background: #f9f9f9; padding: 20px 30px; border-radius: 12px; margin-bottom: 12px; font-size: 20px; font-weight: 700; color: #000; }
-        .faq-item { background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; margin-bottom: 16px; overflow: hidden; transition: all 0.3s ease; }
-        .faq-item:hover { border-color: #000; }
-        .faq-question { padding: 24px 30px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 17px; color: #000; user-select: none; }
-        .faq-question:hover { background: #f9f9f9; }
-        .faq-icon { font-size: 24px; transition: transform 0.3s ease; color: #666; }
-        .faq-item.active .faq-icon { transform: rotate(180deg); color: #000; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 30px; }
-        .faq-item.active .faq-answer { max-height: 1000px; padding: 0 30px 24px 30px; }
-        .faq-answer p { color: #666; line-height: 1.7; margin-bottom: 12px; }
-        .faq-answer ul { padding-left: 24px; color: #666; }
-        .faq-answer li { margin-bottom: 8px; }
-        .search-faq { margin-bottom: 40px; }
-        .search-faq input { width: 100%; padding: 18px 24px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; transition: all 0.3s ease; }
-        .search-faq input:focus { border-color: #000; outline: none; box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
-        .contact-cta { background: linear-gradient(135deg, #000 0%, #333 100%); color: white; padding: 40px; border-radius: 16px; text-align: center; margin-top: 60px; }
-        .contact-cta h3 { font-size: 28px; margin-bottom: 12px; }
-        .contact-cta p { margin-bottom: 24px; font-size: 16px; opacity: 0.9; }
-        .contact-cta a { display: inline-block; background: white; color: #000; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; }
-        .contact-cta a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.3); }
-    </style>
-    <style>
-        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
-            .nav-links li span { font-weight: 700; display: block; padding: 10px 0; width: 100%; text-align: center; }
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
-
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="container" style="padding: 60px 20px; max-width: 900px;">
-        <div style="margin-bottom: 30px; color: #666; font-size: 14px;">
-            <a href="index.html" style="color: #666; text-decoration: none;">Home</a>
-            <i class="bi bi-chevron-right" style="margin: 0 8px; font-size: 12px;"></i>
-            <span style="color: #000; font-weight: 600;">FAQ</span>
-        </div>
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">Frequently Asked Questions</h1>
-            <p style="font-size: 16px; color: #666;">Find answers to common questions about WOW Surprises</p>
-        </div>
-        <div class="search-faq"><input type="text" id="faqSearch" placeholder="Search FAQs..." aria-label="Search FAQs"></div>
-
-        <div class="faq-sections">
-            <div class="faq-section">
-                <div class="faq-category">&#x1F4E6; Booking & Orders</div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>How do I book a surprise package?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Booking a surprise is easy! Here's how:</p><ul><li>Browse our packages on the homepage</li><li>Click on a package to view details</li><li>Click "Book Now" and fill in the required information</li><li>Choose your date, time, and delivery location</li><li>Make payment to confirm your booking</li><li>Receive confirmation via email and SMS</li></ul></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>What's the minimum notice period for bookings?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>We recommend booking at least <strong>48 hours in advance</strong> for most packages. This gives us time to prepare everything perfectly.</p><p>For same-day or next-day surprises, please contact us directly at <a href="tel:+2348012345678" style="color: #000; font-weight: 600;">+234 801 234 5678</a> to check availability.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Can I customize a package?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Absolutely! We offer two options:</p><ul><li><strong>Modify existing packages:</strong> Add or remove items from our standard packages</li><li><strong>Build from scratch:</strong> Use our <a href="custom-package.html" style="color: #000; font-weight: 600;">Custom Package Builder</a> to create your perfect surprise</li></ul></div></div>
-            </div>
-            <div class="faq-section">
-                <div class="faq-category">&#x1F4B3; Payment & Pricing</div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>What payment methods do you accept?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>We accept multiple payment methods:</p><ul><li>Credit/Debit Cards (Visa, Mastercard, Verve)</li><li>Bank Transfer</li><li>USSD Payment</li><li>Mobile Money (Opay, PalmPay)</li></ul></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Do I need to pay upfront?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes, full payment is required at the time of booking to confirm your order and reserve your date.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Are there any hidden fees?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>No hidden fees! The price you see is the final price. However, note:</p><ul><li>Delivery to areas outside Lagos may incur additional charges</li><li>Last-minute changes may have extra costs</li><li>Custom add-ons are priced separately</li></ul><p>All additional charges will be clearly communicated before you confirm payment.</p></div></div>
-            </div>
-            <div class="faq-section">
-                <div class="faq-category">&#x1F69A; Delivery & Logistics</div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Where do you deliver?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>We primarily serve Lagos and surrounding areas. Delivery to other cities in Nigeria may be available upon request with additional fees.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Can I track my delivery?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes! You'll receive real-time updates via SMS and email. You can also check your booking status in the <a href="booking-history.html" style="color: #000; font-weight: 600;">My Bookings</a> section.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>What if the recipient isn't home?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Our delivery team will:</p><ul><li>Call the recipient (if you provided their number)</li><li>Wait up to 15 minutes</li><li>Contact you for alternative arrangements</li><li>Reschedule delivery if needed (may incur fees)</li></ul></div></div>
-            </div>
-            <div class="faq-section">
-                <div class="faq-category">&#x1F504; Cancellations & Refunds</div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>What is your cancellation policy?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Our cancellation policy is based on timing:</p><ul><li><strong>48+ hours before:</strong> Full refund (100%)</li><li><strong>24-48 hours before:</strong> 50% refund</li><li><strong>Less than 24 hours:</strong> No refund</li></ul><p>See our <a href="refund-policy.html" style="color: #000; font-weight: 600;">Refund Policy</a> for complete details.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Can I reschedule instead of cancelling?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes! Rescheduling is often better than cancelling:</p><ul><li><strong>48+ hours before:</strong> Free rescheduling</li><li><strong>24-48 hours before:</strong> &#x20A6;5,000 fee</li><li><strong>Less than 24 hours:</strong> Subject to availability</li></ul></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>How long do refunds take?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Refund processing times:</p><ul><li>Bank Transfer: 3-5 business days</li><li>Credit/Debit Card: 5-10 business days</li><li>Mobile Money: 1-2 business days</li></ul></div></div>
-            </div>
-            <div class="faq-section">
-                <div class="faq-category">&#x1F381; Services & Products</div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Do you handle corporate events?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes! We offer corporate packages for employee appreciation, client gifts, team building, and company milestones. Contact us for custom corporate packages and bulk pricing.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Are your products fresh?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Absolutely! Flowers are sourced daily, food is prepared on the day of delivery, and cakes are baked fresh to order.</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Can you handle allergies and dietary restrictions?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes! Please inform us of any food allergies, dietary restrictions (vegetarian, vegan, halal, etc.), or flower allergies in the "Special Requirements" section when booking.</p></div></div>
-            </div>
-            <div class="faq-section">
-                <div class="faq-category">&#x1F464; Account & Support</div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Do I need an account to book?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes, creating an account allows you to track bookings, save favourites, access order history, and manage cancellations. <a href="register.html" style="color: #000; font-weight: 600;">Create an account</a> — it only takes a minute!</p></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>How do I contact customer support?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>We're here to help!</p><ul><li><strong>Phone:</strong> <a href="tel:+2348012345678" style="color: #000;">+234 801 234 5678</a></li><li><strong>Email:</strong> <a href="mailto:hello@wowsurprises.com" style="color: #000;">hello@wowsurprises.com</a></li><li><strong>WhatsApp:</strong> <a href="https://wa.me/2348012345678" style="color: #000;">+234 801 234 5678</a></li><li><strong>Hours:</strong> Monday - Sunday, 8:00 AM - 10:00 PM</li></ul></div></div>
-                <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Is my information secure?</span><i class="bi bi-chevron-down faq-icon"></i></div><div class="faq-answer"><p>Yes! SSL encryption, secure payment processing, no stored card data, and full privacy policy compliance. Read our <a href="privacy-policy.html" style="color: #000; font-weight: 600;">Privacy Policy</a> for details.</p></div></div>
-            </div>
-        </div>
-
-        <div class="contact-cta">
-            <h3>Still Have Questions?</h3>
-            <p>Our team is ready to help you create the perfect surprise!</p>
-            <a href="tel:+2348012345678"><i class="bi bi-telephone-fill" style="margin-right: 8px;"></i>Contact Support</a>
-        </div>
-    </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about"><div class="footer-logo"><img src="images/logo-white.png" alt="WOW Surprises" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';" style="height: 40px; width: auto; margin-bottom: 16px;"></div><p>Creating unforgettable moments and bringing joy to every celebration.</p><div class="footer-social"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a></div></div>
-                <div class="footer-section"><h3>Quick Links</h3><div class="footer-links"><a href="index.html"><i class="bi bi-chevron-right"></i> Home</a><a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a><a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a><a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a></div></div>
-                <div class="footer-section"><h3>Legal</h3><div class="footer-links"><a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a><a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a><a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a><a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a></div></div>
-                <div class="footer-section"><h3>Contact Us</h3><div class="footer-contact"><div class="contact-item"><i class="bi bi-geo-alt-fill"></i><span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span></div><div class="contact-item"><i class="bi bi-telephone-fill"></i><a href="tel:+2348012345678">+234 801 234 5678</a></div><div class="contact-item"><i class="bi bi-envelope-fill"></i><a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></div></div></div>
-            </div>
-            <div class="footer-bottom"><p>&copy; 2024 WOW Surprises. All rights reserved.</p><div class="footer-bottom-links"><a href="privacy-policy.html">Privacy Policy</a><a href="terms-of-service.html">Terms of Service</a><a href="refund-policy.html">Refund Policy</a><a href="faq.html">FAQ</a></div></div>
-        </div>
-    </footer>
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top"><i class="bi bi-arrow-up"></i></button>
-    <script>
-    (function(){const b=document.getElementById('backToTop');window.addEventListener('scroll',function(){b.classList.toggle('show',window.pageYOffset>300)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
-    function toggleFaq(element) {
-        const faqItem = element.parentElement;
-        const isActive = faqItem.classList.contains('active');
-        document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
-        if (!isActive) faqItem.classList.add('active');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-high":"#ECE6F0","outline-variant":"#CAC4D0",outline:"#79747E",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
     }
-    document.getElementById('faqSearch').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        document.querySelectorAll('.faq-item').forEach(item => {
-            const q = item.querySelector('.faq-question span').textContent.toLowerCase();
-            const a = item.querySelector('.faq-answer').textContent.toLowerCase();
-            item.style.display = (q.includes(searchTerm) || a.includes(searchTerm)) ? 'block' : 'none';
-        });
-        document.querySelectorAll('.faq-section').forEach(section => {
-            const visible = section.querySelectorAll('.faq-item:not([style*="display: none"])');
-            section.style.display = visible.length === 0 ? 'none' : 'block';
-        });
-    });
-    </script>
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+    .faq-item.open .faq-answer{max-height:800px}
+    .faq-item.open .faq-icon{transform:rotate(180deg)}
+    .faq-icon{transition:transform .3s ease}
+    .wow-input:focus{border-color:#6200EE;box-shadow:0 0 0 3px rgba(98,0,238,.1);outline:none}
+  </style>
+</head>
+<body class="bg-surface-low min-h-screen">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const icon = toggleBtn?.querySelector('i');
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="custom-package.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Custom Package</a>
+      <a href="reviews.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Reviews</a>
+      <a href="booking-history.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">My Bookings</a>
+    </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('bi-list', 'bi-x-lg');
-                } else {
-                    icon.classList.replace('bi-x-lg', 'bi-list');
-                }
-            });
-        }
+<!-- HERO -->
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-12 text-center">
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white mb-3">Frequently Asked Questions</h1>
+    <p class="text-white/80 text-lg mb-8">Find answers to common questions about WOW Surprises</p>
+    <!-- Search -->
+    <div class="max-w-xl mx-auto relative">
+      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[22px]">search</span>
+      <input type="text" id="faqSearch" placeholder="Search FAQs..."
+        class="wow-input w-full pl-12 pr-4 py-4 bg-surface border-2 border-transparent rounded-full text-base shadow-lg" />
+    </div>
+  </div>
+</div>
 
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                icon.classList.replace('bi-x-lg', 'bi-list');
-            }
-        });
+<main class="max-w-3xl mx-auto px-4 md:px-6 py-12 pb-28">
 
-        // Auth: match index.html pattern (no name display, no red button)
-        try {
-            const authLink = document.getElementById('authLink');
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if (confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        } catch (error) { console.error('Auth error:', error); }
-    });
-    </script>
+  <!-- Category quick links -->
+  <div class="flex flex-wrap gap-3 mb-10 justify-center">
+    <button onclick="scrollToSection('booking')" class="px-4 py-2 bg-surface border-2 border-outline-variant rounded-full font-bold text-sm hover:bg-primary-container hover:border-primary hover:text-primary transition-all">📦 Booking</button>
+    <button onclick="scrollToSection('payment')" class="px-4 py-2 bg-surface border-2 border-outline-variant rounded-full font-bold text-sm hover:bg-primary-container hover:border-primary hover:text-primary transition-all">💳 Payment</button>
+    <button onclick="scrollToSection('delivery')" class="px-4 py-2 bg-surface border-2 border-outline-variant rounded-full font-bold text-sm hover:bg-primary-container hover:border-primary hover:text-primary transition-all">🚚 Delivery</button>
+    <button onclick="scrollToSection('cancellations')" class="px-4 py-2 bg-surface border-2 border-outline-variant rounded-full font-bold text-sm hover:bg-primary-container hover:border-primary hover:text-primary transition-all">🔄 Cancellations</button>
+    <button onclick="scrollToSection('services')" class="px-4 py-2 bg-surface border-2 border-outline-variant rounded-full font-bold text-sm hover:bg-primary-container hover:border-primary hover:text-primary transition-all">🎁 Services</button>
+    <button onclick="scrollToSection('account')" class="px-4 py-2 bg-surface border-2 border-outline-variant rounded-full font-bold text-sm hover:bg-primary-container hover:border-primary hover:text-primary transition-all">👤 Account</button>
+  </div>
+
+  <div class="space-y-10" id="faqSections">
+
+    <!-- BOOKING -->
+    <div class="faq-section" id="booking">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">inventory_2</span>
+        </div>
+        <h2 class="text-xl font-headline font-bold text-on-surface">Booking & Orders</h2>
+      </div>
+      <div class="space-y-3">
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">How do I book a surprise package?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5 space-y-2">
+              <p>Booking is easy! Browse our packages, click on one you like, then click "Book Now". Fill in the recipient details, choose your date and time, add any personalization, then complete payment. You'll receive a confirmation immediately.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">What's the minimum notice period?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>We recommend at least <strong class="text-on-surface">48 hours</strong> for most packages. For same-day surprises, call us directly at <a href="tel:+2348012345678" class="text-primary font-semibold hover:underline">+234 801 234 5678</a> to check availability.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Can I customize a package?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Absolutely! You can modify existing packages with add-ons, or use our <a href="custom-package.html" class="text-primary font-semibold hover:underline">Custom Package Builder</a> to design your perfect surprise from scratch.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="faq-section" id="payment">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">payments</span>
+        </div>
+        <h2 class="text-xl font-headline font-bold text-on-surface">Payment & Pricing</h2>
+      </div>
+      <div class="space-y-3">
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">What payment methods do you accept?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>We accept Credit/Debit Cards (Visa, Mastercard, Verve), Bank Transfer, USSD Payment, and Mobile Money (Opay, PalmPay) — all via Flutterwave's secure payment platform.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Are there any hidden fees?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>No hidden fees! The price you see is the final price. Delivery outside Lagos may incur additional charges, and custom add-ons are priced separately — all clearly communicated before payment.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Do I need to pay upfront?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes, full payment is required at the time of booking to confirm your order and reserve your date.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="faq-section" id="delivery">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">local_shipping</span>
+        </div>
+        <h2 class="text-xl font-headline font-bold text-on-surface">Delivery & Logistics</h2>
+      </div>
+      <div class="space-y-3">
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Where do you deliver?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>We primarily serve Lagos and surrounding areas. Delivery to other cities in Nigeria may be available on request with additional fees.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Can I track my delivery?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes! You'll receive real-time updates via SMS and email. You can also check your booking status in the <a href="booking-history.html" class="text-primary font-semibold hover:underline">My Bookings</a> section.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">What if the recipient isn't home?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Our delivery team will call the recipient, wait up to 15 minutes, then contact you for alternative arrangements. Rescheduling may incur additional fees.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANCELLATIONS -->
+    <div class="faq-section" id="cancellations">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">event_busy</span>
+        </div>
+        <h2 class="text-xl font-headline font-bold text-on-surface">Cancellations & Refunds</h2>
+      </div>
+      <div class="space-y-3">
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">What is your cancellation policy?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5 space-y-2">
+              <p>Cancellation timing matters:</p>
+              <div class="bg-surface-low rounded-xl p-4 space-y-2 mt-2">
+                <div class="flex items-center justify-between"><span class="font-semibold text-on-surface">48+ hours before</span><span class="font-bold text-success">Full refund (100%)</span></div>
+                <div class="flex items-center justify-between"><span class="font-semibold text-on-surface">24–48 hours before</span><span class="font-bold text-amber-600">50% refund</span></div>
+                <div class="flex items-center justify-between"><span class="font-semibold text-on-surface">Less than 24 hours</span><span class="font-bold text-error">No refund</span></div>
+              </div>
+              <p>See our <a href="refund-policy.html" class="text-primary font-semibold hover:underline">Refund Policy</a> for full details.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Can I reschedule instead of cancelling?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes! Rescheduling is often a better option. Free rescheduling for 48+ hours notice, ₦5,000 fee for 24–48 hours, and subject to availability for less than 24 hours.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">How long do refunds take?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Bank Transfer: 3–5 business days. Credit/Debit Card: 5–10 business days. Mobile Money: 1–2 business days.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="faq-section" id="services">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">card_giftcard</span>
+        </div>
+        <h2 class="text-xl font-headline font-bold text-on-surface">Services & Products</h2>
+      </div>
+      <div class="space-y-3">
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Do you handle corporate events?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes! We offer corporate packages for employee appreciation, client gifts, team building, and company milestones. Contact us for custom corporate packages and bulk pricing.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Are your products fresh?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Absolutely! Flowers are sourced daily, food is prepared on the day of delivery, and cakes are baked fresh to order.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Can you handle allergies and dietary restrictions?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes! Please inform us of any allergies or dietary restrictions (vegetarian, vegan, halal, etc.) in the "Special Requests" section when booking.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="faq-section" id="account">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">manage_accounts</span>
+        </div>
+        <h2 class="text-xl font-headline font-bold text-on-surface">Account & Support</h2>
+      </div>
+      <div class="space-y-3">
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Do I need an account to book?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes, creating an account lets you track bookings, view order history, and manage cancellations. <a href="login.html" class="text-primary font-semibold hover:underline">Create an account</a> — it only takes a minute!</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">How do I contact customer support?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5 space-y-1">
+              <p><strong class="text-on-surface">Phone:</strong> <a href="tel:+2348012345678" class="text-primary hover:underline">+234 801 234 5678</a></p>
+              <p><strong class="text-on-surface">Email:</strong> <a href="mailto:hello@wowsurprises.com" class="text-primary hover:underline">hello@wowsurprises.com</a></p>
+              <p><strong class="text-on-surface">WhatsApp:</strong> <a href="https://wa.me/2348012345678" class="text-primary hover:underline">+234 801 234 5678</a></p>
+              <p><strong class="text-on-surface">Hours:</strong> Monday–Sunday, 8:00 AM – 10:00 PM</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item bg-surface rounded-2xl border-2 border-outline-variant overflow-hidden">
+          <button class="faq-question w-full flex items-center justify-between p-5 text-left" onclick="toggleFaq(this)">
+            <span class="font-bold text-on-surface pr-4">Is my information secure?</span>
+            <span class="material-symbols-outlined faq-icon text-outline flex-shrink-0">keyboard_arrow_down</span>
+          </button>
+          <div class="faq-answer px-5 text-sm text-on-surface-variant leading-relaxed">
+            <div class="pb-5">
+              <p>Yes! We use SSL encryption, secure payment processing, and never store card data. Read our <a href="privacy-policy.html" class="text-primary font-semibold hover:underline">Privacy Policy</a> for full details.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="mt-14 royal-gradient rounded-3xl p-10 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    <div class="relative z-10">
+      <h2 class="text-2xl font-headline font-extrabold text-white mb-2">Still Have Questions?</h2>
+      <p class="text-white/80 mb-6">Our team is ready to help you create the perfect surprise!</p>
+      <a href="tel:+2348012345678" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-full font-bold hover:shadow-xl transition-all">
+        <span class="material-symbols-outlined text-[20px]">call</span> Contact Support
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-on-surface text-white px-6 py-12 mt-8">
+  <div class="max-w-screen-xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+      <div>
+        <img src="images/wowlogo.png" alt="WOW" class="h-10 mb-4 brightness-0 invert" onerror="this.style.display='none';" />
+        <p class="text-white/60 text-sm">Creating unforgettable moments across Nigeria.</p>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Quick Links</h4>
+        <div class="space-y-2 text-sm">
+          <a href="index.html" class="block text-white/60 hover:text-white">Home</a>
+          <a href="custom-package.html" class="block text-white/60 hover:text-white">Custom Package</a>
+          <a href="reviews.html" class="block text-white/60 hover:text-white">Reviews</a>
+          <a href="booking-history.html" class="block text-white/60 hover:text-white">My Bookings</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Legal</h4>
+        <div class="space-y-2 text-sm">
+          <a href="privacy-policy.html" class="block text-white/60 hover:text-white">Privacy Policy</a>
+          <a href="terms-of-service.html" class="block text-white/60 hover:text-white">Terms of Service</a>
+          <a href="refund-policy.html" class="block text-white/60 hover:text-white">Refund Policy</a>
+          <a href="faq.html" class="block text-white/60 hover:text-white">FAQ</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Contact</h4>
+        <div class="space-y-3 text-sm text-white/60">
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><a href="tel:+2348012345678" class="hover:text-white">+234 801 234 5678</a></div>
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><a href="mailto:hello@wowsurprises.com" class="hover:text-white">hello@wowsurprises.com</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
+      <p>© 2024 WOW Surprises. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
+        <a href="terms-of-service.html" class="hover:text-white">Terms</a>
+        <a href="refund-policy.html" class="hover:text-white">Refund</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-4 pt-3 bg-surface/95 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0px_-4px_24px_rgba(0,0,0,0.08)] border-t border-outline-variant">
+  <a href="index.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2"><span class="material-symbols-outlined text-[22px]">explore</span><span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Discover</span></a>
+  <a href="custom-package.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2"><span class="material-symbols-outlined text-[22px]">palette</span><span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Custom</span></a>
+  <a href="booking-history.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2"><span class="material-symbols-outlined text-[22px]">card_giftcard</span><span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Orders</span></a>
+  <a href="login.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2"><span class="material-symbols-outlined text-[22px]">person</span><span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Account</span></a>
+</nav>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+function scrollToSection(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+document.getElementById('faqSearch').addEventListener('input', function() {
+  const term = this.value.toLowerCase();
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-question span').textContent.toLowerCase();
+    const a = item.querySelector('.faq-answer').textContent.toLowerCase();
+    item.style.display = (q.includes(term) || a.includes(term)) ? '' : 'none';
+    if (term && (q.includes(term) || a.includes(term))) item.classList.add('open');
+  });
+  document.querySelectorAll('.faq-section').forEach(sec => {
+    const visible = sec.querySelectorAll('.faq-item:not([style*="display: none"])');
+    sec.style.display = visible.length === 0 ? 'none' : '';
+  });
+});
+</script>
 </body>
 </html>

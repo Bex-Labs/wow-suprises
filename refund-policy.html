@@ -1,250 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refund Policy - WOW Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
-    <style>
-        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
-            .nav-links li span { font-weight: 700; display: block; padding: 10px 0; width: 100%; text-align: center; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refund Policy – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "outline-variant":"#CAC4D0",outline:"#79747E",
+          success:"#166534","success-container":"#dcfce7",
+          "warning-container":"#fef3c7",warning:"#92400e",
+          error:"#B3261E","error-container":"#F9DEDC",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .policy-content h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.25rem;font-weight:700;color:#1C1B1F;margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .policy-content p{color:#49454F;line-height:1.8;margin-bottom:1rem;font-size:.9375rem}
+    .policy-content ul{color:#49454F;padding-left:1.5rem;margin-bottom:1rem}
+    .policy-content li{margin-bottom:.5rem;line-height:1.7;font-size:.9375rem}
+    .policy-content a{color:#6200EE;font-weight:600}
+    .policy-content strong{color:#1C1B1F;font-weight:700}
+  </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
+<body class="bg-surface-low min-h-screen">
 
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="faq.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">FAQ</a>
     </nav>
+    <a href="login.html" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <main class="container" style="padding: 60px 20px; max-width: 900px;">
-        <div style="margin-bottom: 30px; color: #666; font-size: 14px;">
-            <a href="index.html" style="color: #666; text-decoration: none;">Home</a>
-            <i class="bi bi-chevron-right" style="margin: 0 8px; font-size: 12px;"></i>
-            <span style="color: #000; font-weight: 600;">Refund Policy</span>
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-10">
+    <div class="flex items-center gap-2 mb-3 text-sm">
+      <a href="index.html" class="text-white/60 hover:text-white font-semibold">Home</a>
+      <span class="material-symbols-outlined text-white/40 text-[16px]">chevron_right</span>
+      <span class="text-white/80 font-semibold">Refund Policy</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white">Refund Policy</h1>
+    <p class="text-white/70 mt-2">Last updated: January 2024</p>
+  </div>
+</div>
+
+<main class="max-w-3xl mx-auto px-4 md:px-6 py-12 pb-28">
+  <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-8 md:p-10">
+
+    <!-- Quick reference card -->
+    <div class="mb-8">
+      <p class="text-sm font-bold text-on-surface mb-4">Quick Reference</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="bg-success-container rounded-2xl p-4 text-center">
+          <p class="text-2xl font-headline font-extrabold text-success">100%</p>
+          <p class="text-sm font-bold text-success mt-1">48+ hours</p>
+          <p class="text-xs text-on-surface-variant mt-1">Full refund</p>
         </div>
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">Refund Policy</h1>
-            <p style="font-size: 16px; color: #666;">Last updated: December 15, 2024</p>
+        <div class="bg-warning-container rounded-2xl p-4 text-center">
+          <p class="text-2xl font-headline font-extrabold text-warning">50%</p>
+          <p class="text-sm font-bold text-warning mt-1">24–48 hours</p>
+          <p class="text-xs text-on-surface-variant mt-1">Partial refund</p>
         </div>
-        <div style="line-height: 1.8; color: #333;">
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">1. Overview</h2>
-                <p style="margin-bottom: 16px;">At WOW Surprises, we want you to be completely satisfied with our services. This Refund Policy outlines the terms and conditions for cancellations and refunds.</p>
-                <p style="margin-bottom: 16px;">We understand that plans can change, and we've designed our policy to be fair to both our customers and our business operations.</p>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">2. Cancellation Timeframes</h2>
-                <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 24px; margin-bottom: 20px; border-radius: 8px;">
-                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #166534;">&#x2705; 48+ Hours Before Event</h3>
-                    <p style="margin-bottom: 8px; color: #166534;"><strong>Full Refund (100%)</strong></p>
-                    <p style="margin: 0; font-size: 15px; color: #166534;">Cancel 48 hours or more before your scheduled event and receive a complete refund to your original payment method.</p>
-                </div>
-                <div style="background: #fef3c7; border-left: 4px solid #fbbf24; padding: 24px; margin-bottom: 20px; border-radius: 8px;">
-                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #92400e;">&#x26A0;&#xFE0F; 24-48 Hours Before Event</h3>
-                    <p style="margin-bottom: 8px; color: #92400e;"><strong>Partial Refund (50%)</strong></p>
-                    <p style="margin: 0; font-size: 15px; color: #92400e;">Cancel between 24-48 hours before your event and receive 50% refund. The remaining 50% covers preparation costs already incurred.</p>
-                </div>
-                <div style="background: #fee2e2; border-left: 4px solid #dc2626; padding: 24px; margin-bottom: 20px; border-radius: 8px;">
-                    <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #991b1b;">&#x274C; Less Than 24 Hours</h3>
-                    <p style="margin-bottom: 8px; color: #991b1b;"><strong>No Refund (0%)</strong></p>
-                    <p style="margin: 0; font-size: 15px; color: #991b1b;">Cancellations made less than 24 hours before the event are non-refundable as vendors and staff have already been committed.</p>
-                </div>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">3. How to Request a Refund</h2>
-                <p style="margin-bottom: 16px;">To request a refund, follow these steps:</p>
-                <ol style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 16px;"><strong>Log into your account</strong> at <a href="login.html" style="color: #000; font-weight: 600;">WOW Surprises</a></li>
-                    <li style="margin-bottom: 16px;"><strong>Go to "My Bookings"</strong> and find your booking</li>
-                    <li style="margin-bottom: 16px;"><strong>Click "Cancel Booking"</strong> and follow the prompts</li>
-                    <li style="margin-bottom: 16px;"><strong>Or contact us directly:</strong>
-                        <ul style="padding-left: 24px; margin-top: 12px;">
-                            <li style="margin-bottom: 8px;">Email: <a href="mailto:refunds@wowsurprises.com" style="color: #000; font-weight: 600;">refunds@wowsurprises.com</a></li>
-                            <li style="margin-bottom: 8px;">Phone: <a href="tel:+2348012345678" style="color: #000; font-weight: 600;">+234 801 234 5678</a></li>
-                            <li style="margin-bottom: 8px;">WhatsApp: <a href="https://wa.me/2348012345678" style="color: #000; font-weight: 600;">+234 801 234 5678</a></li>
-                        </ul>
-                    </li>
-                </ol>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">4. Refund Processing Time</h2>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;"><strong>Bank Transfer:</strong> 3-5 business days</li>
-                    <li style="margin-bottom: 12px;"><strong>Credit/Debit Card:</strong> 5-10 business days</li>
-                    <li style="margin-bottom: 12px;"><strong>Mobile Money:</strong> 1-2 business days</li>
-                </ul>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">5. Rescheduling vs. Cancelling</h2>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;"><strong>48+ hours before:</strong> Reschedule for free</li>
-                    <li style="margin-bottom: 12px;"><strong>24-48 hours before:</strong> Small rescheduling fee (&#x20A6;5,000)</li>
-                    <li style="margin-bottom: 12px;"><strong>Less than 24 hours:</strong> Subject to availability and fees</li>
-                </ul>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">6. Non-Refundable Items</h2>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Custom-made items (personalized cakes, custom decorations, etc.)</li>
-                    <li style="margin-bottom: 12px;">Perishable goods already prepared or purchased</li>
-                    <li style="margin-bottom: 12px;">Third-party vendor fees already paid</li>
-                    <li style="margin-bottom: 12px;">Special orders or imports</li>
-                    <li style="margin-bottom: 12px;">Services already rendered</li>
-                </ul>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">7. Service Failure or Issues</h2>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;"><strong>Complete service failure:</strong> Full refund</li>
-                    <li style="margin-bottom: 12px;"><strong>Late delivery (our fault):</strong> Partial refund or credit</li>
-                    <li style="margin-bottom: 12px;"><strong>Missing items:</strong> Refund for missing items</li>
-                    <li style="margin-bottom: 12px;"><strong>Quality issues:</strong> Case-by-case evaluation</li>
-                </ul>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">8. Force Majeure</h2>
-                <ul style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">We will work with you to reschedule at no additional cost</li>
-                    <li style="margin-bottom: 12px;">If rescheduling is not possible, a full refund will be provided</li>
-                    <li style="margin-bottom: 12px;">Costs already incurred may be deducted (materials, deposits)</li>
-                </ul>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">9. Disputed Refunds</h2>
-                <ol style="padding-left: 24px; margin-bottom: 16px;">
-                    <li style="margin-bottom: 12px;">Contact our customer service team</li>
-                    <li style="margin-bottom: 12px;">Provide supporting documentation</li>
-                    <li style="margin-bottom: 12px;">We will review your case within 5 business days</li>
-                    <li style="margin-bottom: 12px;">If unresolved, escalate to management</li>
-                </ol>
-            </section>
-            <section style="margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">10. Contact for Refunds</h2>
-                <div style="background: #f9f9f9; padding: 24px; border-radius: 12px; margin-top: 20px;">
-                    <p style="margin-bottom: 12px;"><strong>Email:</strong> <a href="mailto:refunds@wowsurprises.com" style="color: #000;">refunds@wowsurprises.com</a></p>
-                    <p style="margin-bottom: 12px;"><strong>Phone:</strong> <a href="tel:+2348012345678" style="color: #000;">+234 801 234 5678</a></p>
-                    <p style="margin-bottom: 12px;"><strong>WhatsApp:</strong> <a href="https://wa.me/2348012345678" style="color: #000;">+234 801 234 5678</a></p>
-                    <p style="margin-bottom: 12px;"><strong>Address:</strong> 123 Surprise Street, Victoria Island, Lagos, Nigeria</p>
-                    <p style="margin: 0;"><strong>Hours:</strong> Monday - Sunday, 8:00 AM - 10:00 PM</p>
-                </div>
-            </section>
-            <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 20px; margin-top: 40px; border-radius: 8px;">
-                <p style="margin: 0; font-size: 14px; color: #1e40af;"><strong>&#x1F4A1; Pro Tip:</strong> To avoid cancellation fees, we recommend booking with confidence or considering our flexible rescheduling options!</p>
-            </div>
+        <div class="bg-error-container rounded-2xl p-4 text-center">
+          <p class="text-2xl font-headline font-extrabold text-error">0%</p>
+          <p class="text-sm font-bold text-error mt-1">Under 24 hours</p>
+          <p class="text-xs text-on-surface-variant mt-1">No refund</p>
         </div>
-    </main>
+      </div>
+    </div>
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about">
-                    <div class="footer-logo"><img src="images/logo-white.png" alt="WOW Surprises" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';" style="height: 40px; width: auto; margin-bottom: 16px;"></div>
-                    <p>Creating unforgettable moments and bringing joy to every celebration.</p>
-                    <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section"><h3>Quick Links</h3><div class="footer-links"><a href="index.html"><i class="bi bi-chevron-right"></i> Home</a><a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a><a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a><a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a></div></div>
-                <div class="footer-section"><h3>Legal</h3><div class="footer-links"><a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a><a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a><a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a><a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a></div></div>
-                <div class="footer-section"><h3>Contact Us</h3><div class="footer-contact"><div class="contact-item"><i class="bi bi-geo-alt-fill"></i><span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span></div><div class="contact-item"><i class="bi bi-telephone-fill"></i><a href="tel:+2348012345678">+234 801 234 5678</a></div><div class="contact-item"><i class="bi bi-envelope-fill"></i><a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></div></div></div>
-            </div>
-            <div class="footer-bottom"><p>&copy; 2024 WOW Surprises. All rights reserved.</p><div class="footer-bottom-links"><a href="privacy-policy.html">Privacy Policy</a><a href="terms-of-service.html">Terms of Service</a><a href="refund-policy.html">Refund Policy</a><a href="faq.html">FAQ</a></div></div>
-        </div>
-    </footer>
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top"><i class="bi bi-arrow-up"></i></button>
-    <script>(function(){const b=document.getElementById('backToTop');window.addEventListener('scroll',function(){b.classList.toggle('show',window.pageYOffset>300)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+    <div class="policy-content">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const icon = toggleBtn?.querySelector('i');
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">replay</span> 1. Cancellation & Refund Schedule</h2>
+      <p>Your refund amount depends on when you cancel relative to your scheduled delivery date and time:</p>
+      <ul>
+        <li><strong>48+ hours before delivery:</strong> Full refund (100%) — no questions asked</li>
+        <li><strong>24–48 hours before delivery:</strong> 50% refund of the total amount paid</li>
+        <li><strong>Less than 24 hours before delivery:</strong> No refund. Preparation has begun and resources have been committed.</li>
+        <li><strong>After delivery:</strong> No refund except in cases of service failure (see below)</li>
+      </ul>
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('bi-list', 'bi-x-lg');
-                } else {
-                    icon.classList.replace('bi-x-lg', 'bi-list');
-                }
-            });
-        }
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">event_repeat</span> 2. Rescheduling Policy</h2>
+      <p>We encourage rescheduling over cancellation where possible:</p>
+      <ul>
+        <li><strong>48+ hours before delivery:</strong> Free rescheduling to any available date</li>
+        <li><strong>24–48 hours before delivery:</strong> ₦5,000 rescheduling fee applies</li>
+        <li><strong>Less than 24 hours:</strong> Rescheduling subject to availability; standard rescheduling fee applies</li>
+        <li>Rescheduling can only be done once per booking at the discounted rate</li>
+      </ul>
 
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                icon.classList.replace('bi-x-lg', 'bi-list');
-            }
-        });
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">error</span> 3. Service Failure Refunds</h2>
+      <p>We stand behind our service. If we fail to deliver as promised, you may be eligible for a full or partial refund in the following cases:</p>
+      <ul>
+        <li>Non-delivery with no prior notice or reasonable explanation</li>
+        <li>Significant deviation from the booked package (e.g., wrong items, major quality issues)</li>
+        <li>Delivery significantly outside the agreed time window without communication</li>
+      </ul>
+      <p>Service failure claims must be reported within <strong>24 hours</strong> of the scheduled delivery with supporting evidence (photos, descriptions). We will investigate and respond within 48 hours.</p>
 
-        // Auth: match index.html pattern (no name display, no red button)
-        try {
-            const authLink = document.getElementById('authLink');
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if (confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        } catch (error) { console.error('Auth error:', error); }
-    });
-    </script>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">account_balance</span> 4. Refund Processing</h2>
+      <p>Once a refund is approved, processing times depend on your payment method:</p>
+      <ul>
+        <li><strong>Bank Transfer:</strong> 3–5 business days</li>
+        <li><strong>Credit/Debit Card:</strong> 5–10 business days (depending on your bank)</li>
+        <li><strong>Mobile Money (Opay, PalmPay):</strong> 1–2 business days</li>
+        <li><strong>USSD Payment:</strong> 3–5 business days</li>
+      </ul>
+      <p>Refunds are returned to the original payment method only. We cannot process refunds to a different account.</p>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">block</span> 5. Non-Refundable Items</h2>
+      <p>The following are non-refundable in all circumstances:</p>
+      <ul>
+        <li>Customized or personalized items that have been prepared</li>
+        <li>Perishable items (flowers, food, cakes) once prepared</li>
+        <li>Rescheduling fees</li>
+        <li>Delivery fees for completed deliveries</li>
+      </ul>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">how_to_reg</span> 6. How to Request a Refund</h2>
+      <p>To request a cancellation or refund:</p>
+      <ul>
+        <li>Log into your account and go to <a href="booking-history.html">My Bookings</a></li>
+        <li>Find the booking and click "Cancel Booking"</li>
+        <li>Or contact us directly: <a href="tel:+2348012345678">+234 801 234 5678</a> or <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></li>
+      </ul>
+      <p>Please have your booking reference number ready when contacting us.</p>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">contact_support</span> 7. Contact Us</h2>
+      <p>For refund-related questions:</p>
+      <div class="bg-surface-low rounded-2xl p-5 mt-2">
+        <p class="mb-1"><strong>Email:</strong> <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></p>
+        <p class="mb-1"><strong>Phone:</strong> <a href="tel:+2348012345678">+234 801 234 5678</a></p>
+        <p><strong>Hours:</strong> Monday–Sunday, 8:00 AM – 10:00 PM</p>
+      </div>
+    </div>
+
+    <div class="mt-10 pt-8 border-t border-outline-variant">
+      <p class="text-sm font-bold text-on-surface mb-4">Related Policies</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="privacy-policy.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">verified_user</span> Privacy Policy
+        </a>
+        <a href="terms-of-service.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">gavel</span> Terms of Service
+        </a>
+        <a href="faq.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">help</span> FAQ
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-on-surface text-white px-6 py-10">
+  <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50">
+    <p>© 2024 WOW Surprises. All rights reserved.</p>
+    <div class="flex gap-6">
+      <a href="privacy-policy.html" class="hover:text-white">Privacy Policy</a>
+      <a href="terms-of-service.html" class="hover:text-white">Terms of Service</a>
+      <a href="refund-policy.html" class="hover:text-white font-semibold text-white">Refund Policy</a>
+      <a href="faq.html" class="hover:text-white">FAQ</a>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

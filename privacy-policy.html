@@ -1,146 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - WOW Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
-    <style>
-        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
-            .nav-links li span { font-weight: 700; display: block; padding: 10px 0; width: 100%; text-align: center; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-high":"#ECE6F0","outline-variant":"#CAC4D0",outline:"#79747E",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .policy-content h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.25rem;font-weight:700;color:#1C1B1F;margin-top:2rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .policy-content p{color:#49454F;line-height:1.8;margin-bottom:1rem;font-size:.9375rem}
+    .policy-content ul{color:#49454F;padding-left:1.5rem;margin-bottom:1rem;space-y:.5rem}
+    .policy-content li{margin-bottom:.5rem;line-height:1.7;font-size:.9375rem}
+    .policy-content a{color:#6200EE;font-weight:600}
+    .policy-content a:hover{text-decoration:underline}
+    .policy-content strong{color:#1C1B1F;font-weight:700}
+  </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
+<body class="bg-surface-low min-h-screen">
 
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="booking-history.html">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="faq.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">FAQ</a>
     </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
 
-    <main class="container" style="padding: 60px 20px; max-width: 900px;">
-        <div style="margin-bottom: 30px; color: #666; font-size: 14px;">
-            <a href="index.html" style="color: #666; text-decoration: none;">Home</a>
-            <i class="bi bi-chevron-right" style="margin: 0 8px; font-size: 12px;"></i>
-            <span style="color: #000; font-weight: 600;">Privacy Policy</span>
-        </div>
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px; color: #000;">Privacy Policy</h1>
-            <p style="font-size: 16px; color: #666;">Last updated: December 15, 2024</p>
-        </div>
-        <div style="line-height: 1.8; color: #333;">
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">1. Introduction</h2><p style="margin-bottom: 16px;">Welcome to WOW Surprises. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights.</p></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">2. Information We Collect</h2><p style="margin-bottom: 16px;">We may collect, use, store and transfer different kinds of personal data about you:</p><ul style="padding-left: 24px; margin-bottom: 16px;"><li style="margin-bottom: 12px;"><strong>Identity Data:</strong> First name, last name, username</li><li style="margin-bottom: 12px;"><strong>Contact Data:</strong> Email address, telephone number, delivery address</li><li style="margin-bottom: 12px;"><strong>Transaction Data:</strong> Details about payments and bookings</li><li style="margin-bottom: 12px;"><strong>Technical Data:</strong> IP address, browser type, device information</li><li style="margin-bottom: 12px;"><strong>Usage Data:</strong> How you use our website and services</li></ul></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">3. How We Use Your Information</h2><ul style="padding-left: 24px; margin-bottom: 16px;"><li style="margin-bottom: 12px;">To process and deliver your surprise bookings</li><li style="margin-bottom: 12px;">To manage payments and financial transactions</li><li style="margin-bottom: 12px;">To communicate with you about your orders</li><li style="margin-bottom: 12px;">To improve our website and services</li><li style="margin-bottom: 12px;">To send you marketing communications (with your consent)</li></ul></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">4. Data Security</h2><p style="margin-bottom: 16px;">We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, accessed, altered or disclosed. We limit access to your personal data to employees and partners who need to know it.</p></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">5. Your Rights</h2><ul style="padding-left: 24px; margin-bottom: 16px;"><li style="margin-bottom: 12px;">Request access to your personal data</li><li style="margin-bottom: 12px;">Request correction of your personal data</li><li style="margin-bottom: 12px;">Request erasure of your personal data</li><li style="margin-bottom: 12px;">Object to processing of your personal data</li><li style="margin-bottom: 12px;">Request restriction of processing your personal data</li><li style="margin-bottom: 12px;">Request transfer of your personal data</li><li style="margin-bottom: 12px;">Right to withdraw consent</li></ul></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">6. Cookies</h2><p style="margin-bottom: 16px;">Our website uses cookies to distinguish you from other users. This helps us provide you with a good experience and allows us to improve our site. You can set your browser to refuse cookies, but this may limit your use of our website.</p></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">7. Third-Party Links</h2><p style="margin-bottom: 16px;">Our website may include links to third-party websites. Clicking on those links may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements.</p></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">8. Changes to This Policy</h2><p style="margin-bottom: 16px;">We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last updated" date.</p></section>
-            <section style="margin-bottom: 40px;"><h2 style="font-size: 28px; font-weight: 700; margin-bottom: 20px; color: #000;">9. Contact Us</h2><p style="margin-bottom: 16px;">If you have any questions about this privacy policy or our privacy practices, please contact us:</p><div style="background: #f9f9f9; padding: 24px; border-radius: 12px; margin-top: 20px;"><p style="margin-bottom: 12px;"><strong>Email:</strong> <a href="mailto:privacy@wowsurprises.com" style="color: #000;">privacy@wowsurprises.com</a></p><p style="margin-bottom: 12px;"><strong>Phone:</strong> <a href="tel:+2348012345678" style="color: #000;">+234 801 234 5678</a></p><p style="margin: 0;"><strong>Address:</strong> 123 Surprise Street, Victoria Island, Lagos, Nigeria</p></div></section>
-        </div>
-    </main>
+<!-- HERO -->
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-10">
+    <div class="flex items-center gap-2 mb-3 text-sm">
+      <a href="index.html" class="text-white/60 hover:text-white font-semibold">Home</a>
+      <span class="material-symbols-outlined text-white/40 text-[16px]">chevron_right</span>
+      <span class="text-white/80 font-semibold">Privacy Policy</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white">Privacy Policy</h1>
+    <p class="text-white/70 mt-2">Last updated: January 2024</p>
+  </div>
+</div>
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about"><div class="footer-logo"><img src="images/logo-white.png" alt="WOW Surprises" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';" style="height: 40px; width: auto; margin-bottom: 16px;"></div><p>Creating unforgettable moments and bringing joy to every celebration.</p><div class="footer-social"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a></div></div>
-                <div class="footer-section"><h3>Quick Links</h3><div class="footer-links"><a href="index.html"><i class="bi bi-chevron-right"></i> Home</a><a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a><a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a><a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a></div></div>
-                <div class="footer-section"><h3>Legal</h3><div class="footer-links"><a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a><a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a><a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a><a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a></div></div>
-                <div class="footer-section"><h3>Contact Us</h3><div class="footer-contact"><div class="contact-item"><i class="bi bi-geo-alt-fill"></i><span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span></div><div class="contact-item"><i class="bi bi-telephone-fill"></i><a href="tel:+2348012345678">+234 801 234 5678</a></div><div class="contact-item"><i class="bi bi-envelope-fill"></i><a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a></div></div></div>
-            </div>
-            <div class="footer-bottom"><p>&copy; 2024 WOW Surprises. All rights reserved.</p><div class="footer-bottom-links"><a href="privacy-policy.html">Privacy Policy</a><a href="terms-of-service.html">Terms of Service</a><a href="refund-policy.html">Refund Policy</a><a href="faq.html">FAQ</a></div></div>
-        </div>
-    </footer>
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top"><i class="bi bi-arrow-up"></i></button>
-    <script>(function(){const b=document.getElementById('backToTop');window.addEventListener('scroll',function(){b.classList.toggle('show',window.pageYOffset>300)});b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();</script>
+<main class="max-w-3xl mx-auto px-4 md:px-6 py-12 pb-28">
+  <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-8 md:p-10">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const icon = toggleBtn?.querySelector('i');
+    <div class="flex items-center gap-3 p-4 bg-primary-container rounded-2xl mb-8">
+      <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-variation-settings:'FILL' 1;">verified_user</span>
+      <p class="text-sm text-primary font-semibold">Your privacy is important to us. This policy explains how we collect, use, and protect your information.</p>
+    </div>
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('bi-list', 'bi-x-lg');
-                } else {
-                    icon.classList.replace('bi-x-lg', 'bi-list');
-                }
-            });
-        }
+    <div class="policy-content">
 
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                icon.classList.replace('bi-x-lg', 'bi-list');
-            }
-        });
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">info</span> 1. Information We Collect</h2>
+      <p>We collect information you provide directly to us when you create an account, make a booking, or contact us for support:</p>
+      <ul>
+        <li><strong>Personal Information:</strong> Name, email address, phone number, and delivery address</li>
+        <li><strong>Payment Information:</strong> Payment is processed securely by Flutterwave. We do not store your card details.</li>
+        <li><strong>Booking Information:</strong> Details about the surprises you book, recipient information, and preferences</li>
+        <li><strong>Usage Data:</strong> How you interact with our website, pages visited, and features used</li>
+      </ul>
 
-        // Auth: match index.html pattern (no name display, no red button)
-        try {
-            const authLink = document.getElementById('authLink');
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if (confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        } catch (error) { console.error('Auth error:', error); }
-    });
-    </script>
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">settings</span> 2. How We Use Your Information</h2>
+      <p>We use the information we collect to:</p>
+      <ul>
+        <li>Process and fulfill your surprise bookings</li>
+        <li>Send booking confirmations, updates, and delivery notifications</li>
+        <li>Provide customer support and respond to your inquiries</li>
+        <li>Improve our services and personalize your experience</li>
+        <li>Send promotional communications (you can opt out at any time)</li>
+        <li>Comply with legal obligations</li>
+      </ul>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">share</span> 3. Information Sharing</h2>
+      <p>We do not sell or rent your personal information to third parties. We may share your information with:</p>
+      <ul>
+        <li><strong>Service Providers:</strong> Delivery partners, payment processors (Flutterwave), and SMS/email service providers who help us deliver our services</li>
+        <li><strong>Merchants:</strong> Relevant booking details shared with the merchant fulfilling your order</li>
+        <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+      </ul>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">lock</span> 4. Data Security</h2>
+      <p>We take data security seriously and implement appropriate technical and organizational measures including:</p>
+      <ul>
+        <li>SSL/TLS encryption for all data transmitted to and from our website</li>
+        <li>Secure authentication via Supabase with industry-standard protocols</li>
+        <li>Regular security assessments and updates</li>
+        <li>Limited access to personal data on a need-to-know basis</li>
+      </ul>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">cookie</span> 5. Cookies</h2>
+      <p>We use cookies and similar technologies to improve your browsing experience, remember your preferences, and analyze site traffic. You can control cookies through your browser settings, though disabling them may affect some site functionality.</p>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">person</span> 6. Your Rights</h2>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Access the personal information we hold about you</li>
+        <li>Request correction of inaccurate data</li>
+        <li>Request deletion of your account and associated data</li>
+        <li>Opt out of marketing communications at any time</li>
+        <li>Lodge a complaint with a supervisory authority</li>
+      </ul>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">child_care</span> 7. Children's Privacy</h2>
+      <p>Our services are not directed to children under 13 years of age. We do not knowingly collect personal information from children. If you believe we have inadvertently collected such information, please contact us immediately.</p>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">update</span> 8. Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time. We will notify you of significant changes by email or by posting a notice on our website. Your continued use of our services after changes constitutes acceptance of the updated policy.</p>
+
+      <h2><span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1;">contact_support</span> 9. Contact Us</h2>
+      <p>If you have questions about this Privacy Policy or how we handle your data, please contact us:</p>
+      <div class="bg-surface-low rounded-2xl p-5 mt-2">
+        <p class="mb-1"><strong>Email:</strong> <a href="mailto:privacy@wowsurprises.com">privacy@wowsurprises.com</a></p>
+        <p class="mb-1"><strong>Phone:</strong> <a href="tel:+2348012345678">+234 801 234 5678</a></p>
+        <p><strong>Address:</strong> 123 Surprise Street, Victoria Island, Lagos, Nigeria</p>
+      </div>
+    </div>
+
+    <!-- Related policies -->
+    <div class="mt-10 pt-8 border-t border-outline-variant">
+      <p class="text-sm font-bold text-on-surface mb-4">Related Policies</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="terms-of-service.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">gavel</span> Terms of Service
+        </a>
+        <a href="refund-policy.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">replay</span> Refund Policy
+        </a>
+        <a href="faq.html" class="flex items-center gap-2 px-4 py-2.5 bg-surface-low border border-outline-variant rounded-full text-sm font-semibold hover:bg-primary-container hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined text-[16px]">help</span> FAQ
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-on-surface text-white px-6 py-10 mt-8">
+  <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50">
+    <p>© 2024 WOW Surprises. All rights reserved.</p>
+    <div class="flex gap-6">
+      <a href="privacy-policy.html" class="hover:text-white font-semibold text-white">Privacy Policy</a>
+      <a href="terms-of-service.html" class="hover:text-white">Terms of Service</a>
+      <a href="refund-policy.html" class="hover:text-white">Refund Policy</a>
+      <a href="faq.html" class="hover:text-white">FAQ</a>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

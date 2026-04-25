@@ -1,362 +1,352 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - Wow Surprises</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <link rel="stylesheet" href="css/wow-theme.css">
-    
-    <style>
-        /* MOBILE RESPONSIVENESS FIXES FROM CUSTOM PACKAGE */
-        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-
-        @media (max-width: 768px) {
-            #mobileMenuBtn { display: block; }
-            
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                padding: 20px 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-                z-index: 1000;
-                gap: 15px;
-            }
-
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; text-align: center; display: flex; justify-content: center; }
-
-            .page-header { flex-direction: column; text-align: center; gap: 20px; }
-            .header-actions { width: 100%; justify-content: center; }
-            .filter-tabs { display: flex; overflow-x: auto; white-space: nowrap; padding-bottom: 10px; justify-content: flex-start !important; -webkit-overflow-scrolling: touch; gap: 10px; }
-        }
-    </style>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-                <img src="images/logo.png" alt="WOW Surprises Logo" 
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-            </a>
-
-            <button id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="custom-package.html">Custom Package</a></li>
-                <li><a href="reviews.html">Reviews</a></li>
-                <li><a href="booking-history.html" class="active">My Bookings</a></li>
-                <li><a href="login.html" id="authLink">Login</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="container">
-        <div class="page-content">
-            <div class="page-header">
-                <div>
-                    <h1>My Bookings</h1>
-                    <p class="subtitle">View and manage your surprise bookings</p>
-                </div>
-                <div class="header-actions">
-                    <button onclick="refreshBookings()" class="btn-secondary" id="refreshBtn">
-                        <i class="bi bi-arrow-clockwise"></i> Refresh
-                    </button>
-                    <a href="custom-package.html" class="btn-primary" style="text-decoration: none;">
-                        <i class="bi bi-plus-circle"></i> New Booking
-                    </a>
-                </div>
-            </div>
-
-            <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterByStatus('all')" data-status="all">
-                    <i class="bi bi-grid"></i> All
-                </button>
-                <button class="filter-tab" onclick="filterByStatus('pending')" data-status="pending">
-                    <i class="bi bi-clock-history"></i> Pending
-                </button>
-                <button class="filter-tab" onclick="filterByStatus('confirmed')" data-status="confirmed">
-                    <i class="bi bi-check-circle"></i> Confirmed
-                </button>
-                <button class="filter-tab" onclick="filterByStatus('processing')" data-status="processing">
-                    <i class="bi bi-arrow-repeat"></i> Processing
-                </button>
-                <button class="filter-tab" onclick="filterByStatus('delivered')" data-status="delivered">
-                    <i class="bi bi-box-seam"></i> Delivered
-                </button>
-                <button class="filter-tab" onclick="filterByStatus('cancelled')" data-status="cancelled">
-                    <i class="bi bi-x-circle"></i> Cancelled
-                </button>
-            </div>
-
-            <div class="search-sort-section">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search by reference, recipient name..." oninput="searchBookings()">
-                </div>
-                <select id="sortOrder" onchange="sortBookings()" class="sort-select">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="delivery-date">Delivery Date</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="price-low">Price: Low to High</option>
-                </select>
-            </div>
-
-            <div class="stats-section" id="statsSection" style="display: none;">
-                <div class="stat-card">
-                    <div class="stat-icon pending-bg">
-                        <i class="bi bi-clock-history pending-color"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="pendingCount">0</div>
-                        <div class="stat-label">Pending</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon confirmed-bg">
-                        <i class="bi bi-check-circle confirmed-color"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="confirmedCount">0</div>
-                        <div class="stat-label">Confirmed</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon delivered-bg">
-                        <i class="bi bi-box-seam delivered-color"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="deliveredCount">0</div>
-                        <div class="stat-label">Delivered</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon total-bg">
-                        <i class="bi bi-cash-stack total-color"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="totalSpent">₦0</div>
-                        <div class="stat-label">Total Spent</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="loadingState" class="loading-state">
-                <div class="spinner"></div>
-                <p>Loading your bookings...</p>
-            </div>
-
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="bi bi-calendar-x"></i>
-                <h2>No bookings yet</h2>
-                <p>You haven't made any surprise bookings yet</p>
-                <a href="custom-package.html" class="btn-primary" style="text-decoration: none;">
-                    <i class="bi bi-plus-circle"></i> Create Your First Booking
-                </a>
-            </div>
-
-            <div id="noResultsState" class="empty-state" style="display: none;">
-                <i class="bi bi-search"></i>
-                <h2>No bookings found</h2>
-                <p>Try adjusting your filters or search terms</p>
-                <button onclick="clearFilters()" class="btn-secondary">
-                    <i class="bi bi-x-circle"></i> Clear Filters
-                </button>
-            </div>
-
-            <div id="notLoggedInState" class="empty-state" style="display: none;">
-                <i class="bi bi-lock"></i>
-                <h2>Please Login</h2>
-                <p>You need to login to view your bookings</p>
-                <a href="login.html" class="btn-primary" style="text-decoration: none;">
-                    <i class="bi bi-box-arrow-in-right"></i> Login / Register
-                </a>
-            </div>
-
-            <div id="bookingsList" class="bookings-list" style="display: none;">
-                </div>
-        </div>
-    </main>
-
-    <div id="viewModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeViewModal()">&times;</span>
-            <div id="bookingDetails">
-                </div>
-        </div>
-    </div>
-
-    <div id="cancelModal" class="modal">
-        <div class="modal-content modal-small">
-            <span class="close" onclick="closeCancelModal()">&times;</span>
-            <div class="modal-header">
-                <i class="bi bi-exclamation-triangle warning-icon"></i>
-                <h2>Cancel Booking</h2>
-            </div>
-            <p class="modal-text">Are you sure you want to cancel this booking?</p>
-            <div class="alert-warning">
-                <i class="bi bi-info-circle"></i>
-                <div>
-                    <strong>Cancellation Policy:</strong>
-                    <p>Cancellations made 48+ hours before delivery receive a full refund. Otherwise, a cancellation fee may apply.</p>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-secondary" onclick="closeCancelModal()">
-                    Keep Booking
-                </button>
-                <button type="button" class="btn-danger" onclick="confirmCancellation()">
-                    <i class="bi bi-x-circle"></i> Yes, Cancel Booking
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-about">
-                    <div class="footer-logo">
-                        <img src="images/logo-white.png" alt="WOW Surprises" 
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
-                             style="height: 40px; width: auto; margin-bottom: 16px;">
-                    </div>
-                    <p>Creating unforgettable moments and bringing joy to every celebration.</p>
-                    <div class="footer-social">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
-                            <i class="bi bi-twitter"></i>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-                            <i class="bi bi-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <div class="footer-links">
-                        <a href="index.html"><i class="bi bi-chevron-right"></i> Home</a>
-                        <a href="index.html#packages"><i class="bi bi-chevron-right"></i> Browse Packages</a>
-                        <a href="custom-package.html"><i class="bi bi-chevron-right"></i> Custom Package</a>
-                        <a href="reviews.html"><i class="bi bi-chevron-right"></i> Reviews</a>
-                        <a href="booking-history.html"><i class="bi bi-chevron-right"></i> My Bookings</a>
-                        <a href="login.html"><i class="bi bi-chevron-right"></i> Login / Register</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <div class="footer-links">
-                        <a href="privacy-policy.html"><i class="bi bi-chevron-right"></i> Privacy Policy</a>
-                        <a href="terms-of-service.html"><i class="bi bi-chevron-right"></i> Terms of Service</a>
-                        <a href="refund-policy.html"><i class="bi bi-chevron-right"></i> Refund Policy</a>
-                        <a href="faq.html"><i class="bi bi-chevron-right"></i> FAQ</a>
-                    </div>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <div class="footer-contact">
-                        <div class="contact-item">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-telephone-fill"></i>
-                            <a href="tel:+2348012345678">+234 801 234 5678</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="bi bi-envelope-fill"></i>
-                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy-policy.html">Privacy Policy</a>
-                    <a href="terms-of-service.html">Terms of Service</a>
-                    <a href="refund-policy.html">Refund Policy</a>
-                    <a href="faq.html">FAQ</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <button id="backToTop" title="Back to top" aria-label="Scroll to top">
-        <i class="bi bi-arrow-up"></i>
-    </button>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/supabaseApi.js"></script>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        const toggleBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        
-        if(toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navLinks.classList.toggle('active');
-            });
-        }
-
-        document.addEventListener('click', function(e) {
-            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-            }
-        });
-
-        await initializeAuth();
-    });
-
-    async function initializeAuth() {
-        try {
-            const authLink = document.getElementById('authLink');
-            const client = window.sbClient || window.supabase;
-            if (client) {
-                const { data } = await client.auth.getSession();
-                if (data?.session?.user) {
-                    authLink.textContent = 'Logout';
-                    authLink.href = '#';
-                    authLink.onclick = async (e) => {
-                        e.preventDefault();
-                        if(confirm('Logout?')) {
-                            await client.auth.signOut();
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    };
-                }
-            }
-        } catch (error) { console.error('Auth error:', error); }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings – WOW Surprises</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/wow-theme.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary:"#6200EE","primary-dark":"#4a00b4","primary-container":"#EADDFF","on-primary":"#ffffff",
+          secondary:"#B00020",tertiary:"#03DAC6",background:"#FBFBFF",surface:"#FBFBFF",
+          "on-surface":"#1C1B1F","on-surface-variant":"#49454F","surface-low":"#F7F2FA",
+          "surface-container":"#F3EDF7","surface-high":"#ECE6F0","outline-variant":"#CAC4D0",
+          outline:"#79747E",error:"#B3261E","error-container":"#F9DEDC",
+          success:"#166534","success-container":"#dcfce7",
+          "warning-container":"#fef3c7",warning:"#92400e",
+          "info-container":"#dbeafe",info:"#1e40af",
+        },
+        fontFamily:{headline:["Plus Jakarta Sans","sans-serif"],body:["Be Vietnam Pro","sans-serif"]}
+      }}
     }
-    </script>
-    <script src="js/booking-history.js"></script>
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    body{font-family:'Be Vietnam Pro',sans-serif}
+    h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}
+    .royal-gradient{background:linear-gradient(135deg,#6200EE 0%,#9C27B0 50%,#B00020 100%)}
+    .filter-tab.active{background:#6200EE;color:#fff}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{animation:spin .8s linear infinite;display:inline-block}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-surface-low min-h-screen">
+
+<!-- NAVBAR -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-outline-variant shadow-sm">
+  <div class="flex justify-between items-center max-w-screen-xl mx-auto px-6 py-3">
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-11 w-auto object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+      <span class="hidden text-2xl font-black text-primary font-headline">WOW!</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="index.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Home</a>
+      <a href="custom-package.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Custom Package</a>
+      <a href="reviews.html" class="text-on-surface/60 font-semibold font-headline px-4 py-2 rounded-full hover:bg-primary/5 text-sm transition-all">Reviews</a>
+      <a href="booking-history.html" class="text-primary font-bold font-headline px-4 py-2 rounded-full bg-primary/10 text-sm">My Bookings</a>
+    </nav>
+    <a href="login.html" id="authLink" class="flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-full font-bold text-sm hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">person</span><span>Login</span>
+    </a>
+  </div>
+</header>
+
+<!-- PAGE HERO -->
+<div class="pt-20 royal-gradient">
+  <div class="max-w-screen-xl mx-auto px-6 py-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-white">My Bookings</h1>
+        <p class="text-white/80 mt-1 text-lg">View and manage your surprise bookings</p>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="refreshBookings()" id="refreshBtn"
+          class="flex items-center gap-2 px-5 py-2.5 bg-white/20 border border-white/30 text-white rounded-full font-bold text-sm hover:bg-white/30 transition-all backdrop-blur-sm">
+          <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+        </button>
+        <a href="custom-package.html"
+          class="flex items-center gap-2 px-5 py-2.5 bg-white text-primary rounded-full font-bold text-sm hover:shadow-lg transition-all">
+          <span class="material-symbols-outlined text-[18px]">add</span> New Booking
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-screen-xl mx-auto px-4 md:px-6 py-8 pb-28">
+
+  <!-- Stats -->
+  <div id="statsSection" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-surface rounded-2xl border border-outline-variant p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-warning-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-warning" style="font-variation-settings:'FILL' 1;">schedule</span>
+        </div>
+      </div>
+      <p class="text-2xl font-headline font-extrabold text-on-surface" id="pendingCount">0</p>
+      <p class="text-sm text-on-surface-variant font-semibold">Pending</p>
+    </div>
+    <div class="bg-surface rounded-2xl border border-outline-variant p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-info-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-info" style="font-variation-settings:'FILL' 1;">check_circle</span>
+        </div>
+      </div>
+      <p class="text-2xl font-headline font-extrabold text-on-surface" id="confirmedCount">0</p>
+      <p class="text-sm text-on-surface-variant font-semibold">Confirmed</p>
+    </div>
+    <div class="bg-surface rounded-2xl border border-outline-variant p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-success-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-success" style="font-variation-settings:'FILL' 1;">local_shipping</span>
+        </div>
+      </div>
+      <p class="text-2xl font-headline font-extrabold text-on-surface" id="deliveredCount">0</p>
+      <p class="text-sm text-on-surface-variant font-semibold">Delivered</p>
+    </div>
+    <div class="bg-surface rounded-2xl border border-outline-variant p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">payments</span>
+        </div>
+      </div>
+      <p class="text-2xl font-headline font-extrabold text-on-surface" id="totalSpent">₦0</p>
+      <p class="text-sm text-on-surface-variant font-semibold">Total Spent</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-surface rounded-3xl border border-outline-variant p-4 md:p-5 mb-6 shadow-sm">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <!-- Search -->
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+        <input type="text" id="searchInput" placeholder="Search by reference, recipient name..."
+          class="w-full pl-11 pr-4 py-3 bg-surface-low border-2 border-outline-variant rounded-full text-sm focus:border-primary focus:ring-0 focus:outline-none transition-all"
+          oninput="searchBookings()" />
+      </div>
+      <!-- Sort -->
+      <select id="sortOrder" onchange="sortBookings()"
+        class="px-4 py-3 bg-surface-low border-2 border-outline-variant rounded-full text-sm font-semibold focus:border-primary focus:outline-none transition-all min-w-[180px]">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="delivery-date">Delivery Date</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="price-low">Price: Low to High</option>
+      </select>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex gap-2 mt-4 overflow-x-auto pb-1 scrollbar-hide">
+      <button class="filter-tab active flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all bg-primary text-white" onclick="filterByStatus('all')" data-status="all">
+        <span class="material-symbols-outlined text-[16px]">grid_view</span> All
+      </button>
+      <button class="filter-tab flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all bg-surface-high text-on-surface-variant hover:bg-warning-container hover:text-warning" onclick="filterByStatus('pending')" data-status="pending">
+        <span class="material-symbols-outlined text-[16px]">schedule</span> Pending
+      </button>
+      <button class="filter-tab flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all bg-surface-high text-on-surface-variant hover:bg-info-container hover:text-info" onclick="filterByStatus('confirmed')" data-status="confirmed">
+        <span class="material-symbols-outlined text-[16px]">check_circle</span> Confirmed
+      </button>
+      <button class="filter-tab flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all bg-surface-high text-on-surface-variant hover:bg-primary-container hover:text-primary" onclick="filterByStatus('processing')" data-status="processing">
+        <span class="material-symbols-outlined text-[16px]">autorenew</span> Processing
+      </button>
+      <button class="filter-tab flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all bg-surface-high text-on-surface-variant hover:bg-success-container hover:text-success" onclick="filterByStatus('delivered')" data-status="delivered">
+        <span class="material-symbols-outlined text-[16px]">local_shipping</span> Delivered
+      </button>
+      <button class="filter-tab flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all bg-surface-high text-on-surface-variant hover:bg-error-container hover:text-error" onclick="filterByStatus('cancelled')" data-status="cancelled">
+        <span class="material-symbols-outlined text-[16px]">cancel</span> Cancelled
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loadingState" class="py-24 text-center">
+    <span class="material-symbols-outlined text-primary text-5xl spin block mb-4">autorenew</span>
+    <p class="text-on-surface-variant font-semibold">Loading your bookings...</p>
+  </div>
+
+  <!-- Not logged in -->
+  <div id="notLoggedInState" class="hidden py-24 text-center">
+    <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings:'FILL' 1;">lock</span>
+    </div>
+    <h2 class="text-2xl font-headline font-bold mb-2">Please Login</h2>
+    <p class="text-on-surface-variant mb-6">You need to login to view your bookings</p>
+    <a href="login.html" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[20px]">login</span> Login / Register
+    </a>
+  </div>
+
+  <!-- Empty -->
+  <div id="emptyState" class="hidden py-24 text-center">
+    <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings:'FILL' 1;">card_giftcard</span>
+    </div>
+    <h2 class="text-2xl font-headline font-bold mb-2">No bookings yet</h2>
+    <p class="text-on-surface-variant mb-6">You haven't made any surprise bookings yet</p>
+    <a href="custom-package.html" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[20px]">add</span> Create Your First Booking
+    </a>
+  </div>
+
+  <!-- No Results -->
+  <div id="noResultsState" class="hidden py-24 text-center">
+    <div class="w-20 h-20 rounded-full bg-surface-high flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-outline text-4xl">search_off</span>
+    </div>
+    <h2 class="text-2xl font-headline font-bold mb-2">No bookings found</h2>
+    <p class="text-on-surface-variant mb-6">Try adjusting your filters or search terms</p>
+    <button onclick="clearFilters()" class="inline-flex items-center gap-2 px-6 py-3 border-2 border-primary text-primary rounded-full font-bold hover:bg-primary-container transition-all">
+      <span class="material-symbols-outlined text-[18px]">close</span> Clear Filters
+    </button>
+  </div>
+
+  <!-- Bookings List (populated by booking-history.js) -->
+  <div id="bookingsList" class="hidden space-y-4"></div>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-on-surface text-white px-6 py-12 mt-8">
+  <div class="max-w-screen-xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+      <div>
+        <img src="images/wowlogo.png" alt="WOW Surprises" class="h-10 mb-4 brightness-0 invert"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+        <p class="hidden text-2xl font-black font-headline mb-4">WOW!</p>
+        <p class="text-white/60 text-sm leading-relaxed">Creating unforgettable moments across Nigeria.</p>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Quick Links</h4>
+        <div class="space-y-2">
+          <a href="index.html" class="block text-white/60 hover:text-white text-sm transition-colors">Home</a>
+          <a href="custom-package.html" class="block text-white/60 hover:text-white text-sm transition-colors">Custom Package</a>
+          <a href="reviews.html" class="block text-white/60 hover:text-white text-sm transition-colors">Reviews</a>
+          <a href="login.html" class="block text-white/60 hover:text-white text-sm transition-colors">Login / Register</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Legal</h4>
+        <div class="space-y-2">
+          <a href="privacy-policy.html" class="block text-white/60 hover:text-white text-sm transition-colors">Privacy Policy</a>
+          <a href="terms-of-service.html" class="block text-white/60 hover:text-white text-sm transition-colors">Terms of Service</a>
+          <a href="refund-policy.html" class="block text-white/60 hover:text-white text-sm transition-colors">Refund Policy</a>
+          <a href="faq.html" class="block text-white/60 hover:text-white text-sm transition-colors">FAQ</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-headline font-bold mb-4">Contact</h4>
+        <div class="space-y-3 text-sm text-white/60">
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">location_on</span><span>Victoria Island, Lagos</span></div>
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">call</span><a href="tel:+2348012345678" class="hover:text-white">+234 801 234 5678</a></div>
+          <div class="flex gap-2"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><a href="mailto:hello@wowsurprises.com" class="hover:text-white">hello@wowsurprises.com</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
+      <p>© 2024 WOW Surprises. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
+        <a href="terms-of-service.html" class="hover:text-white">Terms</a>
+        <a href="refund-policy.html" class="hover:text-white">Refund</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-4 pt-3 bg-surface/95 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0px_-4px_24px_rgba(0,0,0,0.08)] border-t border-outline-variant">
+  <a href="index.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">explore</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Discover</span>
+  </a>
+  <a href="custom-package.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2">
+    <span class="material-symbols-outlined text-[22px]">palette</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Custom</span>
+  </a>
+  <a href="booking-history.html" class="flex flex-col items-center text-primary bg-primary-container px-5 py-2 rounded-full">
+    <span class="material-symbols-outlined text-[22px]" style="font-variation-settings:'FILL' 1;">card_giftcard</span>
+    <span class="text-[10px] font-bold uppercase tracking-widest mt-0.5">Orders</span>
+  </a>
+  <a href="login.html" class="flex flex-col items-center text-on-surface/50 px-4 py-2" id="mobileNavAuth">
+    <span class="material-symbols-outlined text-[22px]">person</span>
+    <span class="text-[10px] font-semibold uppercase tracking-widest mt-0.5">Account</span>
+  </a>
+</nav>
+
+<!-- View Modal (populated by booking-history.js) -->
+<div id="viewModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeViewModal()"></div>
+  <div class="relative bg-surface rounded-3xl max-w-2xl w-full max-h-[88vh] overflow-y-auto shadow-2xl">
+    <button onclick="closeViewModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-high flex items-center justify-center hover:bg-surface-container transition-all z-10">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div id="bookingDetails" class="p-6"></div>
+  </div>
+</div>
+
+<!-- Cancel Modal -->
+<div id="cancelModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCancelModal()"></div>
+  <div class="relative bg-surface rounded-3xl max-w-md w-full p-8 shadow-2xl text-center">
+    <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center mx-auto mb-4">
+      <span class="material-symbols-outlined text-error text-3xl" style="font-variation-settings:'FILL' 1;">warning</span>
+    </div>
+    <h2 class="text-2xl font-headline font-bold mb-2">Cancel Booking?</h2>
+    <p class="text-on-surface-variant text-sm mb-6">Are you sure you want to cancel this booking?</p>
+    <div class="bg-warning-container rounded-2xl p-4 text-left mb-6">
+      <p class="text-warning text-sm font-semibold flex items-start gap-2">
+        <span class="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">info</span>
+        Cancellations made 48+ hours before delivery receive a full refund. Otherwise, a cancellation fee may apply.
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="closeCancelModal()" class="flex-1 py-3 border-2 border-outline-variant rounded-full font-bold hover:bg-surface-high transition-all">Keep Booking</button>
+      <button onclick="confirmCancellation()" class="flex-1 py-3 bg-secondary text-white rounded-full font-bold hover:bg-red-700 transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">cancel</span> Cancel Booking
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/supabaseApi.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const client = window.sbClient;
+    if (!client) return;
+    const { data } = await client.auth.getSession();
+    if (data?.session?.user) {
+      const authLink = document.getElementById('authLink');
+      authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>`;
+      authLink.href = '#';
+      authLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('Logout?')) { await client.auth.signOut(); localStorage.removeItem('currentUser'); window.location.reload(); }
+      };
+      const mobileNav = document.getElementById('mobileNavAuth');
+      if (mobileNav) {
+        mobileNav.querySelector('span:last-child').textContent = 'Logout';
+        mobileNav.href = '#';
+        mobileNav.onclick = authLink.onclick;
+      }
+    }
+  } catch(e) {}
+});
+function closeViewModal()   { document.getElementById('viewModal').style.display='none'; }
+function closeCancelModal() { document.getElementById('cancelModal').style.display='none'; }
+</script>
+<script src="js/booking-history.js"></script>
 </body>
 </html>
