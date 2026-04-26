@@ -452,8 +452,9 @@ function setLoading(btnId, loading) {
 function redirectByRole(role) {
   const redirects = {
     admin:    'admin/admin-dashboard.html',
-    merchant: 'merchant/index.html',
-    customer: 'index.html'
+    merchant: 'merchant/merchant-dashboard.html',
+    customer: 'index.html',
+    client:   'index.html'
   };
   // Check for a returnUrl param
   const params = new URLSearchParams(window.location.search);
