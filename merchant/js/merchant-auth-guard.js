@@ -1,50 +1,55 @@
 /**
  * Merchant Auth Guard
- * Ensures user is logged in before page content loads, prevents redirect loops.
+ * Fixed: redirects to unified ../login.html instead of merchant-login.html
+ * This eliminates the redirect loop caused by merchant-login.html → login.html → dashboard → loop
  */
+
 (async function() {
-    // 1. Check which page we are currently on
-    const currentPath = window.location.pathname;
-    const isLoginPage = currentPath.includes('merchant-login.html');
+  const currentPath  = window.location.pathname;
+  const isLoginPage  = currentPath.includes('login.html'); // catches both login.html AND merchant-login.html
 
-    // 2. Wait slightly to ensure Supabase config has run
-    let retries = 10;
-    while (!window.sbClient && retries > 0) {
-        await new Promise(r => setTimeout(r, 50));
-        retries--;
+  // Already on a login page — don't do anything, let login.html handle it
+  if (isLoginPage) return;
+
+  // Wait for Supabase client to initialize (up to 500ms)
+  let retries = 10;
+  while (!window.sbClient && retries > 0) {
+    await new Promise(r => setTimeout(r, 50));
+    retries--;
+  }
+
+  if (!window.sbClient) {
+    console.error('Auth Guard: Supabase client not found.');
+    window.location.replace('../login.html');
+    return;
+  }
+
+  try {
+    const { data: { session }, error } = await window.sbClient.auth.getSession();
+
+    if (error) throw error;
+
+    if (!session) {
+      // No session — redirect to unified login
+      console.log('⛔ No active session, redirecting to login.');
+      window.location.replace('../login.html');
+      return;
     }
 
-    if (!window.sbClient) {
-        console.error("Auth Guard Failed: Client missing.");
-        if (!isLoginPage) window.location.replace('merchant-login.html');
-        return;
+    // Session exists — verify it's a merchant account
+    const role = session.user.user_metadata?.role;
+    if (role && role !== 'merchant') {
+      console.warn('⛔ Not a merchant account, redirecting to login.');
+      await window.sbClient.auth.signOut();
+      window.location.replace('../login.html');
+      return;
     }
 
-    try {
-        // 3. Securely check session via Supabase
-        const { data: { session }, error } = await window.sbClient.auth.getSession();
+    console.log('✅ Merchant session active:', session.user.email);
 
-        if (error) throw error;
+  } catch (err) {
+    console.error('Auth Guard Error:', err);
+    window.location.replace('../login.html');
+  }
 
-        // 4. The Routing Logic
-        if (!session) {
-            console.log("⛔ No active session.");
-            // If they are NOT on the login page, kick them to login
-            if (!isLoginPage) {
-                window.location.replace('merchant-login.html');
-            }
-        } else {
-            console.log("✅ Merchant Session Active:", session.user.email);
-            // If they have a session but are sitting on the login page, push to dashboard
-            if (isLoginPage) {
-                window.location.replace('merchant-dashboard.html');
-            }
-        }
-    } catch (error) {
-        console.error("Auth Guard Error:", error);
-        // Fallback: if auth fails entirely, kick to login (unless already there)
-        if (!isLoginPage) {
-            window.location.replace('merchant-login.html');
-        }
-    }
 })();
