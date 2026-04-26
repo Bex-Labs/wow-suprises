@@ -172,6 +172,18 @@
             <span class="role-check material-symbols-outlined text-primary">check_circle</span>
           </div>
 
+          <!-- Admin — hidden unless ?role=admin is in the URL -->
+          <div id="adminRoleCard" class="hidden role-card flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
+               data-role="admin" onclick="selectRole('admin')">
+            <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">admin_panel_settings</span>
+            </div>
+            <div class="flex-1">
+              <p class="font-bold text-on-surface">Admin</p>
+              <p class="text-sm text-on-surface-variant">Platform management & oversight</p>
+            </div>
+            <span class="role-check material-symbols-outlined text-primary">check_circle</span>
+          </div>
 
         </div>
 
@@ -348,19 +360,26 @@ function goToAuth() {
   authStep.classList.add('slide-up');
 
   // Update role badge
-  const icons  = { customer: 'person', merchant: 'storefront' };
-  const labels = { customer: 'Customer', merchant: 'Merchant' };
+  const icons  = { customer: 'person', merchant: 'storefront', admin: 'admin_panel_settings' };
+  const labels = { customer: 'Customer', merchant: 'Merchant', admin: 'Admin' };
   document.getElementById('roleBadgeIcon').textContent = icons[selectedRole] || 'person';
   document.getElementById('roleBadgeText').textContent = labels[selectedRole] || 'Customer';
 
-  // Show/hide merchant-specific fields only
+  // Show/hide role-specific fields
   document.getElementById('merchantFields').classList.toggle('hidden', selectedRole !== 'merchant');
 
-  // Always show sign up tab, update heading
-  document.getElementById('tabSignUp').classList.remove('hidden');
-  const greet = selectedRole === 'merchant' ? 'Merchant Portal' : 'Your Account';
-  document.getElementById('authHeading').textContent = `Sign In to ${greet}`;
-  document.getElementById('authSubheading').textContent = 'Welcome back! Enter your credentials.';
+  // Admin: sign-in only, no sign-up tab
+  if (selectedRole === 'admin') {
+    document.getElementById('tabSignUp').classList.add('hidden');
+    switchTab('signin');
+    document.getElementById('authHeading').textContent = 'Admin Sign In';
+    document.getElementById('authSubheading').textContent = 'Restricted access — authorised personnel only.';
+  } else {
+    document.getElementById('tabSignUp').classList.remove('hidden');
+    const greet = selectedRole === 'merchant' ? 'Merchant Portal' : 'Your Account';
+    document.getElementById('authHeading').textContent = `Sign In to ${greet}`;
+    document.getElementById('authSubheading').textContent = 'Welcome back! Enter your credentials.';
+  }
 }
 
 function goBack() {
@@ -462,13 +481,13 @@ async function handleSignIn() {
     const user     = data.user;
     const userRole = user.user_metadata?.role || 'customer';
 
-    // Role mismatch check (customer/merchant only — admin bypasses role selector)
-    if (userRole !== 'admin' && userRole !== selectedRole) {
+    // Role mismatch check
+    if (userRole !== selectedRole) {
       await client.auth.signOut();
       throw new Error(`This account is registered as "${userRole}". Please select the correct role.`);
     }
-    // Block admin accounts from signing in via this page
-    if (userRole === 'admin') {
+    // Block admin accounts from signing in without the secret URL
+    if (userRole === 'admin' && document.getElementById('adminRoleCard').classList.contains('hidden')) {
       await client.auth.signOut();
       throw new Error('Admin accounts must sign in via the admin portal.');
     }
@@ -567,8 +586,14 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ─── CHECK EXISTING SESSION ──────────────────────────────────────────────────
+// ─── CHECK EXISTING SESSION + SECRET ADMIN URL ───────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  // Show admin card if ?role=admin is in the URL
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('role') === 'admin') {
+    document.getElementById('adminRoleCard').classList.remove('hidden');
+  }
+
   try {
     const client = window.sbClient;
     if (!client) return;
