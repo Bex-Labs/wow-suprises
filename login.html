@@ -1,351 +1,320 @@
 <!DOCTYPE html>
 <html class="light" lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In – WOW Surprises</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary": "#6200EE",
-            "primary-container": "#EADDFF",
-            "on-primary": "#ffffff",
-            "on-primary-container": "#21005D",
-            "secondary": "#B00020",
-            "on-secondary": "#ffffff",
-            "tertiary": "#03DAC6",
-            "background": "#FBFBFF",
-            "on-background": "#1C1B1F",
-            "surface": "#FBFBFF",
-            "on-surface": "#1C1B1F",
-            "surface-variant": "#E7E0EB",
-            "on-surface-variant": "#49454F",
-            "outline": "#79747E",
-            "outline-variant": "#CAC4D0",
-            "surface-container-low": "#F7F2FA",
-            "surface-container": "#F3EDF7",
-            "surface-container-high": "#ECE6F0",
-            "surface-container-lowest": "#ffffff",
-            "error": "#B3261E",
-            "error-container": "#F9DEDC",
-          },
-          fontFamily: {
-            headline: ["Plus Jakarta Sans", "sans-serif"],
-            body: ["Be Vietnam Pro", "sans-serif"],
-          }
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign In – WOW Surprises</title>
+<link rel="icon" type="image/png" href="images/favicon.png" />
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#6200EE",
+        "primary-container": "#EADDFF",
+        "on-primary": "#ffffff",
+        "on-primary-container": "#21005D",
+        "secondary": "#B00020",
+        "on-secondary": "#ffffff",
+        "tertiary": "#03DAC6",
+        "background": "#FBFBFF",
+        "on-background": "#1C1B1F",
+        "surface": "#FBFBFF",
+        "on-surface": "#1C1B1F",
+        "surface-variant": "#E7E0EB",
+        "on-surface-variant": "#49454F",
+        "outline": "#79747E",
+        "outline-variant": "#CAC4D0",
+        "surface-container-low": "#F7F2FA",
+        "surface-container": "#F3EDF7",
+        "surface-container-high": "#ECE6F0",
+        "surface-container-lowest": "#ffffff",
+        "error": "#B3261E",
+        "error-container": "#F9DEDC",
+      },
+      fontFamily: {
+        headline: ["Plus Jakarta Sans", "sans-serif"],
+        body: ["Be Vietnam Pro", "sans-serif"],
       }
     }
-  </script>
-  <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    body { font-family: 'Be Vietnam Pro', sans-serif; }
-    h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .royal-gradient { background: linear-gradient(135deg, #6200EE 0%, #9C27B0 50%, #B00020 100%); }
-
-    /* Role card active state */
-    .role-card { cursor: pointer; transition: all 0.25s ease; }
-    .role-card.selected {
-      border-color: #6200EE !important;
-      background-color: #EADDFF !important;
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(98,0,238,0.18);
-    }
-    .role-card.selected .role-icon { background-color: #6200EE; color: white; }
-    .role-card.selected .role-check { opacity: 1; }
-    .role-check { opacity: 0; transition: opacity 0.2s; }
-
-    /* Tab transitions */
-    .auth-panel { display: none; }
-    .auth-panel.active { display: block; }
-
-    /* Input focus */
-    .wow-input:focus { border-color: #6200EE; box-shadow: 0 0 0 3px rgba(98,0,238,0.12); outline: none; }
-    .wow-input { transition: all 0.2s; }
-
-    /* Spinner */
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.8s linear infinite; display: inline-block; }
-
-    /* Slide in animation */
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .slide-up { animation: slideUp 0.4s ease; }
-  </style>
+  }
+}
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  body { font-family: 'Be Vietnam Pro', sans-serif; }
+  h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .royal-gradient { background: linear-gradient(135deg, #6200EE 0%, #9C27B0 50%, #B00020 100%); }
+  .role-card { cursor: pointer; transition: all 0.25s ease; }
+  .role-card.selected {
+    border-color: #6200EE !important;
+    background-color: #EADDFF !important;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(98,0,238,0.18);
+  }
+  .role-card.selected .role-icon { background-color: #6200EE; color: white; }
+  .role-card.selected .role-check { opacity: 1; }
+  .role-check { opacity: 0; transition: opacity 0.2s; }
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+  .wow-input:focus { border-color: #6200EE; box-shadow: 0 0 0 3px rgba(98,0,238,0.12); outline: none; }
+  .wow-input { transition: all 0.2s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 0.8s linear infinite; display: inline-block; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .slide-up { animation: slideUp 0.4s ease; }
+</style>
 </head>
 <body class="min-h-screen bg-surface-container-low flex">
 
-  <!-- ═══ LEFT PANEL (decorative, desktop only) ═══ -->
-  <div class="hidden lg:flex lg:w-[45%] royal-gradient relative overflow-hidden flex-col justify-between p-12">
-    <!-- Background texture -->
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
-    <!-- Abstract blobs -->
-    <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-    <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-24 -mb-24 blur-3xl"></div>
-
-    <!-- Logo at top -->
-    <div class="relative z-10">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="images/wowlogo.png" alt="WOW Surprises" class="h-14 brightness-0 invert"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <span class="text-3xl font-black text-white font-headline" style="display:none;">WOW!</span>
-      </a>
+<!-- ═══ LEFT PANEL ═══ -->
+<div class="hidden lg:flex lg:w-[45%] royal-gradient relative overflow-hidden flex-col justify-between p-12">
+  <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
+  <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+  <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-24 -mb-24 blur-3xl"></div>
+  <div class="relative z-10">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-14 brightness-0 invert"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+      <span class="text-3xl font-black text-white font-headline" style="display:none;">WOW!</span>
+    </a>
+  </div>
+  <div class="relative z-10 space-y-6">
+    <div class="w-16 h-1 bg-white/40 rounded-full"></div>
+    <h2 class="text-5xl font-headline font-extrabold text-white leading-tight">
+      Create <br/>Moments <br/>That <span class="text-tertiary">WOW!</span>
+    </h2>
+    <p class="text-white/75 text-lg leading-relaxed max-w-sm">
+      Join thousands of customers, merchants, and planners who are making every surprise unforgettable.
+    </p>
+    <div class="flex gap-8 pt-4">
+      <div><p class="text-3xl font-black text-white">5K+</p><p class="text-white/60 text-sm">Happy Customers</p></div>
+      <div><p class="text-3xl font-black text-white">200+</p><p class="text-white/60 text-sm">Merchants</p></div>
+      <div><p class="text-3xl font-black text-white">98%</p><p class="text-white/60 text-sm">Satisfaction</p></div>
     </div>
+  </div>
+  <p class="relative z-10 text-white/40 text-xs">© 2024 WOW Surprises · Lagos, Nigeria</p>
+</div>
 
-    <!-- Middle quote -->
-    <div class="relative z-10 space-y-6">
-      <div class="w-16 h-1 bg-white/40 rounded-full"></div>
-      <h2 class="text-5xl font-headline font-extrabold text-white leading-tight">
-        Create <br/>Moments <br/>That <span class="text-tertiary">WOW!</span>
-      </h2>
-      <p class="text-white/75 text-lg leading-relaxed max-w-sm">
-        Join thousands of customers, merchants, and planners who are making every surprise unforgettable.
-      </p>
-      <!-- Stats -->
-      <div class="flex gap-8 pt-4">
-        <div>
-          <p class="text-3xl font-black text-white">5K+</p>
-          <p class="text-white/60 text-sm">Happy Customers</p>
+<!-- ═══ RIGHT PANEL ═══ -->
+<div class="flex-1 flex flex-col justify-center items-center px-6 py-12 overflow-y-auto">
+  <a href="index.html" class="lg:hidden mb-8 flex items-center gap-2">
+    <img src="images/wowlogo.png" alt="WOW Surprises" class="h-12"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+    <span class="text-2xl font-black text-primary font-headline" style="display:none;">WOW!</span>
+  </a>
+
+  <div class="w-full max-w-md slide-up">
+
+    <!-- ─── STEP 1: Role Selector ─── -->
+    <div id="stepRole">
+      <h1 class="text-3xl font-headline font-extrabold text-on-background mb-2">Welcome Back!</h1>
+      <p class="text-on-surface-variant mb-8">Select your account type to continue</p>
+
+      <div class="space-y-3 mb-8" id="roleCards">
+        <!-- Customer -->
+        <div class="role-card selected flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
+             data-role="customer" onclick="selectRole('customer')">
+          <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">person</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-on-surface">Customer</p>
+            <p class="text-sm text-on-surface-variant">Browse & book surprise packages</p>
+          </div>
+          <span class="role-check material-symbols-outlined text-primary">check_circle</span>
         </div>
-        <div>
-          <p class="text-3xl font-black text-white">200+</p>
-          <p class="text-white/60 text-sm">Merchants</p>
+
+        <!-- Merchant -->
+        <div class="role-card flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
+             data-role="merchant" onclick="selectRole('merchant')">
+          <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">storefront</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-on-surface">Merchant</p>
+            <p class="text-sm text-on-surface-variant">List and manage your packages</p>
+          </div>
+          <span class="role-check material-symbols-outlined text-primary">check_circle</span>
         </div>
-        <div>
-          <p class="text-3xl font-black text-white">98%</p>
-          <p class="text-white/60 text-sm">Satisfaction</p>
+
+        <!-- Admin — hidden unless ?role=admin in URL -->
+        <div id="adminRoleCard" class="hidden role-card flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
+             data-role="admin" onclick="selectRole('admin')">
+          <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">admin_panel_settings</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-on-surface">Admin</p>
+            <p class="text-sm text-on-surface-variant">Platform management & oversight</p>
+          </div>
+          <span class="role-check material-symbols-outlined text-primary">check_circle</span>
         </div>
       </div>
+
+      <button onclick="goToAuth()" id="continueBtn"
+              class="w-full py-4 bg-primary text-white rounded-full font-bold text-lg shadow-lg shadow-primary/25 hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2">
+        Continue <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
     </div>
 
-    <!-- Bottom note -->
-    <p class="relative z-10 text-white/40 text-xs">© 2024 WOW Surprises · Lagos, Nigeria</p>
-  </div>
-
-  <!-- ═══ RIGHT PANEL (auth form) ═══ -->
-  <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 overflow-y-auto">
-
-    <!-- Mobile logo -->
-    <a href="index.html" class="lg:hidden mb-8 flex items-center gap-2">
-      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-12"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-      <span class="text-2xl font-black text-primary font-headline" style="display:none;">WOW!</span>
-    </a>
-
-    <div class="w-full max-w-md slide-up">
-
-      <!-- ─── STEP 1: Role Selector ─────────────────────────────────────── -->
-      <div id="stepRole">
-        <h1 class="text-3xl font-headline font-extrabold text-on-background mb-2">Welcome Back!</h1>
-        <p class="text-on-surface-variant mb-8">Select your account type to continue</p>
-
-        <div class="space-y-3 mb-8" id="roleCards">
-          <!-- Customer -->
-          <div class="role-card selected flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
-               data-role="customer" onclick="selectRole('customer')">
-            <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
-              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">person</span>
-            </div>
-            <div class="flex-1">
-              <p class="font-bold text-on-surface">Customer</p>
-              <p class="text-sm text-on-surface-variant">Browse & book surprise packages</p>
-            </div>
-            <span class="role-check material-symbols-outlined text-primary">check_circle</span>
-          </div>
-
-          <!-- Merchant -->
-          <div class="role-card flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
-               data-role="merchant" onclick="selectRole('merchant')">
-            <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
-              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">storefront</span>
-            </div>
-            <div class="flex-1">
-              <p class="font-bold text-on-surface">Merchant</p>
-              <p class="text-sm text-on-surface-variant">List and manage your packages</p>
-            </div>
-            <span class="role-check material-symbols-outlined text-primary">check_circle</span>
-          </div>
-
-          <!-- Admin — hidden unless ?role=admin is in the URL -->
-          <div id="adminRoleCard" class="hidden role-card flex items-center gap-4 p-5 bg-surface border-2 border-outline-variant rounded-2xl"
-               data-role="admin" onclick="selectRole('admin')">
-            <div class="role-icon w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center transition-all">
-              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">admin_panel_settings</span>
-            </div>
-            <div class="flex-1">
-              <p class="font-bold text-on-surface">Admin</p>
-              <p class="text-sm text-on-surface-variant">Platform management & oversight</p>
-            </div>
-            <span class="role-check material-symbols-outlined text-primary">check_circle</span>
-          </div>
-
+    <!-- ─── STEP 2: Sign In / Sign Up ─── -->
+    <div id="stepAuth" class="hidden">
+      <div class="flex items-center gap-3 mb-6">
+        <button onclick="goBack()" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-surface-container-highest transition-all">
+          <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </button>
+        <div id="roleBadge" class="flex items-center gap-2 px-4 py-2 bg-primary-container rounded-full">
+          <span class="material-symbols-outlined text-primary text-[18px]" id="roleBadgeIcon">person</span>
+          <span class="text-primary font-bold text-sm" id="roleBadgeText">Customer</span>
         </div>
+      </div>
 
-        <button onclick="goToAuth()" id="continueBtn"
-          class="w-full py-4 bg-primary text-white rounded-full font-bold text-lg shadow-lg shadow-primary/25 hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2">
-          Continue <span class="material-symbols-outlined">arrow_forward</span>
+      <h1 class="text-3xl font-headline font-extrabold text-on-background mb-1" id="authHeading">Sign In</h1>
+      <p class="text-on-surface-variant mb-6" id="authSubheading">Welcome back! Sign in to your account.</p>
+
+      <div class="flex bg-surface-container-high rounded-full p-1 mb-8">
+        <button id="tabSignIn" onclick="switchTab('signin')"
+                class="flex-1 py-2.5 rounded-full font-bold text-sm bg-primary text-white transition-all">
+          Sign In
+        </button>
+        <button id="tabSignUp" onclick="switchTab('signup')"
+                class="flex-1 py-2.5 rounded-full font-bold text-sm text-on-surface-variant transition-all">
+          Create Account
         </button>
       </div>
 
-      <!-- ─── STEP 2: Sign In / Sign Up ─────────────────────────────────── -->
-      <div id="stepAuth" class="hidden">
-        <!-- Role badge + back button -->
-        <div class="flex items-center gap-3 mb-6">
-          <button onclick="goBack()" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-surface-container-highest transition-all">
-            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
-          </button>
-          <div id="roleBadge" class="flex items-center gap-2 px-4 py-2 bg-primary-container rounded-full">
-            <span class="material-symbols-outlined text-primary text-[18px]" id="roleBadgeIcon">person</span>
-            <span class="text-primary font-bold text-sm" id="roleBadgeText">Customer</span>
+      <div id="authMessage" class="hidden mb-4 px-4 py-3 rounded-2xl text-sm font-semibold"></div>
+
+      <!-- SIGN IN FORM -->
+      <div id="panelSignIn" class="auth-panel active space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Email Address</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+            <input id="signinEmail" type="email" placeholder="you@example.com"
+                   class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm"
+                   autocomplete="email" />
           </div>
         </div>
-
-        <h1 class="text-3xl font-headline font-extrabold text-on-background mb-1" id="authHeading">Sign In</h1>
-        <p class="text-on-surface-variant mb-6" id="authSubheading">Welcome back! Sign in to your account.</p>
-
-        <!-- Sign In / Sign Up Tabs -->
-        <div class="flex bg-surface-container-high rounded-full p-1 mb-8">
-          <button id="tabSignIn" onclick="switchTab('signin')"
-            class="flex-1 py-2.5 rounded-full font-bold text-sm bg-primary text-white transition-all">
-            Sign In
-          </button>
-          <button id="tabSignUp" onclick="switchTab('signup')"
-            class="flex-1 py-2.5 rounded-full font-bold text-sm text-on-surface-variant transition-all" id="signUpTabBtn">
-            Create Account
-          </button>
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Password</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+            <input id="signinPassword" type="password" placeholder="Enter your password"
+                   class="wow-input w-full pl-11 pr-12 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
+            <button type="button" onclick="togglePassword('signinPassword', this)"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+          </div>
         </div>
-
-        <!-- Error / Success message -->
-        <div id="authMessage" class="hidden mb-4 px-4 py-3 rounded-2xl text-sm font-semibold"></div>
-
-        <!-- ── SIGN IN FORM ── -->
-        <div id="panelSignIn" class="auth-panel active space-y-4">
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Email Address</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
-              <input id="signinEmail" type="email" placeholder="you@example.com"
-                class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm"
-                autocomplete="email" />
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Password</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
-              <input id="signinPassword" type="password" placeholder="Enter your password"
-                class="wow-input w-full pl-11 pr-12 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
-              <button type="button" onclick="togglePassword('signinPassword', this)"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded text-primary border-outline-variant" />
-              <span class="text-sm text-on-surface-variant">Remember me</span>
-            </label>
-            <a href="forgot-password.html" class="text-sm font-bold text-primary hover:underline">Forgot password?</a>
-          </div>
-          <button onclick="handleSignIn()"
-            class="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-lg shadow-primary/25 hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2 mt-2" id="signinBtn">
-            <span class="material-symbols-outlined text-[20px]">login</span> Sign In
-          </button>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded text-primary border-outline-variant" />
+            <span class="text-sm text-on-surface-variant">Remember me</span>
+          </label>
+          <a href="forgot-password.html" class="text-sm font-bold text-primary hover:underline">Forgot password?</a>
         </div>
+        <button onclick="handleSignIn()"
+                class="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-lg shadow-primary/25 hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2 mt-2" id="signinBtn">
+          <span class="material-symbols-outlined text-[20px]">login</span> Sign In
+        </button>
+      </div>
 
-        <!-- ── SIGN UP FORM ── -->
-        <div id="panelSignUp" class="auth-panel space-y-4">
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Full Name</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">badge</span>
-              <input id="signupName" type="text" placeholder="Your full name"
-                class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
-            </div>
+      <!-- SIGN UP FORM -->
+      <div id="panelSignUp" class="auth-panel space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Full Name</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">badge</span>
+            <input id="signupName" type="text" placeholder="Your full name"
+                   class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Email Address</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
-              <input id="signupEmail" type="email" placeholder="you@example.com"
-                class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm"
-                autocomplete="email" />
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Phone Number</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">call</span>
-              <input id="signupPhone" type="tel" placeholder="+234 800 000 0000"
-                class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
-            </div>
-          </div>
-          <!-- Merchant-only: business name -->
-          <div id="merchantFields" class="hidden">
-            <label class="block text-sm font-semibold text-on-surface mb-2">Business Name</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">storefront</span>
-              <input id="signupBusiness" type="text" placeholder="Your business name"
-                class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Password</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
-              <input id="signupPassword" type="password" placeholder="Create a strong password"
-                class="wow-input w-full pl-11 pr-12 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
-              <button type="button" onclick="togglePassword('signupPassword', this)"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-on-surface mb-2">Confirm Password</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
-              <input id="signupConfirm" type="password" placeholder="Repeat your password"
-                class="wow-input w-full pl-11 pr-12 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
-              <button type="button" onclick="togglePassword('signupConfirm', this)"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-            </div>
-          </div>
-
-          <button onclick="handleSignUp()"
-            class="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-lg shadow-primary/25 hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2 mt-2" id="signupBtn">
-            <span class="material-symbols-outlined text-[20px]">person_add</span> Create Account
-          </button>
-          <p class="text-xs text-on-surface-variant text-center">
-            By creating an account, you agree to our
-            <a href="terms-of-service.html" class="text-primary font-semibold hover:underline">Terms of Service</a>
-            and <a href="privacy-policy.html" class="text-primary font-semibold hover:underline">Privacy Policy</a>.
-          </p>
         </div>
-      </div><!-- /stepAuth -->
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Email Address</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+            <input id="signupEmail" type="email" placeholder="you@example.com"
+                   class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm"
+                   autocomplete="email" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Phone Number</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">call</span>
+            <input id="signupPhone" type="tel" placeholder="+234 800 000 0000"
+                   class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
+          </div>
+        </div>
+        <div id="merchantFields" class="hidden">
+          <label class="block text-sm font-semibold text-on-surface mb-2">Business Name</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">storefront</span>
+            <input id="signupBusiness" type="text" placeholder="Your business name"
+                   class="wow-input w-full pl-11 pr-4 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Password</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+            <input id="signupPassword" type="password" placeholder="Create a strong password"
+                   class="wow-input w-full pl-11 pr-12 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
+            <button type="button" onclick="togglePassword('signupPassword', this)"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-2">Confirm Password</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+            <input id="signupConfirm" type="password" placeholder="Repeat your password"
+                   class="wow-input w-full pl-11 pr-12 py-3.5 bg-surface border-2 border-outline-variant rounded-2xl text-sm" />
+            <button type="button" onclick="togglePassword('signupConfirm', this)"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+          </div>
+        </div>
+        <button onclick="handleSignUp()"
+                class="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-lg shadow-primary/25 hover:bg-primary/90 active:scale-95 transition-all flex items-center justify-center gap-2 mt-2" id="signupBtn">
+          <span class="material-symbols-outlined text-[20px]">person_add</span> Create Account
+        </button>
+        <p class="text-xs text-on-surface-variant text-center">
+          By creating an account, you agree to our
+          <a href="terms-of-service.html" class="text-primary font-semibold hover:underline">Terms of Service</a>
+          and <a href="privacy-policy.html" class="text-primary font-semibold hover:underline">Privacy Policy</a>.
+        </p>
+      </div>
+    </div><!-- /stepAuth -->
 
-    </div><!-- /max-w-md -->
-  </div><!-- /right panel -->
+  </div><!-- /max-w-md -->
+</div><!-- /right panel -->
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 <script src="js/supabaseApi.js"></script>
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
+
 let selectedRole = 'customer';
 let currentTab   = 'signin';
 
+// FIX: guard flag — prevents the DOMContentLoaded session check from
+// triggering a redirect while a sign-in redirect is already underway.
+let isRedirecting = false;
+
 // ─── ROLE SELECTION ──────────────────────────────────────────────────────────
+
 function selectRole(role) {
   selectedRole = role;
   document.querySelectorAll('.role-card').forEach(card => {
@@ -359,25 +328,22 @@ function goToAuth() {
   authStep.classList.remove('hidden');
   authStep.classList.add('slide-up');
 
-  // Update role badge
   const icons  = { customer: 'person', merchant: 'storefront', admin: 'admin_panel_settings' };
   const labels = { customer: 'Customer', merchant: 'Merchant', admin: 'Admin' };
-  document.getElementById('roleBadgeIcon').textContent = icons[selectedRole] || 'person';
+  document.getElementById('roleBadgeIcon').textContent = icons[selectedRole]  || 'person';
   document.getElementById('roleBadgeText').textContent = labels[selectedRole] || 'Customer';
 
-  // Show/hide role-specific fields
   document.getElementById('merchantFields').classList.toggle('hidden', selectedRole !== 'merchant');
 
-  // Admin: sign-in only, no sign-up tab
   if (selectedRole === 'admin') {
     document.getElementById('tabSignUp').classList.add('hidden');
     switchTab('signin');
-    document.getElementById('authHeading').textContent = 'Admin Sign In';
+    document.getElementById('authHeading').textContent    = 'Admin Sign In';
     document.getElementById('authSubheading').textContent = 'Restricted access — authorised personnel only.';
   } else {
     document.getElementById('tabSignUp').classList.remove('hidden');
     const greet = selectedRole === 'merchant' ? 'Merchant Portal' : 'Your Account';
-    document.getElementById('authHeading').textContent = `Sign In to ${greet}`;
+    document.getElementById('authHeading').textContent    = `Sign In to ${greet}`;
     document.getElementById('authSubheading').textContent = 'Welcome back! Enter your credentials.';
   }
 }
@@ -389,10 +355,11 @@ function goBack() {
 }
 
 // ─── TAB SWITCHING ───────────────────────────────────────────────────────────
+
 function switchTab(tab) {
   currentTab = tab;
   const signinActive = tab === 'signin';
-  document.getElementById('panelSignIn').classList.toggle('active', signinActive);
+  document.getElementById('panelSignIn').classList.toggle('active',  signinActive);
   document.getElementById('panelSignUp').classList.toggle('active', !signinActive);
   document.getElementById('tabSignIn').className = signinActive
     ? 'flex-1 py-2.5 rounded-full font-bold text-sm bg-primary text-white transition-all'
@@ -404,35 +371,31 @@ function switchTab(tab) {
 }
 
 // ─── PASSWORD TOGGLE ─────────────────────────────────────────────────────────
+
 function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId);
   const icon  = btn.querySelector('.material-symbols-outlined');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.textContent = 'visibility_off';
-  } else {
-    input.type = 'password';
-    icon.textContent = 'visibility';
-  }
+  if (input.type === 'password') { input.type = 'text';     icon.textContent = 'visibility_off'; }
+  else                           { input.type = 'password'; icon.textContent = 'visibility';     }
 }
 
 // ─── MESSAGES ────────────────────────────────────────────────────────────────
+
 function showMessage(msg, type = 'error') {
   const el = document.getElementById('authMessage');
   el.classList.remove('hidden', 'bg-error-container', 'text-error', 'bg-primary-container', 'text-primary');
-  if (type === 'error') {
-    el.classList.add('bg-error-container', 'text-error');
-  } else {
-    el.classList.add('bg-primary-container', 'text-primary');
-  }
+  if (type === 'error') { el.classList.add('bg-error-container', 'text-error'); }
+  else                  { el.classList.add('bg-primary-container', 'text-primary'); }
   el.innerHTML = `<span class="material-symbols-outlined text-[18px] align-middle mr-1">${type === 'error' ? 'error' : 'check_circle'}</span> ${msg}`;
   el.classList.remove('hidden');
 }
+
 function clearMessage() {
   document.getElementById('authMessage').classList.add('hidden');
 }
 
 // ─── LOADING STATE ───────────────────────────────────────────────────────────
+
 function setLoading(btnId, loading) {
   const btn = document.getElementById(btnId);
   if (loading) {
@@ -440,29 +403,32 @@ function setLoading(btnId, loading) {
     btn.innerHTML = `<span class="material-symbols-outlined spin text-[20px]">autorenew</span> Please wait...`;
   } else {
     btn.disabled = false;
-    if (btnId === 'signinBtn') {
-      btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">login</span> Sign In`;
-    } else {
-      btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">person_add</span> Create Account`;
-    }
+    btn.innerHTML = btnId === 'signinBtn'
+      ? `<span class="material-symbols-outlined text-[20px]">login</span> Sign In`
+      : `<span class="material-symbols-outlined text-[20px]">person_add</span> Create Account`;
   }
 }
 
 // ─── REDIRECT AFTER LOGIN ────────────────────────────────────────────────────
+
+const ROLE_REDIRECTS = {
+  admin:    'admin/admin-dashboard.html',
+  merchant: 'merchant/merchant-dashboard.html',
+  customer: 'index.html',
+  client:   'index.html'
+};
+
 function redirectByRole(role) {
-  const redirects = {
-    admin:    'admin/admin-dashboard.html',
-    merchant: 'merchant/merchant-dashboard.html',
-    customer: 'index.html',
-    client:   'index.html'
-  };
-  // Check for a returnUrl param
-  const params = new URLSearchParams(window.location.search);
+  if (isRedirecting) return;   // FIX: prevent double-redirect
+  isRedirecting = true;
+
+  const params    = new URLSearchParams(window.location.search);
   const returnUrl = params.get('returnUrl');
-  window.location.href = returnUrl || redirects[role] || 'index.html';
+  window.location.href = returnUrl || ROLE_REDIRECTS[role] || 'index.html';
 }
 
 // ─── SIGN IN ─────────────────────────────────────────────────────────────────
+
 async function handleSignIn() {
   clearMessage();
   const email    = document.getElementById('signinEmail').value.trim();
@@ -472,6 +438,7 @@ async function handleSignIn() {
   if (!email || !password) { showMessage('Please fill in all fields.'); return; }
 
   setLoading('signinBtn', true);
+
   try {
     const client = window.sbClient;
     if (!client) throw new Error('Supabase not initialized. Please refresh.');
@@ -482,18 +449,19 @@ async function handleSignIn() {
     const user     = data.user;
     const userRole = user.user_metadata?.role || 'customer';
 
-    // Role mismatch check
+    // FIX: await signOut fully before throwing — prevents the stale session
+    //      being picked up by the DOMContentLoaded check on the next page load.
     if (userRole !== selectedRole) {
       await client.auth.signOut();
       throw new Error(`This account is registered as "${userRole}". Please select the correct role.`);
     }
-    // Block admin accounts from signing in without the secret URL
+
     if (userRole === 'admin' && document.getElementById('adminRoleCard').classList.contains('hidden')) {
       await client.auth.signOut();
       throw new Error('Admin accounts must sign in via the admin portal.');
     }
 
-    // Persist user info
+    // Persist user info — role is always included
     const userInfo = {
       id:    user.id,
       email: user.email,
@@ -501,14 +469,13 @@ async function handleSignIn() {
       phone: user.user_metadata?.phone || '',
       role:  userRole
     };
-    if (remember) {
-      localStorage.setItem('currentUser', JSON.stringify(userInfo));
-    } else {
-      sessionStorage.setItem('currentUser', JSON.stringify(userInfo));
-    }
+
+    if (remember) { localStorage.setItem('currentUser',   JSON.stringify(userInfo)); }
+    else          { sessionStorage.setItem('currentUser', JSON.stringify(userInfo)); }
 
     showMessage(`Welcome back, ${userInfo.name}! Redirecting...`, 'success');
     setTimeout(() => redirectByRole(userRole), 1200);
+
   } catch (err) {
     console.error('Sign in error:', err);
     showMessage(err.message || 'Sign in failed. Please check your credentials.');
@@ -517,6 +484,7 @@ async function handleSignIn() {
 }
 
 // ─── SIGN UP ─────────────────────────────────────────────────────────────────
+
 async function handleSignUp() {
   clearMessage();
   const name     = document.getElementById('signupName').value.trim();
@@ -527,21 +495,18 @@ async function handleSignUp() {
 
   if (!name || !email || !password || !confirm) { showMessage('Please fill in all required fields.'); return; }
   if (password !== confirm) { showMessage('Passwords do not match.'); return; }
-  if (password.length < 6) { showMessage('Password must be at least 6 characters.'); return; }
+  if (password.length < 6)  { showMessage('Password must be at least 6 characters.'); return; }
 
-  // Merchant extra
   let businessName = '';
   if (selectedRole === 'merchant') {
     businessName = document.getElementById('signupBusiness').value.trim();
     if (!businessName) { showMessage('Please enter your business name.'); return; }
   }
 
-  // Admin accounts cannot be created via this page
-  if (selectedRole === 'admin') {
-    showMessage('Admin accounts cannot be created here.'); return;
-  }
+  if (selectedRole === 'admin') { showMessage('Admin accounts cannot be created here.'); return; }
 
   setLoading('signupBtn', true);
+
   try {
     const client = window.sbClient;
     if (!client) throw new Error('Supabase not initialized. Please refresh.');
@@ -558,19 +523,19 @@ async function handleSignUp() {
         }
       }
     });
+
     if (error) throw error;
 
     if (data.user && !data.session) {
-      // Email confirmation required
       showMessage('Account created! Please check your email to confirm your account.', 'success');
       setTimeout(() => switchTab('signin'), 3000);
     } else if (data.session) {
-      // Auto confirmed
       const userInfo = { id: data.user.id, email, name, phone, role: selectedRole };
       localStorage.setItem('currentUser', JSON.stringify(userInfo));
       showMessage(`Account created! Welcome, ${name}!`, 'success');
       setTimeout(() => redirectByRole(selectedRole), 1500);
     }
+
   } catch (err) {
     console.error('Sign up error:', err);
     showMessage(err.message || 'Registration failed. Please try again.');
@@ -579,6 +544,7 @@ async function handleSignUp() {
 }
 
 // ─── KEYBOARD SUPPORT ────────────────────────────────────────────────────────
+
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (!document.getElementById('stepAuth').classList.contains('hidden')) {
@@ -587,23 +553,35 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ─── CHECK EXISTING SESSION + SECRET ADMIN URL ───────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  // Show admin card if ?role=admin is in the URL
+// ─── SESSION CHECK ON LOAD ───────────────────────────────────────────────────
+// FIX: Uses onAuthStateChange instead of getSession() so we wait for Supabase
+//      to fully hydrate its auth state before deciding whether to redirect.
+//      This eliminates the race condition where getSession() returned null
+//      mid-flight and triggered a redirect back from the merchant dashboard.
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Show admin card if ?role=admin in URL
   const params = new URLSearchParams(window.location.search);
   if (params.get('role') === 'admin') {
     document.getElementById('adminRoleCard').classList.remove('hidden');
   }
 
-  try {
-    const client = window.sbClient;
-    if (!client) return;
-    const { data } = await client.auth.getSession();
-    if (data?.session?.user) {
-      const role = data.session.user.user_metadata?.role || 'customer';
+  const client = window.sbClient;
+  if (!client) return;
+
+  // onAuthStateChange fires once immediately with the current state,
+  // so we get a reliable answer without any timing ambiguity.
+  const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
+    // Unsubscribe immediately — we only need the initial state check here.
+    subscription.unsubscribe();
+
+    if (isRedirecting) return;  // a sign-in is already in progress, don't double-redirect
+
+    if (session?.user) {
+      const role = session.user.user_metadata?.role || 'customer';
       redirectByRole(role);
     }
-  } catch (e) { /* not logged in */ }
+  });
 });
 </script>
 </body>

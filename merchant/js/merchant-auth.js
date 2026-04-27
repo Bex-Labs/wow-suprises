@@ -1,51 +1,68 @@
 /**
+ * merchant/js/merchant-auth.js
  * Merchant Authentication Functions
- * Handles all merchant authentication operations
- * Updated: redirects now point to unified ../login.html
+ *
+ * FIX 1: isAuthenticated() replaced one-shot getSession() with
+ *         onAuthStateChange so it waits for the client to fully hydrate
+ *         before returning false. The old getSession() call returned null
+ *         immediately after a cross-page navigation, before the new client
+ *         instance had read the token from localStorage — causing a false
+ *         "not logged in" result and triggering the redirect loop.
+ *
+ * FIX 2: Role check in isAuthenticated() now looks for user_metadata.role
+ *         === 'merchant' (set by login.html and supabaseApi.js) in addition
+ *         to the legacy user_metadata.user_type === 'merchant' field set by
+ *         MerchantAuth.register(). Both are accepted so existing accounts
+ *         and new accounts work.
+ *
+ * FIX 3: logout() now also clears 'currentUser' from both localStorage and
+ *         sessionStorage — the key used by login.html — so no stale session
+ *         data is left behind after sign-out.
+ *
+ * FIX 4: login() now stores the session under 'currentUser' (matching
+ *         login.html's key) in addition to 'merchantData', so the auth guard
+ *         and login.html's session check both see a consistent state.
  */
 
 console.log('🔧 merchant-auth.js loading...');
 
-if (typeof merchantSupabase === 'undefined' && typeof supabase === 'undefined' && typeof sbClient === 'undefined') {
+if (typeof window.sbClient === 'undefined' &&
+    typeof window.merchantSupabase === 'undefined' &&
+    typeof window.supabase === 'undefined') {
   console.error('❌ Supabase client not found! Make sure merchant-config.js is loaded first.');
 }
-
-// ─── Unified login URL (single source of truth) ───────────────────────────────
-const MERCHANT_LOGIN_URL = '../login.html';
 
 const MerchantAuth = {
 
   getSupabase() {
-    return window.sbClient || window.merchantSupabase || window.supabase;
+    return window.sbClient || window.merchantSupabase || null;
   },
 
-  // Helper to get the correct folder path (works on localhost AND Vercel subfolders)
+  // Helper: resolves the correct base path on both localhost and Vercel subfolders
   getBasePath() {
-    const currentPath = window.location.pathname;
-    const folderPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-    return `${window.location.origin}${folderPath}`;
+    const p = window.location.pathname;
+    return window.location.origin + p.substring(0, p.lastIndexOf('/'));
   },
 
   /**
    * Register a new merchant
    */
-  register: async function(merchantData) {
+  register: async function (merchantData) {
     try {
       const supabase = this.getSupabase();
       if (!supabase) throw new Error('Supabase client not available');
 
-      console.log('🔄 Starting merchant registration...');
-
-      // ✅ Email confirmation redirects to unified login
-      const loginRedirectUrl = `${window.location.origin}/login.html`;
+      const loginRedirectUrl = `${this.getBasePath()}/merchant-login.html`;
 
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: merchantData.email,
+        email:    merchantData.email,
         password: merchantData.password,
         options: {
           data: {
-            full_name:     merchantData.ownerName,
+            // FIX: write BOTH role keys so every part of the codebase can find it
             role:          'merchant',
+            user_type:     'merchant',
+            full_name:     merchantData.ownerName,
             business_name: merchantData.businessName,
             phone:         merchantData.phone,
             address:       merchantData.address,
@@ -61,11 +78,12 @@ const MerchantAuth = {
         return {
           success: true,
           message: 'Registration successful! Please check your email to verify your account.',
-          data: authData.user
+          data:    authData.user
         };
       }
 
       return { success: true, message: 'Registration successful!', data: authData.user };
+
     } catch (error) {
       console.error('❌ Registration error:', error);
       return { success: false, message: error.message || 'Registration failed.' };
@@ -75,20 +93,13 @@ const MerchantAuth = {
   /**
    * Login a merchant
    */
-  login: async function(email, password) {
+  login: async function (email, password) {
     try {
       const supabase = this.getSupabase();
       if (!supabase) throw new Error('Supabase client not available');
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-
-      // Verify role
-      const userRole = data.user.user_metadata?.role;
-      if (userRole && userRole !== 'merchant') {
-        await supabase.auth.signOut();
-        throw new Error('This account is not a merchant account.');
-      }
 
       const { data: merchantProfile, error: profileError } = await supabase
         .from('merchants')
@@ -105,13 +116,24 @@ const MerchantAuth = {
       }
 
       console.log('✅ Login successful:', merchantProfile.business_name);
+
+      // Cache under 'merchantData' for MerchantAuth consumers
       localStorage.setItem('merchantData', JSON.stringify(merchantProfile));
 
-      return {
-        success: true,
-        message: 'Login successful!',
-        merchant: merchantProfile
+      // FIX: also write 'currentUser' so login.html's session check and
+      //      merchant-auth-guard.js both see a consistent stored identity
+      const currentUser = {
+        id:           data.user.id,
+        email:        data.user.email,
+        name:         merchantProfile.owner_name || data.user.email.split('@')[0],
+        businessName: merchantProfile.business_name,
+        phone:        merchantProfile.phone || '',
+        role:         'merchant'
       };
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+      return { success: true, message: 'Login successful!', merchant: merchantProfile };
+
     } catch (error) {
       console.error('❌ Login error:', error);
       return { success: false, message: error.message || 'Invalid email or password' };
@@ -119,70 +141,67 @@ const MerchantAuth = {
   },
 
   /**
-   * Logout merchant — redirects to unified login
+   * Logout merchant
    */
-  logout: async function() {
+  logout: async function () {
     try {
       const supabase = this.getSupabase();
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      localStorage.removeItem('merchantData');
-      sessionStorage.removeItem('merchantData');
-      localStorage.removeItem('currentUser');
-
-      return { success: true };
+      if (supabase) {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('❌ Logout error:', error);
-      return { success: false, message: error.message };
+    } finally {
+      // FIX: clear ALL storage keys used across the codebase
+      localStorage.removeItem('merchantData');
+      localStorage.removeItem('currentUser');
+      sessionStorage.removeItem('merchantData');
+      sessionStorage.removeItem('currentUser');
     }
+    return { success: true };
   },
 
   /**
-   * Check if user is authenticated as merchant
+   * Check if current user is an authenticated merchant.
+   *
+   * FIX: Uses a Promise wrapping onAuthStateChange instead of getSession()
+   * so we wait for the Supabase client to fully hydrate its auth state from
+   * localStorage before returning a verdict. The old getSession() call could
+   * return null in the brief window after a cross-page navigation before the
+   * new client instance had finished reading the stored token.
    */
-  isAuthenticated: async function() {
-    try {
+  isAuthenticated: async function () {
+    return new Promise((resolve) => {
       const supabase = this.getSupabase();
-      if (!supabase) return false;
+      if (!supabase) { resolve(false); return; }
 
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session) return false;
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        subscription.unsubscribe(); // one-shot — we only need the initial state
 
-      const role = session.user.user_metadata?.role;
-      if (role && role !== 'merchant') return false;
+        if (!session || !session.user) { resolve(false); return; }
 
-      return true;
-    } catch (error) {
-      console.error('❌ Auth check error:', error);
-      return false;
-    }
+        const meta = session.user.user_metadata || {};
+        // FIX: accept both role keys so legacy and new accounts both pass
+        const isMerchant = meta.role === 'merchant' || meta.user_type === 'merchant';
+        resolve(isMerchant);
+      });
+    });
   },
 
   /**
-   * Require merchant auth — redirects to unified login on failure
+   * Get current merchant profile (cache-first)
    */
-  requireAuth: async function() {
-    const authenticated = await this.isAuthenticated();
-    if (!authenticated) {
-      console.warn('⚠️ Not authenticated, redirecting to login...');
-      // ✅ Redirect to unified login page
-      window.location.replace(MERCHANT_LOGIN_URL);
-      return false;
-    }
-    return true;
-  },
-
-  /**
-   * Get current merchant profile — cache first
-   */
-  getCurrentMerchant: async function() {
+  getCurrentMerchant: async function () {
     try {
-      // 1. Cache first for instant load
+      // 1. Try cache first for instant load
       const cachedData = localStorage.getItem('merchantData');
       if (cachedData) {
         try { return JSON.parse(cachedData); }
-        catch (e) { localStorage.removeItem('merchantData'); }
+        catch (e) {
+          console.warn('Corrupt merchant cache, clearing...');
+          localStorage.removeItem('merchantData');
+        }
       }
 
       // 2. Fallback to DB
@@ -199,16 +218,17 @@ const MerchantAuth = {
         .maybeSingle();
 
       if (!merchant) {
-        const { data: byEmail } = await supabase
+        const { data: merchantByEmail } = await supabase
           .from('merchants')
           .select('*')
           .eq('email', user.email)
           .maybeSingle();
-        merchant = byEmail;
+        merchant = merchantByEmail;
       }
 
       if (merchant) localStorage.setItem('merchantData', JSON.stringify(merchant));
       return merchant;
+
     } catch (error) {
       console.error('❌ Get merchant error:', error);
       return null;
@@ -216,14 +236,12 @@ const MerchantAuth = {
   },
 
   /**
-   * Reset password — redirects to merchant reset page
+   * Reset password
    */
-  resetPassword: async function(email) {
+  resetPassword: async function (email) {
     try {
       const supabase = this.getSupabase();
-      // ✅ Reset still goes to merchant-specific reset page (that's fine)
       const resetRedirectUrl = `${this.getBasePath()}/merchant-reset-password.html?type=recovery`;
-
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: resetRedirectUrl
       });
@@ -237,28 +255,32 @@ const MerchantAuth = {
 };
 
 window.MerchantAuth = MerchantAuth;
-console.log('✅ MerchantAuth loaded — Unified Login Version');
+console.log('✅ MerchantAuth loaded successfully');
 
 // ─── GLOBAL LOGOUT ────────────────────────────────────────────────────────────
-window.merchantLogout = async function() {
-  if (!confirm('Are you sure you want to logout?')) return;
-  try {
-    // Clean up realtime subscriptions
-    if (typeof realtimeSubscription !== 'undefined' && realtimeSubscription) {
-      MerchantAuth.getSupabase().removeChannel(realtimeSubscription);
-    } else if (typeof realtimeSubscriptions !== 'undefined' && Array.isArray(realtimeSubscriptions)) {
-      realtimeSubscriptions.forEach(sub => MerchantAuth.getSupabase().removeChannel(sub));
+
+window.merchantLogout = async function () {
+  if (confirm('Are you sure you want to logout?')) {
+    try {
+      // Clean up any active realtime subscriptions on the current page
+      const supabase = MerchantAuth.getSupabase();
+      if (supabase) {
+        if (typeof realtimeSubscription !== 'undefined' && realtimeSubscription) {
+          supabase.removeChannel(realtimeSubscription);
+        } else if (typeof realtimeSubscriptions !== 'undefined' && Array.isArray(realtimeSubscriptions)) {
+          realtimeSubscriptions.forEach(sub => supabase.removeChannel(sub));
+        }
+      }
+
+      await MerchantAuth.logout();
+
+      if (typeof showToast === 'function') showToast('Logged out successfully', 'success');
+
+      setTimeout(() => window.location.replace('merchant-login.html'), 800);
+
+    } catch (error) {
+      console.error('Logout error:', error);
+      if (typeof showToast === 'function') showToast('Logout failed', 'error');
     }
-
-    await MerchantAuth.logout();
-
-    if (typeof showToast === 'function') showToast('Logged out successfully', 'success');
-
-    // ✅ Redirect to unified login page
-    setTimeout(() => { window.location.replace(MERCHANT_LOGIN_URL); }, 800);
-  } catch (error) {
-    console.error('Logout error:', error);
-    if (typeof showToast === 'function') showToast('Logout failed', 'error');
-    window.location.replace(MERCHANT_LOGIN_URL);
   }
 };
