@@ -452,7 +452,7 @@ async function initAuth() {
       // If merchant/admin redirect their nav link
       if (role === 'merchant') {
         authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">storefront</span><span>Merchant Portal</span>`;
-        authLink.href = 'merchant/index.html';
+        authLink.href = 'merchant/merchant-dashboard.html';
         authLink.onclick = null;
       } else if (role === 'admin') {
         authLink.innerHTML = `<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span><span>Admin</span>`;
