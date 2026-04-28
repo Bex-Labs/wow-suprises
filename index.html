@@ -1,437 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WOW Surprises - Create Unforgettable Moments</title>
-<link rel="icon" type="image/png" href="images/favicon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/index.css">
-<link rel="stylesheet" href="css/footer.css">
-<style>
-/* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
-#mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
-@media (max-width: 768px) {
-  #mobileMenuBtn { display: block; }
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 70px;
-    left: 0;
-    width: 100%;
-    background: #fff;
-    padding: 20px 0;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    z-index: 1000;
-    gap: 15px;
-  }
-  .nav-links.active { display: flex; }
-  .nav-links li {
-    width: 100%;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-  }
-  .nav-links li span {
-    font-weight: 700;
-    display: block;
-    padding: 10px 0;
-    width: 100%;
-    text-align: center;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOW Surprises - Create Unforgettable Moments</title>
+    
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/footer.css">
+    
+    <style>
+        /* CSS FIX FOR RESPONSIVE NAVBAR ONLY */
+        #mobileMenuBtn { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #000; }
+
+        @media (max-width: 768px) {
+            #mobileMenuBtn { display: block; }
+            
+            .nav-links {
+                display: none; /* Hide by default on mobile */
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                gap: 15px; /* Tight spacing between links */
+            }
+
+            .nav-links.active { display: flex; }
+
+            .nav-links li { 
+                width: 100%; 
+                text-align: center; 
+                display: flex; 
+                justify-content: center; 
+            }
+
+            .nav-links li span {
+                font-weight: 700;
+                display: block;
+                padding: 10px 0;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo" aria-label="WOW Surprises Home">
+                <img src="images/logo.png" alt="WOW Surprises " 
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
+            </a>
+            
+            <button id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
 
-<nav class="navbar">
-  <div class="container">
-    <a href="index.html" class="logo" aria-label="WOW Surprises Home">
-      <img src="images/logo.png" alt="WOW Surprises"
-           onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:24px; font-weight:800; color:#000;\'>WOW SURPRISES</span>';">
-    </a>
-    <button id="mobileMenuBtn">
-      <i class="bi bi-list"></i>
-    </button>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="custom-package.html">Custom Package</a></li>
-      <li><a href="reviews.html">Reviews</a></li>
-      <li><a href="booking-history.html">My Bookings</a></li>
-      <li><a href="login.html" id="authLink">Login</a></li>
-    </ul>
-  </div>
-</nav>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="custom-package.html">Custom Package</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="booking-history.html">My Bookings</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<section class="hero hero-carousel">
-  <div class="hero-slide active" style="background-image: url('images/front-view-purple-little-presents.jpg');">
-    <div class="hero-overlay"></div>
-  </div>
-  <div class="hero-slide" style="background-image: url('images/flowers-near-glass-present-bottle-drink.jpg');">
-    <div class="hero-overlay"></div>
-  </div>
-  <div class="hero-slide" style="background-image: url('images/simple-gift-box-tied-with-red-silk-tape-close-red-flower-plant-romantic-love-set-valentine-day-holidays-festivals.jpg');">
-    <div class="hero-overlay"></div>
-  </div>
-  <div class="hero-slide" style="background-image: url('images/valentines-day-romantic-man-hand-holding-engagement-ring-box-marry-me-wedding.jpg');">
-    <div class="hero-overlay"></div>
-  </div>
-  <div class="hero-content">
-    <div class="container">
-      <h1>Bring the Wow to Every Occasion!</h1>
-      <p class="hero-subtitle">Create unforgettable surprise experiences for your loved ones</p>
-      <div class="hero-buttons">
-        <button class="btn-primary" onclick="scrollToPackages()">
-          <i class="bi bi-gift"></i> Plan a Surprise
+    <section class="hero hero-carousel">
+        <div class="hero-slide active" style="background-image: url('images/front-view-purple-little-presents.jpg');">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('images/flowers-near-glass-present-bottle-drink.jpg');">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('images/simple-gift-box-tied-with-red-silk-tape-close-red-flower-plant-romantic-love-set-valentine-day-holidays-festivals.jpg');">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('images/valentines-day-romantic-man-hand-holding-engagement-ring-box-marry-me-wedding.jpg');">
+            <div class="hero-overlay"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="container">
+                <h1>Bring the Wow to Every Occasion!</h1>
+                <p class="hero-subtitle">Create unforgettable surprise experiences for your loved ones</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="scrollToPackages()">
+                        <i class="bi bi-gift"></i> Plan a Surprise
+                    </button>
+                    <a href="custom-package.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-palette"></i> Build Custom Package
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <button class="carousel-prev" aria-label="Previous slide">
+            <i class="bi bi-chevron-left"></i>
         </button>
-        <a href="custom-package.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-          <i class="bi bi-palette"></i> Build Custom Package
-        </a>
-      </div>
-    </div>
-  </div>
-  <button class="carousel-prev" aria-label="Previous slide"><i class="bi bi-chevron-left"></i></button>
-  <button class="carousel-next" aria-label="Next slide"><i class="bi bi-chevron-right"></i></button>
-  <div class="carousel-dots">
-    <button class="carousel-dot active" aria-label="Go to slide 1"></button>
-    <button class="carousel-dot" aria-label="Go to slide 2"></button>
-    <button class="carousel-dot" aria-label="Go to slide 3"></button>
-    <button class="carousel-dot" aria-label="Go to slide 4"></button>
-  </div>
-</section>
-
-<section class="features">
-  <div class="container">
-    <div class="features-grid">
-      <div class="feature-card">
-        <i class="bi bi-grid-3x3"></i>
-        <h3>Customized Events</h3>
-        <p>Tailored surprises for every occasion</p>
-      </div>
-      <div class="feature-card">
-        <i class="bi bi-shield-lock"></i>
-        <h3>Secret Delivery</h3>
-        <p>Your surprise stays secret until the perfect moment</p>
-      </div>
-      <div class="feature-card">
-        <i class="bi bi-clock"></i>
-        <h3>24/7 Support</h3>
-        <p>We're here whenever you need us</p>
-      </div>
-      <div class="feature-card">
-        <i class="bi bi-star"></i>
-        <h3>Premium Quality</h3>
-        <p>Only the finest products and services</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<main class="container">
-  <section class="filter-section" id="packages">
-    <div class="search-bar">
-      <i class="bi bi-search"></i>
-      <input type="text" id="searchInput" placeholder="Search surprise packages..." aria-label="Search packages">
-      <button id="searchBtn" class="btn-primary" onclick="if(typeof applyFilters === 'function') applyFilters()">
-        <i class="bi bi-search"></i> Search
-      </button>
-    </div>
-    <div class="filters">
-      <div class="filter-group">
-        <label for="categoryFilter">Category</label>
-        <select id="categoryFilter" aria-label="Filter by category" onchange="if(typeof applyFilters === 'function') applyFilters()">
-          <option value="">All Categories</option>
-          <option value="gift_packages">Gift Packages</option>
-          <option value="flowers_bouquet">Flowers & Bouquet</option>
-          <option value="cakes_desserts">Cakes & Desserts</option>
-          <option value="event_decorations">Event Decorations</option>
-          <option value="balloons_party">Balloons & Party Supplies</option>
-          <option value="gift_hampers">Gift Hampers</option>
-          <option value="experience_packages">Experience Packages</option>
-          <option value="birthday">Birthday Surprise</option>
-          <option value="proposal">Marriage Proposal</option>
-          <option value="anniversary">Anniversary</option>
-          <option value="romantic">Romantic Dinner/Date</option>
-          <option value="corporate">Corporate Events</option>
-          <option value="others">Others</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label for="priceRange">Price Range</label>
-        <input type="range" id="priceRange" min="0" max="1000000" value="1000000" step="10000" aria-label="Price range slider">
-        <span id="priceValue">₦0 - ₦1,000,000</span>
-      </div>
-      <div class="filter-group">
-        <label for="sortFilter">Sort By</label>
-        <select id="sortFilter" aria-label="Sort packages" onchange="if(typeof applyFilters === 'function') applyFilters()">
-          <option value="popular">Most Popular</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="newest">Newest</option>
-          <option value="name">Name: A-Z</option>
-        </select>
-      </div>
-      <button id="clearFilters" class="btn-secondary" onclick="clearAllFilters()">
-        <i class="bi bi-x-circle"></i> Clear
-      </button>
-    </div>
-  </section>
-
-  <section class="packages-section" id="packagesSection">
-    <h2>Featured Surprise Packages</h2>
-    <div id="packagesGrid" class="packages-grid"></div>
-    <div id="loadingSpinner" class="loading" style="display: none;">
-      <i class="bi bi-arrow-repeat spin"></i> Loading packages...
-    </div>
-    <div id="noResults" style="display: none;" class="no-results">
-      <i class="bi bi-inbox"></i>
-      <h3>No packages found</h3>
-      <p>Try adjusting your search or filters</p>
-      <button onclick="clearAllFilters()" class="btn-secondary">
-        <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
-      </button>
-    </div>
-    <div id="emptyState" style="display: none;" class="no-results">
-      <i class="bi bi-gift"></i>
-      <h3>Coming Soon!</h3>
-      <p>We're preparing amazing surprise packages for you</p>
-      <a href="custom-package.html" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;">
-        <i class="bi bi-palette"></i> Build Custom Package Instead
-      </a>
-    </div>
-  </section>
-
-  <section class="cta-section" style="text-align: center; padding: 60px 0; background: #f9f9f9; border-radius: 16px; margin-top: 60px;">
-    <h2 style="font-size: 36px; margin-bottom: 16px;">Can't Find What You're Looking For?</h2>
-    <p style="font-size: 18px; color: #666; margin-bottom: 30px;">Build your own custom package with exactly what you want!</p>
-    <a href="custom-package.html" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; font-size: 18px;">
-      <i class="bi bi-palette"></i> Create Custom Package
-    </a>
-  </section>
-</main>
-
-<div id="packageModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()" aria-label="Close modal">&times;</span>
-    <div id="modalBody"></div>
-  </div>
-</div>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-section footer-about">
-        <div class="footer-logo">
-          <img src="images/logo-white.png" alt="WOW Surprises"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
-               style="height: 40px; width: auto; margin-bottom: 16px;">
+        <button class="carousel-next" aria-label="Next slide">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+        
+        <div class="carousel-dots">
+            <button class="carousel-dot active" aria-label="Go to slide 1"></button>
+            <button class="carousel-dot" aria-label="Go to slide 2"></button>
+            <button class="carousel-dot" aria-label="Go to slide 3"></button>
+            <button class="carousel-dot" aria-label="Go to slide 4"></button>
         </div>
-        <p>Creating unforgettable moments and bringing joy to every celebration. We specialize in turning your surprise dreams into reality.</p>
-        <div class="footer-social">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="bi bi-grid-3x3"></i>
+                    <h3>Customized Events</h3>
+                    <p>Tailored surprises for every occasion</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-shield-lock"></i>
+                    <h3>Secret Delivery</h3>
+                    <p>Your surprise stays secret until the perfect moment</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-clock"></i>
+                    <h3>24/7 Support</h3>
+                    <p>We're here whenever you need us</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-star"></i>
+                    <h3>Premium Quality</h3>
+                    <p>Only the finest products and services</p>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="index.html#packages">Browse Packages</a>
-          <a href="custom-package.html">Custom Package</a>
-          <a href="reviews.html">Reviews</a>
-          <a href="booking-history.html">My Bookings</a>
-          <a href="login.html">Login / Register</a>
+    </section>
+
+    <main class="container">
+        <section class="filter-section" id="packages">
+            <div class="search-bar">
+                <i class="bi bi-search"></i>
+                <input type="text" id="searchInput" placeholder="Search surprise packages..." aria-label="Search packages">
+                <button id="searchBtn" class="btn-primary" onclick="if(typeof applyFilters === 'function') applyFilters()">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter" aria-label="Filter by category" onchange="if(typeof applyFilters === 'function') applyFilters()">
+                        <option value="">All Categories</option>
+                        <option value="gift_packages">Gift Packages</option>
+                        <option value="flowers_bouquet">Flowers & Bouquet</option>
+                        <option value="cakes_desserts">Cakes & Desserts</option>
+                        <option value="event_decorations">Event Decorations</option>
+                        <option value="balloons_party">Balloons & Party Supplies</option>
+                        <option value="gift_hampers">Gift Hampers</option>
+                        <option value="experience_packages">Experience Packages</option>
+                        <option value="birthday">Birthday Surprise</option>
+                        <option value="proposal">Marriage Proposal</option>
+                        <option value="anniversary">Anniversary</option>
+                        <option value="romantic">Romantic Dinner/Date</option>
+                        <option value="corporate">Corporate Events</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="priceRange">Price Range</label>
+                    <input type="range" id="priceRange" min="0" max="1000000" value="1000000" step="10000" aria-label="Price range slider">
+                    <span id="priceValue">₦0 - ₦1,000,000</span>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortFilter">Sort By</label>
+                    <select id="sortFilter" aria-label="Sort packages" onchange="if(typeof applyFilters === 'function') applyFilters()">
+                        <option value="popular">Most Popular</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                        <option value="name">Name: A-Z</option>
+                    </select>
+                </div>
+
+                <button id="clearFilters" class="btn-secondary" onclick="clearAllFilters()">
+                    <i class="bi bi-x-circle"></i> Clear
+                </button>
+            </div>
+        </section>
+
+        <section class="packages-section" id="packagesSection">
+            <h2>Featured Surprise Packages</h2>
+            <div id="packagesGrid" class="packages-grid">
+                </div>
+            
+            <div id="loadingSpinner" class="loading" style="display: none;">
+                <i class="bi bi-arrow-repeat spin"></i> Loading packages...
+            </div>
+            
+            <div id="noResults" style="display: none;" class="no-results">
+                <i class="bi bi-inbox"></i>
+                <h3>No packages found</h3>
+                <p>Try adjusting your search or filters</p>
+                <button onclick="clearAllFilters()" class="btn-secondary">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                </button>
+            </div>
+
+            <div id="emptyState" style="display: none;" class="no-results">
+                <i class="bi bi-gift"></i>
+                <h3>Coming Soon!</h3>
+                <p>We're preparing amazing surprise packages for you</p>
+                <a href="custom-package.html" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;">
+                    <i class="bi bi-palette"></i> Build Custom Package Instead
+                </a>
+            </div>
+        </section>
+
+        <section class="cta-section" style="text-align: center; padding: 60px 0; background: #f9f9f9; border-radius: 16px; margin-top: 60px;">
+            <h2 style="font-size: 36px; margin-bottom: 16px;">Can't Find What You're Looking For?</h2>
+            <p style="font-size: 18px; color: #666; margin-bottom: 30px;">Build your own custom package with exactly what you want!</p>
+            <a href="custom-package.html" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; font-size: 18px;">
+                <i class="bi bi-palette"></i> Create Custom Package
+            </a>
+        </section>
+    </main>
+
+    <div id="packageModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()" aria-label="Close modal">&times;</span>
+            <div id="modalBody"></div>
         </div>
-      </div>
-      <div class="footer-section">
-        <h3>Our Services</h3>
-        <div class="footer-links">
-          <a href="#" onclick="filterByCategory('gift_packages')">Gift Packages</a>
-          <a href="#" onclick="filterByCategory('flowers_bouquet')">Flowers & Bouquet</a>
-          <a href="#" onclick="filterByCategory('cakes_desserts')">Cakes & Desserts</a>
-          <a href="#" onclick="filterByCategory('birthday')">Birthday Surprise</a>
-          <a href="#" onclick="filterByCategory('proposal')">Marriage Proposal</a>
-        </div>
-      </div>
-      <div class="footer-section">
-        <h3>Contact Us</h3>
-        <div class="footer-contact">
-          <div class="contact-item">
-            <i class="bi bi-geo-alt-fill"></i>
-            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
-          </div>
-          <div class="contact-item">
-            <i class="bi bi-telephone-fill"></i>
-            <a href="tel:+2348012345678">+234 801 234 5678</a>
-          </div>
-          <div class="contact-item">
-            <i class="bi bi-envelope-fill"></i>
-            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
-          </div>
-          <div class="contact-item">
-            <i class="bi bi-clock-fill"></i>
-            <span>Mon - Sun: 8:00 AM - 10:00 PM</span>
-          </div>
-        </div>
-      </div>
     </div>
-    <div class="footer-bottom">
-      <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
-      <div class="footer-bottom-links">
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="terms-of-service.html">Terms of Service</a>
-        <a href="refund-policy.html">Refund Policy</a>
-        <a href="faq.html">FAQ</a>
-      </div>
-    </div>
-  </div>
-</footer>
 
-<button id="backToTop" title="Back to top" aria-label="Scroll to top">
-  <i class="bi bi-arrow-up"></i>
-</button>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-about">
+                    <div class="footer-logo">
+                        <img src="images/logo-white.png" alt="WOW Surprises" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:28px; font-weight:800; color:#fff;\'>WOW SURPRISES</div>';"
+                             style="height: 40px; width: auto; margin-bottom: 16px;">
+                    </div>
+                    <p>Creating unforgettable moments and bringing joy to every celebration. We specialize in turning your surprise dreams into reality.</p>
+                    <div class="footer-social">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/supabaseApi.js"></script>
-<script src="js/packages.js"></script>
-<script src="js/hero-carousel.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="index.html">Home</a>
+                        <a href="index.html#packages">Browse Packages</a>
+                        <a href="custom-package.html">Custom Package</a>
+                        <a href="reviews.html">Reviews</a>
+                        <a href="booking-history.html">My Bookings</a>
+                        <a href="login.html">Login / Register</a>
+                    </div>
+                </div>
 
-  // ── Mobile menu ──────────────────────────────────────────────────────────
-  const toggleBtn = document.getElementById('mobileMenuBtn');
-  const navLinks  = document.getElementById('navLinks');
-  const icon      = toggleBtn?.querySelector('i');
+                <div class="footer-section">
+                    <h3>Our Services</h3>
+                    <div class="footer-links">
+                        <a href="#" onclick="filterByCategory('gift_packages')">Gift Packages</a>
+                        <a href="#" onclick="filterByCategory('flowers_bouquet')">Flowers & Bouquet</a>
+                        <a href="#" onclick="filterByCategory('cakes_desserts')">Cakes & Desserts</a>
+                        <a href="#" onclick="filterByCategory('birthday')">Birthday Surprise</a>
+                        <a href="#" onclick="filterByCategory('proposal')">Marriage Proposal</a>
+                    </div>
+                </div>
 
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      navLinks.classList.toggle('active');
-      if (navLinks.classList.contains('active')) {
-        icon.classList.replace('bi-list', 'bi-x-lg');
-      } else {
-        icon.classList.replace('bi-x-lg', 'bi-list');
-      }
-    });
-  }
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>123 Surprise Street, Victoria Island<br>Lagos, Nigeria</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <a href="tel:+2348012345678">+234 801 234 5678</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <a href="mailto:hello@wowsurprises.com">hello@wowsurprises.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-clock-fill"></i>
+                            <span>Mon - Sun: 8:00 AM - 10:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  document.addEventListener('click', function (e) {
-    if (navLinks.classList.contains('active') &&
-        !navLinks.contains(e.target) &&
-        !toggleBtn.contains(e.target)) {
-      navLinks.classList.remove('active');
-      icon.classList.replace('bi-x-lg', 'bi-list');
-    }
-  });
+            <div class="footer-bottom">
+                <p>&copy; 2024 WOW Surprises. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-of-service.html">Terms of Service</a>
+                    <a href="refund-policy.html">Refund Policy</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-  // ── Auth ─────────────────────────────────────────────────────────────────
-  initializeAuth();
+    <button id="backToTop" title="Back to top" aria-label="Scroll to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
 
-  // ── Other inits ──────────────────────────────────────────────────────────
-  initializeBackToTop();
-  initializePriceRangeDisplay();
-});
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/supabaseApi.js"></script>
+    <script src="js/packages.js"></script>
+    <script src="js/hero-carousel.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const toggleBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const icon = toggleBtn?.querySelector('i');
 
-// FIX: Use onAuthStateChange instead of getSession() so the auth state is
-// fully hydrated before we decide what to show in the nav. getSession() on
-// a fresh page load can return null briefly before Supabase reads the token
-// from localStorage, which caused the portal button to show "Login" even
-// for signed-in users, and could contribute to the auth loop on navigate.
-function initializeAuth() {
-  const authLink = document.getElementById('authLink');
-  const client   = window.sbClient;
-  if (!client || !authLink) return;
-
-  const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
-    subscription.unsubscribe(); // one-shot — only need initial state
-
-    if (!session?.user) return; // not signed in — leave the default Login link
-
-    const user = session.user;
-    const role = user.user_metadata?.role || 'customer';
-
-    // FIX: merchant/index.html does not exist — corrected to merchant-dashboard.html.
-    // admin/index.html exists (separate admin login entry point) — unchanged.
-    if (role === 'merchant') {
-      authLink.innerHTML = '<i class="bi bi-storefront"></i> Merchant Portal';
-      authLink.href      = 'merchant/merchant-dashboard.html'; // was: merchant/index.html
-      authLink.onclick   = null;
-    } else if (role === 'admin') {
-      authLink.innerHTML = '<i class="bi bi-shield-lock"></i> Admin Panel';
-      authLink.href      = 'admin/index.html';
-      authLink.onclick   = null;
-    } else {
-      // Regular customer — show My Account + Logout
-      // TODO: update href to 'my-account.html' once that page is created
-      authLink.textContent = 'My Account';
-      authLink.href        = 'booking-history.html';
-      authLink.onclick     = null;
-
-      // Inject a Logout link right after the authLink's <li>
-      const authLi        = authLink.parentElement;
-      const logoutLi      = document.createElement('li');
-      const logoutAnchor  = document.createElement('a');
-      logoutAnchor.textContent = 'Logout';
-      logoutAnchor.href        = '#';
-      logoutAnchor.onclick     = async (e) => {
-        e.preventDefault();
-        if (confirm('Are you sure you want to logout?')) {
-          await client.auth.signOut();
-          localStorage.removeItem('currentUser');
-          sessionStorage.removeItem('currentUser');
-          window.location.reload();
+        if(toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.replace('bi-list', 'bi-x-lg');
+                } else {
+                    icon.classList.replace('bi-x-lg', 'bi-list');
+                }
+            });
         }
-      };
-      logoutLi.appendChild(logoutAnchor);
-      authLi.insertAdjacentElement('afterend', logoutLi);
+
+        document.addEventListener('click', function(e) {
+            if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                icon.classList.replace('bi-x-lg', 'bi-list');
+            }
+        });
+
+        await initializeAuth();
+        initializeBackToTop();
+        initializePriceRangeDisplay();
+    });
+
+    async function initializeAuth() {
+        try {
+            const authLink = document.getElementById('authLink');
+            const client = window.sbClient || window.supabase;
+            if (client) {
+                const { data } = await client.auth.getSession();
+                if (data?.session?.user) {
+                    // Hi, Name logic removed. Auth state update only.
+                    authLink.textContent = 'Logout';
+                    authLink.href = '#';
+                    authLink.onclick = async (e) => {
+                        e.preventDefault();
+                        if(confirm('Logout?')) {
+                            await client.auth.signOut();
+                            localStorage.removeItem('currentUser');
+                            window.location.reload();
+                        }
+                    };
+                }
+            }
+        } catch (error) { console.error('Auth error:', error); }
     }
-  });
-}
 
-function initializeBackToTop() {
-  const btn = document.getElementById('backToTop');
-  window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 300) btn.classList.add('show');
-    else btn.classList.remove('show');
-  });
-  btn?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-}
+    function initializeBackToTop() {
+        const btn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) btn.classList.add('show');
+            else btn.classList.remove('show');
+        });
+        btn?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
 
-function initializePriceRangeDisplay() {
-  const range   = document.getElementById('priceRange');
-  const display = document.getElementById('priceValue');
-  range?.addEventListener('input', () => {
-    display.textContent = `₦0 - ₦${parseInt(range.value).toLocaleString()}`;
-    if (typeof applyFilters === 'function') applyFilters();
-  });
-}
+    function initializePriceRangeDisplay() {
+        const range = document.getElementById('priceRange');
+        const display = document.getElementById('priceValue');
+        range?.addEventListener('input', () => {
+            display.textContent = `₦0 - ₦${parseInt(range.value).toLocaleString()}`;
+            if(typeof applyFilters === 'function') applyFilters();
+        });
+    }
 
-function scrollToPackages() {
-  document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
-}
+    function scrollToPackages() {
+        document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' });
+    }
 
-function clearAllFilters() {
-  document.getElementById('searchInput').value     = '';
-  document.getElementById('categoryFilter').value  = '';
-  document.getElementById('priceRange').value      = 1000000;
-  document.getElementById('priceValue').textContent = '₦0 - ₦1,000,000';
-  if (typeof applyFilters === 'function') applyFilters();
-}
+    function clearAllFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('categoryFilter').value = '';
+        document.getElementById('priceRange').value = 1000000;
+        document.getElementById('priceValue').textContent = `₦0 - ₦1,000,000`;
+        if (typeof applyFilters === 'function') applyFilters();
+    }
 
-function filterByCategory(category) {
-  const filter = document.getElementById('categoryFilter');
-  if (filter) {
-    filter.value = category;
-    if (typeof applyFilters === 'function') applyFilters();
-    document.getElementById('packages').scrollIntoView({ behavior: 'smooth' });
-  }
-}
-</script>
+    function filterByCategory(category) {
+        const filter = document.getElementById('categoryFilter');
+        if (filter) {
+            filter.value = category;
+            if (typeof applyFilters === 'function') applyFilters();
+            document.getElementById('packages').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+    </script>
 </body>
 </html>
