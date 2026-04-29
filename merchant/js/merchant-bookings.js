@@ -27,7 +27,7 @@ async function initMerchant() {
     try {
         if (!await MerchantAuth.isAuthenticated()) {
             console.log('❌ Not authenticated, redirecting...');
-            window.location.href = 'merchant-login.html';
+            window.location.replace('../login.html');
             return;
         }
 

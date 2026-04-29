@@ -473,6 +473,28 @@ async function handleSignIn() {
     if (remember) { localStorage.setItem('currentUser',   JSON.stringify(userInfo)); }
     else          { sessionStorage.setItem('currentUser', JSON.stringify(userInfo)); }
 
+    // FIX (auth loop): For merchant logins, pre-populate merchantData in localStorage
+    // so the dashboard's getCurrentMerchant() finds it in cache and never hits the
+    // null-return branch that triggers "Session expired" → redirect → loop.
+    //
+    // login.html uses a unified auth flow (no MerchantAuth.login() call), so
+    // merchantData is otherwise never written after a login from this page.
+    // Always use localStorage (not sessionStorage) because the merchant portal
+    // reads merchantData from localStorage regardless of the rememberMe flag.
+    if (userRole === 'merchant') {
+      const meta = user.user_metadata || {};
+      localStorage.setItem('merchantData', JSON.stringify({
+        user_id:       user.id,
+        email:         user.email,
+        owner_name:    meta.full_name  || user.email.split('@')[0],
+        business_name: meta.business_name || meta.full_name || user.email.split('@')[0],
+        phone:         meta.phone      || '',
+        role:          'merchant',
+        is_active:     true,
+        _synthesized:  true   // no merchants-table row guaranteed; profile page should upsert
+      }));
+    }
+
     showMessage(`Welcome back, ${userInfo.name}! Redirecting...`, 'success');
     setTimeout(() => redirectByRole(userRole), 1200);
 

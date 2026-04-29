@@ -12,10 +12,11 @@ async function initDashboard() {
         currentMerchant = await MerchantAuth.getCurrentMerchant();
         
         if (!currentMerchant) {
-            showToast('Session expired. Please login again.', 'error');
-            setTimeout(() => {
-                window.location.href = 'merchant-login.html';
-            }, 2000);
+            // getCurrentMerchant() only returns null when auth.getUser() itself
+            // fails — meaning the Supabase session is genuinely gone. Redirect to
+            // login without a toast that falsely implies an expired session.
+            console.error('❌ Could not load merchant profile — no auth session.');
+            window.location.replace('../login.html');
             return;
         }
         

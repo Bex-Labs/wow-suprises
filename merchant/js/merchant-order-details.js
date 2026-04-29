@@ -26,8 +26,8 @@ async function initOrderDetails() {
         currentMerchant = await MerchantAuth.getCurrentMerchant();
         
         if (!currentMerchant) {
-            showToast('Session expired. Please login again.', 'error');
-            setTimeout(() => window.location.href = 'merchant-login.html', 2000);
+            console.error('❌ Could not load merchant profile — no auth session.');
+            window.location.replace('../login.html');
             return;
         }
         

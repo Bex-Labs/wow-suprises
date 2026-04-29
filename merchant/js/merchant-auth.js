@@ -226,8 +226,32 @@ const MerchantAuth = {
         merchant = merchantByEmail;
       }
 
-      if (merchant) localStorage.setItem('merchantData', JSON.stringify(merchant));
-      return merchant;
+      if (merchant) {
+        localStorage.setItem('merchantData', JSON.stringify(merchant));
+        return merchant;
+      }
+
+      // 3. Safety-net fallback: the merchants table has no row for this user
+      //    (e.g. they signed up via the unified login.html which only creates an
+      //    auth record). Build a minimal merchant object from user_metadata so
+      //    the dashboard can render without looping back to login.
+      //
+      //    The _synthesized flag signals that no real DB row exists yet — the
+      //    profile page should upsert the full record when the merchant saves.
+      console.warn('⚠️ No merchants table row found for authenticated user — building from user_metadata');
+      const meta = user.user_metadata || {};
+      const fallback = {
+        user_id:       user.id,
+        email:         user.email,
+        owner_name:    meta.full_name     || user.email.split('@')[0],
+        business_name: meta.business_name || meta.full_name || user.email.split('@')[0],
+        phone:         meta.phone         || '',
+        role:          'merchant',
+        is_active:     true,
+        _synthesized:  true
+      };
+      localStorage.setItem('merchantData', JSON.stringify(fallback));
+      return fallback;
 
     } catch (error) {
       console.error('❌ Get merchant error:', error);
