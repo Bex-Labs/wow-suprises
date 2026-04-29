@@ -6,9 +6,13 @@
     <title>My Services - WOW Merchant</title>
     
     <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- CRITICAL: Auth guard must be first — hides page and redirects if not authenticated -->
+    <script src="js/merchant-auth-guard.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/merchant.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>

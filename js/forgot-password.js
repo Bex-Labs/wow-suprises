@@ -20,11 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Sending...';
                 
-                // FIX: Use the updated window.sbClient instead of the old getSupabaseClient()
-                const supabaseClient = window.sbClient || window.supabase;
-                
+                // Use the shared client created by config.js — never fall back to the
+                // raw window.supabase object, which is unconfigured and would fail silently.
+                const supabaseClient = window.sbClient;
+
                 if (!supabaseClient) {
-                    throw new Error("Database client not initialized. Please check your internet connection and refresh.");
+                    throw new Error("Database client not initialized. Please refresh the page and try again.");
                 }
                 
                 // Send the email and route them to the actual reset page

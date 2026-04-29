@@ -1,3 +1,19 @@
+// ⚠️  DEAD CODE — THIS FILE IS NOT LOADED BY ANY HTML PAGE
+//
+// login.html uses a self-contained inline <script> block (at the bottom of the
+// file) for all authentication logic. This file is NOT referenced anywhere and
+// has no effect at runtime.
+//
+// Known stale issue inside this file:
+//   Line ~112 redirects admin to '/admin/dashboard.html', which does not exist.
+//   The correct path is 'admin/admin-dashboard.html'.  The inline script in
+//   login.html already uses the correct ROLE_REDIRECTS map, so this bug has
+//   no real impact — but it would need fixing before this file could be used.
+//
+// TODO: either delete this file, or wire it into login.html as an external
+//       script once the stale redirect path above is corrected.
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Login Page JavaScript - Supabase Integrated - FIXED VERSION
 
 // Switch between login and register tabs
