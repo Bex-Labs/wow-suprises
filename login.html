@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sign In – WOW Surprises</title>
-<link rel="icon" type="image/png" href="images/favicon.png" />
+<link rel="icon" type="image/png" href="images/wowlogo-nobg.png" />
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -78,7 +78,7 @@ tailwind.config = {
   <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-24 -mb-24 blur-3xl"></div>
   <div class="relative z-10">
     <a href="index.html" class="flex items-center gap-3">
-      <img src="images/wowlogo.png" alt="WOW Surprises" class="h-14 brightness-0 invert"
+      <img src="images/wowlogo-nobg.png" alt="WOW Surprises" class="h-14 brightness-0 invert"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
       <span class="text-3xl font-black text-white font-headline" style="display:none;">WOW!</span>
     </a>
@@ -103,7 +103,7 @@ tailwind.config = {
 <!-- ═══ RIGHT PANEL ═══ -->
 <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 overflow-y-auto">
   <a href="index.html" class="lg:hidden mb-8 flex items-center gap-2">
-    <img src="images/wowlogo.png" alt="WOW Surprises" class="h-12"
+    <img src="images/wowlogo-nobg.png" alt="WOW Surprises" class="h-12"
          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
     <span class="text-2xl font-black text-primary font-headline" style="display:none;">WOW!</span>
   </a>
@@ -576,35 +576,4 @@ document.addEventListener('keydown', e => {
 });
 
 // ─── SESSION CHECK ON LOAD ───────────────────────────────────────────────────
-// FIX: Uses onAuthStateChange instead of getSession() so we wait for Supabase
-//      to fully hydrate its auth state before deciding whether to redirect.
-//      This eliminates the race condition where getSession() returned null
-//      mid-flight and triggered a redirect back from the merchant dashboard.
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Show admin card if ?role=admin in URL
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('role') === 'admin') {
-    document.getElementById('adminRoleCard').classList.remove('hidden');
-  }
-
-  const client = window.sbClient;
-  if (!client) return;
-
-  // onAuthStateChange fires once immediately with the current state,
-  // so we get a reliable answer without any timing ambiguity.
-  const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
-    // Unsubscribe immediately — we only need the initial state check here.
-    subscription.unsubscribe();
-
-    if (isRedirecting) return;  // a sign-in is already in progress, don't double-redirect
-
-    if (session?.user) {
-      const role = session.user.user_metadata?.role || 'customer';
-      redirectByRole(role);
-    }
-  });
-});
-</script>
-</body>
-</html>
+// FIX: Uses onAuthStateChange instead of getSession() so we wait for Sup
